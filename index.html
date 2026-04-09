@@ -398,7 +398,7 @@ footer a { color: var(--accent2); }
       <h3>Commutator Attention (Ablation)</h3>
       <p>Replace dot-product attention with Lie-bracket-based mixing using structure constants
       $c_{ij}^k$ (Levi-Civita for $\mathfrak{su}(2)$). First architecture that respects algebraic mixing in
-      the attention mechanism. Isolated in Notebook 1 ablation.</p>
+      the attention mechanism. Isolated in the Architecture &amp; Unitarity notebook ablation.</p>
     </div>
   </div>
 </section>
@@ -584,144 +584,144 @@ footer a { color: var(--accent2); }
     <div class="fig-card">
       <div class="fig-img">
         <img src="outputs/unitarity_benchmark.png"
-             onerror="this.parentNode.innerHTML='Run Notebook 1 to generate this figure'"
+             onerror="this.parentNode.innerHTML='Run the Architecture notebook to generate this figure'"
              alt="Unitarity Benchmark"/>
       </div>
       <div class="fig-body">
         <div class="fig-title">Unitarity Violation Distribution</div>
         <div class="fig-desc">Over $10^5$ random Hamiltonians: LieGPT at machine
         $\varepsilon$, unconstrained GRU 10⁸–10¹⁰× larger.</div>
-        <span class="fig-key-badge">Notebook 1</span>
+        <span class="fig-key-badge">Architecture &amp; Unitarity</span>
       </div>
     </div>
     <div class="fig-card">
       <div class="fig-img">
         <img src="outputs/bloch_sphere_unitarity.png"
-             onerror="this.parentNode.innerHTML='Run Notebook 1 to generate this figure'"
+             onerror="this.parentNode.innerHTML='Run the Architecture notebook to generate this figure'"
              alt="Bloch Sphere"/>
       </div>
       <div class="fig-body">
         <div class="fig-title">Bloch Sphere Trajectories</div>
         <div class="fig-desc">LieGPT state norm stays at exactly 1.000000. Unconstrained
         model leaks off the sphere with growing divergence.</div>
-        <span class="fig-key-badge">Notebook 1</span>
+        <span class="fig-key-badge">Architecture &amp; Unitarity</span>
       </div>
     </div>
     <div class="fig-card" style="border-color: var(--accent);">
       <div class="fig-img">
         <img src="outputs/stability_rollout.png"
-             onerror="this.parentNode.innerHTML='Run Notebook 2 to generate this figure (KEY RESULT)'"
+             onerror="this.parentNode.innerHTML='Run the Stability notebook to generate this figure (KEY RESULT)'"
              alt="Stability Rollout"/>
       </div>
       <div class="fig-body">
         <div class="fig-title">🔴 Long-Time Stability — PRIMARY FIGURE</div>
         <div class="fig-desc">Rollout to $10\times$ training horizon. LieGPT remains
         stable. All unconstrained baselines diverge. This is the strongest result in the submission.</div>
-        <span class="fig-key-badge">Notebook 2 · KEY</span>
+        <span class="fig-key-badge">Long-Time Stability · KEY</span>
       </div>
     </div>
     <div class="fig-card">
       <div class="fig-img">
         <img src="outputs/theorem1_bound.png"
-             onerror="this.parentNode.innerHTML='Run Notebook 2 to generate this figure'"
+             onerror="this.parentNode.innerHTML='Run the Stability notebook to generate this figure'"
              alt="Theorem 1 Bound"/>
       </div>
       <div class="fig-body">
         <div class="fig-title">Theorem 1 Verification</div>
         <div class="fig-desc">Observed state error vs. theoretical bound $T \cdot C \cdot \varepsilon$.
         LieGPT stays well below the bound — proven linear error growth.</div>
-        <span class="fig-key-badge">Notebook 2</span>
+        <span class="fig-key-badge">Long-Time Stability</span>
       </div>
     </div>
     <div class="fig-card">
       <div class="fig-img">
         <img src="outputs/data_efficiency.png"
-             onerror="this.parentNode.innerHTML='Run Notebook 3 to generate this figure'"
+             onerror="this.parentNode.innerHTML='Run the Efficiency notebook to generate this figure'"
              alt="Data Efficiency"/>
       </div>
       <div class="fig-body">
         <div class="fig-title">Data Efficiency</div>
         <div class="fig-desc">Error vs training set size $N$. LieGPT reaches accuracy
         threshold with $\sim 3\times$ fewer trajectories, consistent with Theorem 2.</div>
-        <span class="fig-key-badge">Notebook 3</span>
+        <span class="fig-key-badge">Data Efficiency &amp; Noise</span>
       </div>
     </div>
     <div class="fig-card">
       <div class="fig-img">
         <img src="outputs/noise_robustness.png"
-             onerror="this.parentNode.innerHTML='Run Notebook 3 to generate this figure'"
+             onerror="this.parentNode.innerHTML='Run the Efficiency notebook to generate this figure'"
              alt="Noise Robustness"/>
       </div>
       <div class="fig-body">
         <div class="fig-title">Noise Robustness</div>
         <div class="fig-desc">LieGPT unitarity violation stays at machine $\varepsilon$ at
         all noise levels — the structural guarantee cannot be broken by training noise.</div>
-        <span class="fig-key-badge">Notebook 3</span>
+        <span class="fig-key-badge">Data Efficiency &amp; Noise</span>
       </div>
     </div>
     <div class="fig-card">
       <div class="fig-img">
         <img src="outputs/combined_summary.png"
-             onerror="this.parentNode.innerHTML='Run Notebook 3 to generate this figure'"
+             onerror="this.parentNode.innerHTML='Run the Efficiency notebook to generate this figure'"
              alt="Combined Summary"/>
       </div>
       <div class="fig-body">
         <div class="fig-title">Combined Advantage Summary</div>
         <div class="fig-desc">2×2 panel: data efficiency + noise robustness for all three models.
         The NeurIPS-facing figure consolidating Contribution 3.5.</div>
-        <span class="fig-key-badge">Notebook 3</span>
+        <span class="fig-key-badge">Data Efficiency &amp; Noise</span>
       </div>
     </div>
     <div class="fig-card">
       <div class="fig-img">
         <img src="outputs/theorem2_complexity.png"
-             onerror="this.parentNode.innerHTML='Run Notebook 3 to generate this figure'"
+             onerror="this.parentNode.innerHTML='Run the Efficiency notebook to generate this figure'"
              alt="Theorem 2"/>
       </div>
       <div class="fig-body">
         <div class="fig-title">Theorem 2: Rademacher Complexity</div>
         <div class="fig-desc">Theoretical bound $\sqrt{k/n^2} = \sqrt{3/8}$ vs. empirical
         data efficiency curve. Theory and experiment are consistent.</div>
-        <span class="fig-key-badge">Notebook 3</span>
+        <span class="fig-key-badge">Data Efficiency &amp; Noise</span>
       </div>
     </div>
     <div class="fig-card">
       <div class="fig-img">
         <img src="outputs/su2_basis.png"
-             onerror="this.parentNode.innerHTML='Run Notebook 1 to generate this figure'"
+             onerror="this.parentNode.innerHTML='Run the Architecture notebook to generate this figure'"
              alt="su(2) Basis"/>
       </div>
       <div class="fig-body">
         <div class="fig-title">su(2) Lie Algebra Basis</div>
         <div class="fig-desc">Real and imaginary parts of the three Pauli matrices $\sigma_x, \sigma_y, \sigma_z$,
         the fixed Hermitian basis of the Lie Constraint Layer.</div>
-        <span class="fig-key-badge">Notebook 1</span>
+        <span class="fig-key-badge">Architecture &amp; Unitarity</span>
       </div>
     </div>
     <div class="fig-card">
       <div class="fig-img">
         <img src="outputs/training_curves.png"
-             onerror="this.parentNode.innerHTML='Run Notebook 2 to generate this figure'"
+             onerror="this.parentNode.innerHTML='Run the Stability notebook to generate this figure'"
              alt="Training Curves"/>
       </div>
       <div class="fig-body">
         <div class="fig-title">Training Loss Curves</div>
         <div class="fig-desc">MSE loss (log scale) during training for all four models.
         LieGPT converges competitively despite having a stricter output constraint.</div>
-        <span class="fig-key-badge">Notebook 2</span>
+        <span class="fig-key-badge">Long-Time Stability</span>
       </div>
     </div>
     <div class="fig-card">
       <div class="fig-img">
         <img src="outputs/structure_constants.png"
-             onerror="this.parentNode.innerHTML='Run Notebook 1 to generate this figure'"
+             onerror="this.parentNode.innerHTML='Run the Architecture notebook to generate this figure'"
              alt="Structure Constants"/>
       </div>
       <div class="fig-body">
         <div class="fig-title">Levi-Civita Structure Constants</div>
         <div class="fig-desc">Heatmap of $c_{ij}^k$ where $[X_i, X_j]=\sum_k c_{ij}^k X_k$.
         Levi-Civita pattern confirms LieGPT operates in the correct 3-D rotation algebra.</div>
-        <span class="fig-key-badge">Notebook 1</span>
+        <span class="fig-key-badge">Architecture &amp; Unitarity</span>
       </div>
     </div>
   </div>
@@ -731,12 +731,12 @@ footer a { color: var(--accent2); }
 <section id="notebooks">
   <h2>Executed Notebook Record</h2>
   <p style="color:var(--text2); margin-bottom:.5rem;">
-    Each notebook is a self-contained section of the NeurIPS submission.
+    Each notebook is available as a pre-rendered HTML page (no Jupyter required) and as an executable <code>.ipynb</code> source.
     Together they constitute the complete empirical and theoretical case for LieGPT.
   </p>
   <div class="notebooks-grid">
     <div class="nb-card">
-      <div class="nb-num">Notebook 1</div>
+      <div class="nb-num">Foundations</div>
       <div class="nb-title">Architecture &amp; Unitarity Guarantee</div>
       <div class="nb-desc">
         Establishes the three foundational contributions: Lie algebra space, hard constraints by design,
@@ -751,13 +751,13 @@ footer a { color: var(--accent2); }
         <span>Bloch sphere trajectory visualization</span>
       </div>
       <div class="nb-btns">
-        <a href="notebooks/liegpt_architecture_unitarity.ipynb" class="nb-btn nb-btn-open">Open Notebook</a>
+        <a href="notebooks/liegpt_architecture_unitarity.html" class="nb-btn nb-btn-open">View HTML</a>
         <a href="#figures" class="nb-btn nb-btn-section">View Figures</a>
       </div>
     </div>
 
     <div class="nb-card" style="border-left: 3px solid var(--accent);">
-      <div class="nb-num">Notebook 2 — 🔴 PRIMARY RESULT</div>
+      <div class="nb-num">🔴 Primary Result</div>
       <div class="nb-title">Long-Time Stability</div>
       <div class="nb-desc">
         The key experimental contribution. Trains all four models (LieGPT, GRU, GRU+penalty, MLP)
@@ -772,13 +772,13 @@ footer a { color: var(--accent2); }
         <span>Primary NeurIPS figure: 4-panel stability comparison</span>
       </div>
       <div class="nb-btns">
-        <a href="notebooks/liegpt_stability.ipynb" class="nb-btn nb-btn-open">Open Notebook</a>
+        <a href="notebooks/liegpt_stability.html" class="nb-btn nb-btn-open">View HTML</a>
         <a href="#figures" class="nb-btn nb-btn-section">View Figures</a>
       </div>
     </div>
 
     <div class="nb-card">
-      <div class="nb-num">Notebook 3</div>
+      <div class="nb-num">Supporting Experiments</div>
       <div class="nb-title">Data Efficiency &amp; Noise Robustness</div>
       <div class="nb-desc">
         Two-experiment notebook completing the empirical case for Contribution 3.5.
@@ -793,7 +793,7 @@ footer a { color: var(--accent2); }
         <span>Combined summary: NeurIPS supporting figure</span>
       </div>
       <div class="nb-btns">
-        <a href="notebooks/liegpt_efficiency_robustness.ipynb" class="nb-btn nb-btn-open">Open Notebook</a>
+        <a href="notebooks/liegpt_efficiency_robustness.html" class="nb-btn nb-btn-open">View HTML</a>
         <a href="#figures" class="nb-btn nb-btn-section">View Figures</a>
       </div>
     </div>
