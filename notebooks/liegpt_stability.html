@@ -7802,7 +7802,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="LieGPT-%E2%80%94-Long-Time-Stability-(Primary-Result)">LieGPT — Long-Time Stability (Primary Result)<a class="anchor-link" href="#LieGPT-%E2%80%94-Long-Time-Stability-(Primary-Result)">¶</a></h1><p><strong>NeurIPS Submission · Lie-Structured Generative Models for Hamiltonian Simulation</strong></p>
+<h1 id="LieGPT-%E2%80%94-Long-Time-Stability-(Primary-Result)">LieGPT — Long-Time Stability (Primary Result)<a class="anchor-link" href="#LieGPT-%E2%80%94-Long-Time-Stability-(Primary-Result)">¶</a></h1><p><strong>Lie-Structured Generative Models for Hamiltonian Simulation</strong></p>
 <hr/>
 <blockquote>
 <p><strong>This is the primary experimental contribution of the paper.</strong></p>
@@ -8597,7 +8597,7 @@ Unconstrained unitarity violation: 6.51e-03
 <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">'Saved:'</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">*** This is the primary experimental result of the NeurIPS paper ***'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">*** This is the primary experimental result of the paper ***'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8725,7 +8725,7 @@ This is the correct behavior for a stability guarantee.</p>
     <span class="n">marker</span> <span class="o">=</span> <span class="s2">" ← THIS WORK"</span> <span class="k">if</span> <span class="s2">"LieGPT"</span> <span class="ow">in</span> <span class="n">m</span> <span class="k">else</span> <span class="s2">""</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">m</span><span class="si">:</span><span class="s2">&lt;25</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">u</span><span class="si">:</span><span class="s2">&gt;22.2e</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">&gt;11.0f</span><span class="si">}</span><span class="s2">×</span><span class="si">{</span><span class="n">marker</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"KEY TAKEAWAYS (for NeurIPS reviewers):"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"KEY TAKEAWAYS:"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  1. State error: LieGPT has </span><span class="si">{</span><span class="n">ratio_vs_liegpt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">× lower error than unconstrained GRU at T=200."</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  2. Unitarity: LieGPT maintains 10⁻¹⁶ violation vs </span><span class="si">{</span><span class="n">unit_viol_T200</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">:</span><span class="s2">.0e</span><span class="si">}</span><span class="s2"> for GRU."</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  3. At T=200, ALL baselines have diverged while LieGPT remains bounded."</span><span class="p">)</span>

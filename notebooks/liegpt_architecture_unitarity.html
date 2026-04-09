@@ -7802,7 +7802,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="LieGPT-%E2%80%94-Architecture-&amp;-Unitarity-Guarantee">LieGPT — Architecture &amp; Unitarity Guarantee<a class="anchor-link" href="#LieGPT-%E2%80%94-Architecture-&amp;-Unitarity-Guarantee">¶</a></h1><p><strong>NeurIPS Submission · Lie-Structured Generative Models for Hamiltonian Simulation</strong></p>
+<h1 id="LieGPT-%E2%80%94-Architecture-&amp;-Unitarity-Guarantee">LieGPT — Architecture &amp; Unitarity Guarantee<a class="anchor-link" href="#LieGPT-%E2%80%94-Architecture-&amp;-Unitarity-Guarantee">¶</a></h1><p><strong>Lie-Structured Generative Models for Hamiltonian Simulation</strong></p>
 <hr/>
 <h2 id="What-this-notebook-proves">What this notebook proves<a class="anchor-link" href="#What-this-notebook-proves">¶</a></h2><table>
 <thead>
@@ -8181,7 +8181,7 @@ The pattern is the Levi-Civita symbol: cᵢⱼᵏ = εᵢⱼᵏ (±1 for cyclic 
 The Lie algebra su(2) is <em>closed under commutation</em> — the commutator of any two
 su(2) elements stays in su(2). This means H(t) = Σᵢ θᵢσᵢ is guaranteed to lie
 in the algebra regardless of θ, and so does any superposition.</p>
-<p><strong>Why this matters for NeurIPS</strong>:
+<p><strong>Why this matters for the paper</strong>:
 A reviewer may ask: "what if the GRU produces a linear combination that leaves the algebra?"
 The answer is: it <em>cannot</em>, because the algebra is closed. This figure is the
 algebraic certificate of that closure.</p>
@@ -8521,7 +8521,7 @@ unconstrained, but still 10⁶× worse than LieGPT — proving that loss terms a
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># ── NEW: Quantitative model comparison table ─────────────────────────────────</span>
-<span class="c1"># Print a concise comparison table that a NeurIPS reviewer can read immediately</span>
+<span class="c1"># Print a concise comparison table highlighting the architectural advantage</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 

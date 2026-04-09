@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 LieGPT — Master Figure Generation Script
-Generates all publication figures for the NeurIPS submission.
+Generates all publication figures for the paper draft.
 Run from the repo root:  python scripts/generate_liegpt_figures.py
 """
 

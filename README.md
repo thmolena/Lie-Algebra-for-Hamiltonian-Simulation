@@ -312,7 +312,7 @@ the Lie Constraint Layer forces ‖U†U−I‖_F ≤ ε_machine at **every sing
 
 ---
 
-### Long-Time Stability *(Primary NeurIPS result)*
+### Long-Time Stability *(Primary result)*
 **Notebook:** [liegpt_stability.html](notebooks/liegpt_stability.html) · [.ipynb source](notebooks/liegpt_stability.ipynb)  
 **Paper sections:** §5 Experiments (primary) · §4 Theory (Theorem 1)
 
@@ -366,7 +366,7 @@ its capacity for learning dynamics. This is why fewer training samples suffice.
 | 10 | `noise_robustness.png` | Data Efficiency & Noise | §5 | Graceful degradation under noise |
 | 11 | `combined_summary.png` | Data Efficiency & Noise | §5 | All supporting results in one panel |
 
-★ = primary submission figure
+★ = primary result figure
 
 ---
 
@@ -491,7 +491,7 @@ The prior Cartan-QAOA direction developed in this repository is the **starting p
 
 ## 17. Final Differentiation Checklist
 
-Before submission, every item must be answered **YES**:
+Before finalizing the paper, every item must be answered **YES**:
 
 | Requirement | Status |
 |---|---|
