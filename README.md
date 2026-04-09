@@ -1,5 +1,9 @@
 # Research Plan: Lie-Structured Generative Models for Hamiltonian Simulation
 
+## Paper
+
+- Research paper artifact: [research_paper/research_paper.pdf](research_paper/research_paper.pdf)
+
 > **Working title:** LieGPT — A Lie-Algebra–Constrained Generative Framework for Quantum Dynamics
 
 ---
