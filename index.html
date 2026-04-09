@@ -16,21 +16,22 @@
 /* ── Reset & Base ──────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg:          #0a0a1a;
-  --bg2:         #111127;
-  --bg3:         #1a1a3e;
-  --surface:     #1e1b4b;
-  --border:      #312e81;
-  --accent:      #7c3aed;
-  --accent2:     #a78bfa;
-  --accent3:     #ede9fe;
-  --text:        #e2e8f0;
-  --text2:       #94a3b8;
+  color-scheme:  light;
+  --bg:          #fcfbf7;
+  --bg2:         #f4f1e8;
+  --bg3:         #ebe5d8;
+  --surface:     #e7decd;
+  --border:      #cbbda3;
+  --accent:      #3557a6;
+  --accent2:     #233b73;
+  --accent3:     #eff5ff;
+  --text:        #1f2937;
+  --text2:       #5b6472;
   --red:         #ef4444;
   --orange:      #f97316;
   --green:       #22c55e;
   --radius:      10px;
-  --shadow:      0 4px 24px rgba(124,58,237,.2);
+  --shadow:      0 10px 30px rgba(35,59,115,.10);
 }
 html { scroll-behavior: smooth; }
 body {
@@ -45,6 +46,7 @@ a:hover { text-decoration: underline; }
 code, pre {
   font-family: 'Courier New', monospace;
   background: var(--bg3);
+  color: var(--text);
   border-radius: 5px;
 }
 code { padding: 2px 6px; font-size: .9em; }
@@ -56,7 +58,7 @@ h3 { color: var(--text);    margin-bottom: .6rem; }
 /* ── Nav ────────────────────────────────────────────────────────────────────── */
 nav {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(10,10,26,.92);
+  background: rgba(252,251,247,.94);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
   padding: 0 2rem;
@@ -84,7 +86,9 @@ section + section { border-top: 1px solid var(--border); }
 #hero {
   max-width: 100%;
   padding: 5rem 2rem 3rem;
-  background: radial-gradient(ellipse at 60% 30%, rgba(124,58,237,.18) 0%, transparent 65%);
+  background:
+    radial-gradient(ellipse at 60% 28%, rgba(53,87,166,.10) 0%, transparent 62%),
+    linear-gradient(180deg, #fffdf8 0%, #f8f4ea 100%);
   text-align: center;
 }
 #hero .label {
@@ -93,7 +97,7 @@ section + section { border-top: 1px solid var(--border); }
 }
 #hero h1 {
   font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 900;
-  background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 50%, #c4b5fd 100%);
+  background: linear-gradient(135deg, #5679c2 0%, #3557a6 50%, #213a7a 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text; margin-bottom: 1.5rem;
 }
@@ -125,8 +129,8 @@ section + section { border-top: 1px solid var(--border); }
   border-radius: 99px; font-size: .9rem; font-weight: 700;
   transition: all .2s; cursor: pointer; border: none;
 }
-.btn-primary   { background: var(--accent); color: white; box-shadow: 0 0 20px rgba(124,58,237,.4); }
-.btn-primary:hover { background: #6d28d9; text-decoration: none; }
+.btn-primary   { background: var(--accent); color: white; box-shadow: 0 0 20px rgba(53,87,166,.22); }
+.btn-primary:hover { background: var(--accent2); text-decoration: none; }
 .btn-outline { background: transparent; color: var(--accent2); border: 1.5px solid var(--accent); }
 .btn-outline:hover { background: var(--accent); color: white; text-decoration: none; }
 
@@ -146,7 +150,7 @@ section + section { border-top: 1px solid var(--border); }
   color: var(--accent); margin-bottom: .5rem;
 }
 .must-tag {
-  display: inline-block; background: #7f1d1d; color: #fca5a5;
+  display: inline-block; background: #fee2e2; color: #991b1b;
   font-size: .65rem; font-weight: 700; padding: 1px 6px; border-radius: 4px;
   letter-spacing: .5px; text-transform: uppercase; margin-left: 6px; vertical-align: middle;
 }
@@ -195,7 +199,7 @@ section + section { border-top: 1px solid var(--border); }
 .results-table td {
   padding: .7rem 1rem; border-bottom: 1px solid var(--border); color: var(--text2);
 }
-.results-table tr.ours td { background: rgba(124,58,237,.1); color: var(--text); font-weight: 600; }
+.results-table tr.ours td { background: rgba(53,87,166,.10); color: var(--text); font-weight: 600; }
 .results-table tr.ours td:first-child { border-left: 3px solid var(--accent); }
 .tag-good  { color: var(--green); font-weight: 700; }
 .tag-bad   { color: var(--red); }
@@ -223,7 +227,7 @@ section + section { border-top: 1px solid var(--border); }
 .fig-card .fig-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: .4rem; }
 .fig-card .fig-desc  { font-size: .85rem; color: var(--text2); }
 .fig-key-badge {
-  display: inline-block; background: #4c1d95; color: var(--accent3);
+  display: inline-block; background: #e7eefc; color: #233b73;
   font-size: .65rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
   padding: 2px 7px; border-radius: 4px; margin-top: .5rem;
 }
@@ -256,7 +260,7 @@ section + section { border-top: 1px solid var(--border); }
   cursor: pointer; transition: all .2s; text-align: center;
 }
 .nb-btn-open   { background: var(--accent); color: white; border: none; }
-.nb-btn-open:hover { background: #6d28d9; text-decoration: none; }
+.nb-btn-open:hover { background: var(--accent2); text-decoration: none; }
 .nb-btn-section { background: transparent; color: var(--accent2); border: 1px solid var(--accent); }
 .nb-btn-section:hover { background: var(--accent); color: white; text-decoration: none; }
 
@@ -267,7 +271,7 @@ section + section { border-top: 1px solid var(--border); }
   padding: .65rem .9rem; text-align: left; border-bottom: 2px solid var(--accent);
 }
 .pos-table td { padding: .6rem .9rem; border-bottom: 1px solid var(--border); color: var(--text2); }
-.pos-table tr.ours td { background: rgba(124,58,237,.12); color: var(--text); font-weight: 600; }
+.pos-table tr.ours td { background: rgba(53,87,166,.12); color: var(--text); font-weight: 600; }
 .pos-table tr.ours td:first-child { border-left: 3px solid var(--accent); }
 
 /* ── Reproducibility ────────────────────────────────────────────────────────── */
@@ -394,7 +398,7 @@ footer a { color: var(--accent2); }
       Under noise: unitarity violation stays at machine $\varepsilon$ regardless of noise level.</p>
     </div>
     <div class="contrib-card">
-      <div class="number">Optional <span class="must-tag" style="background:#164e63;color:#a5f3fc;">Novel</span></div>
+      <div class="number">Optional <span class="must-tag" style="background:#dbeafe;color:#1d4ed8;">Novel</span></div>
       <h3>Commutator Attention (Ablation)</h3>
       <p>Replace dot-product attention with Lie-bracket-based mixing using structure constants
       $c_{ij}^k$ (Levi-Civita for $\mathfrak{su}(2)$). First architecture that respects algebraic mixing in
