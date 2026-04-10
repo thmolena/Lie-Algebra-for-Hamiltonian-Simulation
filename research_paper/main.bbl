@@ -1,0 +1,1380 @@
+%apsrev4-2.bst 2019-01-14 (MD) hand-edited version of apsrev4-1.bst
+%Control: key (0)
+%Control: author (72) initials jnrlst
+%Control: editor formatted (1) identically to author
+%Control: production of article title (-1) disabled
+%Control: page (0) single
+%Control: year (1) truncated
+%Control: production of eprint (0) enabled
+\begin{thebibliography}{134}%
+\makeatletter
+\providecommand \@ifxundefined [1]{%
+ \@ifx{#1\undefined}
+}%
+\providecommand \@ifnum [1]{%
+ \ifnum #1\expandafter \@firstoftwo
+ \else \expandafter \@secondoftwo
+ \fi
+}%
+\providecommand \@ifx [1]{%
+ \ifx #1\expandafter \@firstoftwo
+ \else \expandafter \@secondoftwo
+ \fi
+}%
+\providecommand \natexlab [1]{#1}%
+\providecommand \enquote  [1]{``#1''}%
+\providecommand \bibnamefont  [1]{#1}%
+\providecommand \bibfnamefont [1]{#1}%
+\providecommand \citenamefont [1]{#1}%
+\providecommand \href@noop [0]{\@secondoftwo}%
+\providecommand \href [0]{\begingroup \@sanitize@url \@href}%
+\providecommand \@href[1]{\@@startlink{#1}\@@href}%
+\providecommand \@@href[1]{\endgroup#1\@@endlink}%
+\providecommand \@sanitize@url [0]{\catcode `\\12\catcode `\$12\catcode
+  `\&12\catcode `\#12\catcode `\^12\catcode `\_12\catcode `\%12\relax}%
+\providecommand \@@startlink[1]{}%
+\providecommand \@@endlink[0]{}%
+\providecommand \url  [0]{\begingroup\@sanitize@url \@url }%
+\providecommand \@url [1]{\endgroup\@href {#1}{\urlprefix }}%
+\providecommand \urlprefix  [0]{URL }%
+\providecommand \Eprint [0]{\href }%
+\providecommand \doibase [0]{https://doi.org/}%
+\providecommand \selectlanguage [0]{\@gobble}%
+\providecommand \bibinfo  [0]{\@secondoftwo}%
+\providecommand \bibfield  [0]{\@secondoftwo}%
+\providecommand \translation [1]{[#1]}%
+\providecommand \BibitemOpen [0]{}%
+\providecommand \bibitemStop [0]{}%
+\providecommand \bibitemNoStop [0]{.\EOS\space}%
+\providecommand \EOS [0]{\spacefactor3000\relax}%
+\providecommand \BibitemShut  [1]{\csname bibitem#1\endcsname}%
+\let\auto@bib@innerbib\@empty
+%</preamble>
+\bibitem [{\citenamefont {Lloyd}(1996)}]{lloyd1996}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {S.}~\bibnamefont
+  {Lloyd}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal}
+  {Science}\ }\textbf {\bibinfo {volume} {273}},\ \bibinfo {pages} {1073}
+  (\bibinfo {year} {1996})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Suzuki}(1990)}]{suzuki1990}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
+  {Suzuki}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal}
+  {Physics Letters A}\ }\textbf {\bibinfo {volume} {146}},\ \bibinfo {pages}
+  {319} (\bibinfo {year} {1990})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Berry}\ \emph {et~al.}(2007)\citenamefont {Berry},
+  \citenamefont {Ahokas}, \citenamefont {Cleve},\ and\ \citenamefont
+  {Sanders}}]{berry2007}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {D.~W.}\ \bibnamefont
+  {Berry}}, \bibinfo {author} {\bibfnamefont {G.}~\bibnamefont {Ahokas}},
+  \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont {Cleve}},\ and\ \bibinfo
+  {author} {\bibfnamefont {B.~C.}\ \bibnamefont {Sanders}},\ }\href@noop {}
+  {\bibfield  {journal} {\bibinfo  {journal} {Communications in Mathematical
+  Physics}\ }\textbf {\bibinfo {volume} {270}},\ \bibinfo {pages} {359}
+  (\bibinfo {year} {2007})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Childs}\ and\ \citenamefont
+  {Wiebe}(2012)}]{childs2012}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.~M.}\ \bibnamefont
+  {Childs}}\ and\ \bibinfo {author} {\bibfnamefont {N.}~\bibnamefont {Wiebe}},\
+  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Quantum
+  Information and Computation}\ }\textbf {\bibinfo {volume} {12}},\ \bibinfo
+  {pages} {901} (\bibinfo {year} {2012})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Berry}\ \emph {et~al.}(2015)\citenamefont {Berry},
+  \citenamefont {Childs}, \citenamefont {Cleve}, \citenamefont {Kothari},\ and\
+  \citenamefont {Somma}}]{berry2015}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {D.~W.}\ \bibnamefont
+  {Berry}}, \bibinfo {author} {\bibfnamefont {A.~M.}\ \bibnamefont {Childs}},
+  \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont {Cleve}}, \bibinfo
+  {author} {\bibfnamefont {R.}~\bibnamefont {Kothari}},\ and\ \bibinfo {author}
+  {\bibfnamefont {R.~D.}\ \bibnamefont {Somma}},\ }\href@noop {} {\bibfield
+  {journal} {\bibinfo  {journal} {Physical Review Letters}\ }\textbf {\bibinfo
+  {volume} {114}},\ \bibinfo {pages} {090502} (\bibinfo {year}
+  {2015})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Low}\ and\ \citenamefont {Chuang}(2017)}]{low2017}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {G.~H.}\ \bibnamefont
+  {Low}}\ and\ \bibinfo {author} {\bibfnamefont {I.~L.}\ \bibnamefont
+  {Chuang}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal}
+  {Physical Review Letters}\ }\textbf {\bibinfo {volume} {118}},\ \bibinfo
+  {pages} {010501} (\bibinfo {year} {2017})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Low}\ and\ \citenamefont {Chuang}(2019)}]{low2019}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {G.~H.}\ \bibnamefont
+  {Low}}\ and\ \bibinfo {author} {\bibfnamefont {I.~L.}\ \bibnamefont
+  {Chuang}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal}
+  {Quantum}\ }\textbf {\bibinfo {volume} {3}},\ \bibinfo {pages} {163}
+  (\bibinfo {year} {2019})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Childs}\ \emph {et~al.}(2021)\citenamefont {Childs},
+  \citenamefont {Su}, \citenamefont {Tran}, \citenamefont {Wiebe},\ and\
+  \citenamefont {Zhu}}]{childs2021}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.~M.}\ \bibnamefont
+  {Childs}}, \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {Su}}, \bibinfo
+  {author} {\bibfnamefont {M.~C.}\ \bibnamefont {Tran}}, \bibinfo {author}
+  {\bibfnamefont {N.}~\bibnamefont {Wiebe}},\ and\ \bibinfo {author}
+  {\bibfnamefont {S.}~\bibnamefont {Zhu}},\ }\href@noop {} {\bibfield
+  {journal} {\bibinfo  {journal} {PRX Quantum}\ }\textbf {\bibinfo {volume}
+  {2}},\ \bibinfo {pages} {010329} (\bibinfo {year} {2021})}\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Sharma}\ and\ \citenamefont
+  {Tran}(2024)}]{sharma2024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {K.}~\bibnamefont
+  {Sharma}}\ and\ \bibinfo {author} {\bibfnamefont {M.~C.}\ \bibnamefont
+  {Tran}},\ }\href@noop {} {\bibinfo {title} {Hamiltonian simulation in the
+  interaction picture using the magnus expansion}} (\bibinfo {year} {2024}),\
+  \Eprint {https://arxiv.org/abs/2404.02966} {arXiv:2404.02966 [quant-ph]}
+  \BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Fang}\ \emph {et~al.}(2025)\citenamefont {Fang},
+  \citenamefont {Liu},\ and\ \citenamefont {Sarkar}}]{fang2025}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {D.}~\bibnamefont
+  {Fang}}, \bibinfo {author} {\bibfnamefont {D.}~\bibnamefont {Liu}},\ and\
+  \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont {Sarkar}},\ }\bibfield
+  {journal} {\bibinfo  {journal} {Communications in Mathematical Physics}\
+  }\href {https://doi.org/10.1007/s00220-025-05314-5}
+  {10.1007/s00220-025-05314-5} (\bibinfo {year} {2025})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Peng}\ \emph {et~al.}(2025)\citenamefont {Peng},
+  \citenamefont {Su}, \citenamefont {Claudino},\ and\ \citenamefont
+  {Kowalski}}]{peng2025}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {B.}~\bibnamefont
+  {Peng}}, \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {Su}}, \bibinfo
+  {author} {\bibfnamefont {D.}~\bibnamefont {Claudino}},\ and\ \bibinfo
+  {author} {\bibfnamefont {K.}~\bibnamefont {Kowalski}},\ }\bibfield  {journal}
+  {\bibinfo  {journal} {Quantum Science and Technology}\ }\href
+  {https://doi.org/10.1088/2058-9565/adbf42} {10.1088/2058-9565/adbf42}
+  (\bibinfo {year} {2025})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Chatterjee}\ \emph {et~al.}(2025)\citenamefont
+  {Chatterjee}, \citenamefont {Rappaport},\ and\ \citenamefont
+  {Giri}}]{chatterjee2025}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {Chatterjee}}, \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont
+  {Rappaport}},\ and\ \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {Giri}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {IEEE
+  Transactions on Quantum Engineering}\ } (\bibinfo {year} {2025})}\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Liang}\ \emph {et~al.}(2026)\citenamefont {Liang},
+  \citenamefont {Xu}, \citenamefont {Li}, \citenamefont {Situ},\ and\
+  \citenamefont {Zheng}}]{liang2026}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont
+  {Liang}}, \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont {Xu}}, \bibinfo
+  {author} {\bibfnamefont {M.~S.}\ \bibnamefont {Li}}, \bibinfo {author}
+  {\bibfnamefont {H.}~\bibnamefont {Situ}},\ and\ \bibinfo {author}
+  {\bibfnamefont {Z.~J.}\ \bibnamefont {Zheng}},\ }\href@noop {} {\bibinfo
+  {title} {A dynamical lie-algebraic framework for hamiltonian engineering and
+  quantum control}} (\bibinfo {year} {2026}),\ \Eprint
+  {https://arxiv.org/abs/2603.04916} {arXiv:2603.04916 [quant-ph]} \BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {dos Santos}\ and\ \citenamefont
+  {Kokkelmans}(2025)}]{dossantos2025}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {R.~F.}\ \bibnamefont
+  {dos Santos}}\ and\ \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont
+  {Kokkelmans}},\ }\href@noop {} {\bibinfo {title} {Lie algebra-assisted
+  quantum simulation and quantum optimal control via high-order magnus
+  expansions}} (\bibinfo {year} {2025}),\ \Eprint
+  {https://arxiv.org/abs/2512.20357} {arXiv:2512.20357 [quant-ph]} \BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Chen}\ and\ \citenamefont {Wu}(2024)}]{icml_chenw24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {Chen}}\ and\ \bibinfo {author} {\bibfnamefont {K.}~\bibnamefont {Wu}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st
+  International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Cheng}\ \emph {et~al.}(2024)\citenamefont {Cheng},
+  \citenamefont {Hao}, \citenamefont {Wang},\ and\ \citenamefont
+  {Huang}}]{icml_chenghwhwlzl024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Z.}~\bibnamefont
+  {Cheng}}, \bibinfo {author} {\bibfnamefont {Z.}~\bibnamefont {Hao}}, \bibinfo
+  {author} {\bibfnamefont {X.}~\bibnamefont {Wang}},\ and\ \bibinfo {author}
+  {\bibfnamefont {J.}~\bibnamefont {Huang}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Proceedings of the 41st International Conference on
+  Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Pal}\ \emph {et~al.}(2024)\citenamefont {Pal},
+  \citenamefont {Adepu}, \citenamefont {Wang},\ and\ \citenamefont
+  {Golland}}]{icml_palawgs24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {S.}~\bibnamefont
+  {Pal}}, \bibinfo {author} {\bibfnamefont {H.}~\bibnamefont {Adepu}}, \bibinfo
+  {author} {\bibfnamefont {C.~J.}\ \bibnamefont {Wang}},\ and\ \bibinfo
+  {author} {\bibfnamefont {P.}~\bibnamefont {Golland}},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Proceedings of the 41st International
+  Conference on Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Xiao}\ \emph
+  {et~al.}(2024{\natexlab{a}})\citenamefont {Xiao}, \citenamefont {Hao},
+  \citenamefont {Lin},\ and\ \citenamefont {Deng}}]{icml_xiaohld024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Z.}~\bibnamefont
+  {Xiao}}, \bibinfo {author} {\bibfnamefont {Z.}~\bibnamefont {Hao}}, \bibinfo
+  {author} {\bibfnamefont {B.}~\bibnamefont {Lin}},\ and\ \bibinfo {author}
+  {\bibfnamefont {Z.}~\bibnamefont {Deng}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Proceedings of the 41st International Conference on
+  Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Bryutkin}\ \emph {et~al.}(2024)\citenamefont
+  {Bryutkin}, \citenamefont {Huang}, \citenamefont {Deng},\ and\ \citenamefont
+  {Yang}}]{icml_bryutkinhd0sa24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {Bryutkin}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Huang}},
+  \bibinfo {author} {\bibfnamefont {Z.}~\bibnamefont {Deng}},\ and\ \bibinfo
+  {author} {\bibfnamefont {G.}~\bibnamefont {Yang}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Proceedings of the 41st International Conference on
+  Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Kim}\ and\ \citenamefont {Ahn}(2024)}]{icml_kima24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {S.}~\bibnamefont
+  {Kim}}\ and\ \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Ahn}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st
+  International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Lingsch}\ \emph {et~al.}(2024)\citenamefont
+  {Lingsch}, \citenamefont {Michelis}, \citenamefont {de~Bezenac},\ and\
+  \citenamefont {Perera}}]{icml_lingschmbpkm24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {L.~E.}\ \bibnamefont
+  {Lingsch}}, \bibinfo {author} {\bibfnamefont {M.~Y.}\ \bibnamefont
+  {Michelis}}, \bibinfo {author} {\bibfnamefont {E.}~\bibnamefont
+  {de~Bezenac}},\ and\ \bibinfo {author} {\bibfnamefont {S.~M.}\ \bibnamefont
+  {Perera}},\ }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of
+  the 41st International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Liu-Schiaffini}\ \emph {et~al.}(2024)\citenamefont
+  {Liu-Schiaffini}, \citenamefont {Berner}, \citenamefont {Bonev},\ and\
+  \citenamefont {Kurth}}]{icml_liuschiaffinib24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
+  {Liu-Schiaffini}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {Berner}}, \bibinfo {author} {\bibfnamefont {B.}~\bibnamefont {Bonev}},\ and\
+  \bibinfo {author} {\bibfnamefont {T.}~\bibnamefont {Kurth}},\ }in\ \href@noop
+  {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st International
+  Conference on Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Liu}\ \emph {et~al.}(2024{\natexlab{a}})\citenamefont
+  {Liu}, \citenamefont {Fan}, \citenamefont {Zeng},\ and\ \citenamefont
+  {Klower}}]{icml_liufzkzy24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {N.}~\bibnamefont
+  {Liu}}, \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {Fan}}, \bibinfo
+  {author} {\bibfnamefont {X.}~\bibnamefont {Zeng}},\ and\ \bibinfo {author}
+  {\bibfnamefont {M.}~\bibnamefont {Klower}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Proceedings of the 41st International Conference on
+  Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Luo}\ \emph {et~al.}(2024)\citenamefont {Luo},
+  \citenamefont {Qian},\ and\ \citenamefont {Yoon}}]{icml_luoqy24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {X.}~\bibnamefont
+  {Luo}}, \bibinfo {author} {\bibfnamefont {X.}~\bibnamefont {Qian}},\ and\
+  \bibinfo {author} {\bibfnamefont {B.-J.}\ \bibnamefont {Yoon}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st
+  International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Rudikov}\ \emph {et~al.}(2024)\citenamefont
+  {Rudikov}, \citenamefont {Fanaskov}, \citenamefont {Muravleva},\ and\
+  \citenamefont {Laevsky}}]{icml_rudikovfmlo24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {Rudikov}}, \bibinfo {author} {\bibfnamefont {V.}~\bibnamefont {Fanaskov}},
+  \bibinfo {author} {\bibfnamefont {E.~A.}\ \bibnamefont {Muravleva}},\ and\
+  \bibinfo {author} {\bibfnamefont {Y.~M.}\ \bibnamefont {Laevsky}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st
+  International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Ryu}\ \emph {et~al.}(2024)\citenamefont {Ryu},
+  \citenamefont {Xu}, \citenamefont {Erol},\ and\ \citenamefont
+  {Bu}}]{icml_ryu0ebzw24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.~J.}\ \bibnamefont
+  {Ryu}}, \bibinfo {author} {\bibfnamefont {X.}~\bibnamefont {Xu}}, \bibinfo
+  {author} {\bibfnamefont {H.~S.~M.}\ \bibnamefont {Erol}},\ and\ \bibinfo
+  {author} {\bibfnamefont {Y.}~\bibnamefont {Bu}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Proceedings of the 41st International Conference on
+  Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Chen}\ \emph {et~al.}(2024)\citenamefont {Chen},
+  \citenamefont {Song}, \citenamefont {Ren},\ and\ \citenamefont
+  {Subramanian}}]{nips_chensrsmm24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {W.}~\bibnamefont
+  {Chen}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Song}}, \bibinfo
+  {author} {\bibfnamefont {P.}~\bibnamefont {Ren}},\ and\ \bibinfo {author}
+  {\bibfnamefont {S.}~\bibnamefont {Subramanian}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Advances in Neural Information Processing Systems}}}\
+  (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Adcock}\ \emph {et~al.}(2024)\citenamefont {Adcock},
+  \citenamefont {Dexter},\ and\ \citenamefont {Scheuermann}}]{nips_adcockds24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {B.}~\bibnamefont
+  {Adcock}}, \bibinfo {author} {\bibfnamefont {N.~C.}\ \bibnamefont {Dexter}},\
+  and\ \bibinfo {author} {\bibfnamefont {S.~M.}\ \bibnamefont {Scheuermann}},\
+  }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Advances in Neural
+  Information Processing Systems}}}\ (\bibinfo {year} {2024})\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Novelli}\ \emph {et~al.}(2024)\citenamefont
+  {Novelli}, \citenamefont {Prattico}, \citenamefont {Pontil},\ and\
+  \citenamefont {Ciliberto}}]{nips_novellippc24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {P.}~\bibnamefont
+  {Novelli}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Prattico}},
+  \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Pontil}},\ and\ \bibinfo
+  {author} {\bibfnamefont {C.}~\bibnamefont {Ciliberto}},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Advances in Neural Information Processing
+  Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Zhu}\ \emph {et~al.}(2024)\citenamefont {Zhu},
+  \citenamefont {Cong}, \citenamefont {Chen},\ and\ \citenamefont
+  {Ning}}]{nips_zhuccnc0p24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {H.}~\bibnamefont
+  {Zhu}}, \bibinfo {author} {\bibfnamefont {W.}~\bibnamefont {Cong}}, \bibinfo
+  {author} {\bibfnamefont {G.}~\bibnamefont {Chen}},\ and\ \bibinfo {author}
+  {\bibfnamefont {S.}~\bibnamefont {Ning}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Advances in Neural Information Processing Systems}}}\
+  (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Zheng}\ \emph {et~al.}(2024)\citenamefont {Zheng},
+  \citenamefont {Li}, \citenamefont {Xu},\ and\ \citenamefont
+  {Zhu}}]{nips_0001lxzlz24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {Zheng}}, \bibinfo {author} {\bibfnamefont {W.}~\bibnamefont {Li}}, \bibinfo
+  {author} {\bibfnamefont {N.}~\bibnamefont {Xu}},\ and\ \bibinfo {author}
+  {\bibfnamefont {J.}~\bibnamefont {Zhu}},\ }in\ \href@noop {} {\emph {\bibinfo
+  {booktitle} {Advances in Neural Information Processing Systems}}}\ (\bibinfo
+  {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Alkin}\ \emph {et~al.}(2024)\citenamefont {Alkin},
+  \citenamefont {Furst}, \citenamefont {Schmid},\ and\ \citenamefont
+  {Gruber}}]{nips_alkinfsghb24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {B.}~\bibnamefont
+  {Alkin}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Furst}},
+  \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Schmid}},\ and\ \bibinfo
+  {author} {\bibfnamefont {L.}~\bibnamefont {Gruber}},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Advances in Neural Information Processing
+  Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Hao}\ \emph {et~al.}(2024)\citenamefont {Hao},
+  \citenamefont {Liu},\ and\ \citenamefont {Yang}}]{nips_haoly24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {W.}~\bibnamefont
+  {Hao}}, \bibinfo {author} {\bibfnamefont {X.}~\bibnamefont {Liu}},\ and\
+  \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {Yang}},\ }in\ \href@noop
+  {} {\emph {\bibinfo {booktitle} {Advances in Neural Information Processing
+  Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Koshizuka}\ \emph {et~al.}(2024)\citenamefont
+  {Koshizuka}, \citenamefont {Fujisawa}, \citenamefont {Tanaka},\ and\
+  \citenamefont {Sato}}]{nips_koshizukafts24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {T.}~\bibnamefont
+  {Koshizuka}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Fujisawa}},
+  \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {Tanaka}},\ and\ \bibinfo
+  {author} {\bibfnamefont {I.}~\bibnamefont {Sato}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Advances in Neural Information Processing Systems}}}\
+  (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Rahman}\ \emph {et~al.}(2024)\citenamefont {Rahman},
+  \citenamefont {George}, \citenamefont {Elleithy},\ and\ \citenamefont
+  {Leibovici}}]{nips_rahmangellbwbyk24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.~A.}\ \bibnamefont
+  {Rahman}}, \bibinfo {author} {\bibfnamefont {R.~J.}\ \bibnamefont {George}},
+  \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Elleithy}},\ and\
+  \bibinfo {author} {\bibfnamefont {D.~V.}\ \bibnamefont {Leibovici}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Advances in Neural Information
+  Processing Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Wang}\ and\ \citenamefont
+  {Wang}(2024)}]{nips_wangw24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {T.}~\bibnamefont
+  {Wang}}\ and\ \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Wang}},\
+  }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Advances in Neural
+  Information Processing Systems}}}\ (\bibinfo {year} {2024})\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Xiao}\ \emph
+  {et~al.}(2024{\natexlab{b}})\citenamefont {Xiao}, \citenamefont {Kou},
+  \citenamefont {Hao},\ and\ \citenamefont {Lin}}]{nips_xiaokhld24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Z.}~\bibnamefont
+  {Xiao}}, \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Kou}}, \bibinfo
+  {author} {\bibfnamefont {Z.}~\bibnamefont {Hao}},\ and\ \bibinfo {author}
+  {\bibfnamefont {B.}~\bibnamefont {Lin}},\ }in\ \href@noop {} {\emph {\bibinfo
+  {booktitle} {Advances in Neural Information Processing Systems}}}\ (\bibinfo
+  {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Liu}\ \emph {et~al.}(2025{\natexlab{a}})\citenamefont
+  {Liu}, \citenamefont {Wang}, \citenamefont {Ren}, \citenamefont {Yuan},
+  \citenamefont {Hao}, \citenamefont {Xu}, \citenamefont {Cai},\ and\
+  \citenamefont {Ni}}]{aaai_liuwryhxc025}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {P.}~\bibnamefont
+  {Liu}}, \bibinfo {author} {\bibfnamefont {P.}~\bibnamefont {Wang}}, \bibinfo
+  {author} {\bibfnamefont {X.}~\bibnamefont {Ren}}, \bibinfo {author}
+  {\bibfnamefont {H.}~\bibnamefont {Yuan}}, \bibinfo {author} {\bibfnamefont
+  {Z.}~\bibnamefont {Hao}}, \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont
+  {Xu}}, \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Cai}},\ and\
+  \bibinfo {author} {\bibfnamefont {D.}~\bibnamefont {Ni}},\ }in\ \href
+  {https://doi.org/10.1609/aaai.v39i18.34083} {\emph {\bibinfo {booktitle}
+  {Proceedings of the AAAI Conference on Artificial Intelligence}}},\
+  Vol.~\bibinfo {volume} {39}\ (\bibinfo {year} {2025})\ pp.\ \bibinfo {pages}
+  {18924--18932}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Xu}\ \emph {et~al.}(2024{\natexlab{a}})\citenamefont
+  {Xu}, \citenamefont {Han}, \citenamefont {Lou},\ and\ \citenamefont
+  {Kossaifi}}]{icml_xuhlkralea24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
+  {Xu}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Han}}, \bibinfo
+  {author} {\bibfnamefont {A.}~\bibnamefont {Lou}},\ and\ \bibinfo {author}
+  {\bibfnamefont {J.}~\bibnamefont {Kossaifi}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Proceedings of the 41st International Conference on
+  Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Pervez}\ \emph {et~al.}(2024)\citenamefont {Pervez},
+  \citenamefont {Locatello},\ and\ \citenamefont {Gavves}}]{icml_pervezlg24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {Pervez}}, \bibinfo {author} {\bibfnamefont {F.}~\bibnamefont {Locatello}},\
+  and\ \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Gavves}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st
+  International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Cho}\ \emph {et~al.}(2024)\citenamefont {Cho},
+  \citenamefont {Jo}, \citenamefont {Lim},\ and\ \citenamefont
+  {Lee}}]{icml_chojll00p24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {W.}~\bibnamefont
+  {Cho}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Jo}}, \bibinfo
+  {author} {\bibfnamefont {H.}~\bibnamefont {Lim}},\ and\ \bibinfo {author}
+  {\bibfnamefont {K.}~\bibnamefont {Lee}},\ }in\ \href@noop {} {\emph {\bibinfo
+  {booktitle} {Proceedings of the 41st International Conference on Machine
+  Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Dalton}\ \emph {et~al.}(2024)\citenamefont {Dalton},
+  \citenamefont {Husmeier},\ and\ \citenamefont {Gao}}]{icml_daltonh024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {D.}~\bibnamefont
+  {Dalton}}, \bibinfo {author} {\bibfnamefont {D.}~\bibnamefont {Husmeier}},\
+  and\ \bibinfo {author} {\bibfnamefont {H.}~\bibnamefont {Gao}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st
+  International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Eiras}\ \emph {et~al.}(2024)\citenamefont {Eiras},
+  \citenamefont {Bibi}, \citenamefont {Bunel},\ and\ \citenamefont
+  {Dvijotham}}]{icml_eirasbbd0k24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {F.}~\bibnamefont
+  {Eiras}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Bibi}},
+  \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont {Bunel}},\ and\ \bibinfo
+  {author} {\bibfnamefont {K.~D.}\ \bibnamefont {Dvijotham}},\ }in\ \href@noop
+  {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st International
+  Conference on Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Meng}\ \emph {et~al.}(2024)\citenamefont {Meng},
+  \citenamefont {Zhou}, \citenamefont {Mukherjee},\ and\ \citenamefont
+  {Fitzsimmons}}]{icml_mengzmfs024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont
+  {Meng}}, \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont {Zhou}}, \bibinfo
+  {author} {\bibfnamefont {A.}~\bibnamefont {Mukherjee}},\ and\ \bibinfo
+  {author} {\bibfnamefont {M.}~\bibnamefont {Fitzsimmons}},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Proceedings of the 41st International
+  Conference on Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Saleh}\ \emph {et~al.}(2024)\citenamefont {Saleh},
+  \citenamefont {Ghaffari}, \citenamefont {Bretl},\ and\ \citenamefont
+  {Olson}}]{icml_salehgbo024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {E.}~\bibnamefont
+  {Saleh}}, \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Ghaffari}},
+  \bibinfo {author} {\bibfnamefont {T.}~\bibnamefont {Bretl}},\ and\ \bibinfo
+  {author} {\bibfnamefont {L.~N.}\ \bibnamefont {Olson}},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Proceedings of the 41st International
+  Conference on Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Angeloudi}\ \emph {et~al.}(2024)\citenamefont
+  {Angeloudi}, \citenamefont {Audenaert}, \citenamefont {Bowles},\ and\
+  \citenamefont {Boyd}}]{nips_angeloudiabbccc24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {E.}~\bibnamefont
+  {Angeloudi}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {Audenaert}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Bowles}},\
+  and\ \bibinfo {author} {\bibfnamefont {B.~M.}\ \bibnamefont {Boyd}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Advances in Neural Information
+  Processing Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Furuya}\ \emph {et~al.}(2024)\citenamefont {Furuya},
+  \citenamefont {Puthawala}, \citenamefont {Lassas},\ and\ \citenamefont
+  {de~Hoop}}]{nips_furuyaplh24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {T.}~\bibnamefont
+  {Furuya}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Puthawala}},
+  \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Lassas}},\ and\ \bibinfo
+  {author} {\bibfnamefont {M.~V.}\ \bibnamefont {de~Hoop}},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Advances in Neural Information Processing
+  Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Velasco}\ \emph {et~al.}(2024)\citenamefont
+  {Velasco}, \citenamefont {O'Hare}, \citenamefont {Rychtenberg},\ and\
+  \citenamefont {Villar}}]{nips_velascoorv24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
+  {Velasco}}, \bibinfo {author} {\bibfnamefont {K.}~\bibnamefont {O'Hare}},
+  \bibinfo {author} {\bibfnamefont {B.}~\bibnamefont {Rychtenberg}},\ and\
+  \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Villar}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Advances in Neural Information
+  Processing Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Knigge}\ \emph {et~al.}(2024)\citenamefont {Knigge},
+  \citenamefont {Wessels}, \citenamefont {Valperga},\ and\ \citenamefont
+  {Papa}}]{nips_kniggewvpsbg24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {D.~M.}\ \bibnamefont
+  {Knigge}}, \bibinfo {author} {\bibfnamefont {D.~R.}\ \bibnamefont {Wessels}},
+  \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont {Valperga}},\ and\
+  \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Papa}},\ }in\ \href@noop
+  {} {\emph {\bibinfo {booktitle} {Advances in Neural Information Processing
+  Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Huang}\ \emph {et~al.}(2024)\citenamefont {Huang},
+  \citenamefont {Zhao}, \citenamefont {Gao},\ and\ \citenamefont
+  {Hu}}]{nips_0002zgh0ccs024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Z.}~\bibnamefont
+  {Huang}}, \bibinfo {author} {\bibfnamefont {W.}~\bibnamefont {Zhao}},
+  \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Gao}},\ and\ \bibinfo
+  {author} {\bibfnamefont {Z.}~\bibnamefont {Hu}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Advances in Neural Information Processing Systems}}}\
+  (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Bonfanti}\ \emph {et~al.}(2024)\citenamefont
+  {Bonfanti}, \citenamefont {Bruno},\ and\ \citenamefont
+  {Cipriani}}]{nips_bonfantibc24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {Bonfanti}}, \bibinfo {author} {\bibfnamefont {G.}~\bibnamefont {Bruno}},\
+  and\ \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Cipriani}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Advances in Neural Information
+  Processing Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Dangel}\ \emph {et~al.}(2024)\citenamefont {Dangel},
+  \citenamefont {Muller},\ and\ \citenamefont {Zeinhofer}}]{nips_dangelmz24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {F.}~\bibnamefont
+  {Dangel}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Muller}},\
+  and\ \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Zeinhofer}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Advances in Neural Information
+  Processing Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Chen}(2025)}]{aaai_chen25b}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {W.}~\bibnamefont
+  {Chen}},\ }in\ \href {https://doi.org/10.1609/aaai.v39i27.35103} {\emph
+  {\bibinfo {booktitle} {Proceedings of the AAAI Conference on Artificial
+  Intelligence}}},\ Vol.~\bibinfo {volume} {39}\ (\bibinfo {year} {2025})\ pp.\
+  \bibinfo {pages} {28708--28708}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Bizzi}\ \emph {et~al.}(2025)\citenamefont {Bizzi},
+  \citenamefont {Nissenbaum},\ and\ \citenamefont {Pereira}}]{aaai_bizzin025}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {Bizzi}}, \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont {Nissenbaum}},\
+  and\ \bibinfo {author} {\bibfnamefont {J.~M.}\ \bibnamefont {Pereira}},\ }in\
+  \href {https://doi.org/10.1609/aaai.v39i15.33710} {\emph {\bibinfo
+  {booktitle} {Proceedings of the AAAI Conference on Artificial
+  Intelligence}}},\ Vol.~\bibinfo {volume} {39}\ (\bibinfo {year} {2025})\ pp.\
+  \bibinfo {pages} {15576--15586}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Ghanem}\ \emph {et~al.}(2025)\citenamefont {Ghanem},
+  \citenamefont {Demirkaya}, \citenamefont {Imbiriba}, \citenamefont
+  {Ramezani}, \citenamefont {Danziger},\ and\ \citenamefont
+  {Erdogmus}}]{aaai_ghanemdirde25}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {P.}~\bibnamefont
+  {Ghanem}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Demirkaya}},
+  \bibinfo {author} {\bibfnamefont {T.}~\bibnamefont {Imbiriba}}, \bibinfo
+  {author} {\bibfnamefont {A.}~\bibnamefont {Ramezani}}, \bibinfo {author}
+  {\bibfnamefont {Z.}~\bibnamefont {Danziger}},\ and\ \bibinfo {author}
+  {\bibfnamefont {D.}~\bibnamefont {Erdogmus}},\ }in\ \href
+  {https://doi.org/10.1609/aaai.v39i16.33846} {\emph {\bibinfo {booktitle}
+  {Proceedings of the AAAI Conference on Artificial Intelligence}}},\
+  Vol.~\bibinfo {volume} {39}\ (\bibinfo {year} {2025})\ pp.\ \bibinfo {pages}
+  {16799--16807}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Matsubara}\ and\ \citenamefont
+  {Yaguchi}(2025)}]{aaai_0001y25}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {T.}~\bibnamefont
+  {Matsubara}}\ and\ \bibinfo {author} {\bibfnamefont {T.}~\bibnamefont
+  {Yaguchi}},\ }in\ \href {https://doi.org/10.1609/aaai.v39i1.32040} {\emph
+  {\bibinfo {booktitle} {Proceedings of the AAAI Conference on Artificial
+  Intelligence}}},\ Vol.~\bibinfo {volume} {39}\ (\bibinfo {year} {2025})\ pp.\
+  \bibinfo {pages} {595--603}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Sun}\ \emph {et~al.}(2025)\citenamefont {Sun},
+  \citenamefont {Zhang}, \citenamefont {Wang}, \citenamefont {Wang},
+  \citenamefont {Wan}, \citenamefont {Li}, \citenamefont {Peng},\ and\
+  \citenamefont {Yu}}]{aaai_0008zwwwl0y25}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {L.}~\bibnamefont
+  {Sun}}, \bibinfo {author} {\bibfnamefont {Z.}~\bibnamefont {Zhang}}, \bibinfo
+  {author} {\bibfnamefont {Z.}~\bibnamefont {Wang}}, \bibinfo {author}
+  {\bibfnamefont {Y.}~\bibnamefont {Wang}}, \bibinfo {author} {\bibfnamefont
+  {Q.}~\bibnamefont {Wan}}, \bibinfo {author} {\bibfnamefont {H.}~\bibnamefont
+  {Li}}, \bibinfo {author} {\bibfnamefont {H.}~\bibnamefont {Peng}},\ and\
+  \bibinfo {author} {\bibfnamefont {P.~S.}\ \bibnamefont {Yu}},\ }in\ \href
+  {https://doi.org/10.1609/aaai.v39i12.33372} {\emph {\bibinfo {booktitle}
+  {Proceedings of the AAAI Conference on Artificial Intelligence}}},\
+  Vol.~\bibinfo {volume} {39}\ (\bibinfo {year} {2025})\ pp.\ \bibinfo {pages}
+  {12586--12594}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Chen}\ and\ \citenamefont
+  {Zhang}(2024)}]{icml_0001024a}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {D.}~\bibnamefont
+  {Chen}}\ and\ \bibinfo {author} {\bibfnamefont {Q.}~\bibnamefont {Zhang}},\
+  }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st
+  International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Zhang}\ \emph
+  {et~al.}(2024{\natexlab{a}})\citenamefont {Zhang}, \citenamefont {Wei},
+  \citenamefont {Yuan},\ and\ \citenamefont {Li}}]{icml_0094w0l024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont
+  {Zhang}}, \bibinfo {author} {\bibfnamefont {Z.}~\bibnamefont {Wei}}, \bibinfo
+  {author} {\bibfnamefont {Y.}~\bibnamefont {Yuan}},\ and\ \bibinfo {author}
+  {\bibfnamefont {C.}~\bibnamefont {Li}},\ }in\ \href@noop {} {\emph {\bibinfo
+  {booktitle} {Proceedings of the 41st International Conference on Machine
+  Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Ashman}\ \emph
+  {et~al.}(2024{\natexlab{a}})\citenamefont {Ashman}, \citenamefont {Diaconu},
+  \citenamefont {Kim},\ and\ \citenamefont {Sivaraya}}]{icml_ashmandksmrbt24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
+  {Ashman}}, \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Diaconu}},
+  \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Kim}},\ and\ \bibinfo
+  {author} {\bibfnamefont {L.}~\bibnamefont {Sivaraya}},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Proceedings of the 41st International
+  Conference on Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Dym}\ \emph {et~al.}(2024)\citenamefont {Dym},
+  \citenamefont {Lawrence},\ and\ \citenamefont {Siegel}}]{icml_dymls24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {N.}~\bibnamefont
+  {Dym}}, \bibinfo {author} {\bibfnamefont {H.}~\bibnamefont {Lawrence}},\ and\
+  \bibinfo {author} {\bibfnamefont {J.~W.}\ \bibnamefont {Siegel}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st
+  International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Hansen}\ \emph {et~al.}(2024)\citenamefont {Hansen},
+  \citenamefont {Calissano},\ and\ \citenamefont {Feragen}}]{icml_hansencf24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.~A.}\ \bibnamefont
+  {Hansen}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Calissano}},\
+  and\ \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Feragen}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st
+  International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Hordan}\ \emph {et~al.}(2024)\citenamefont {Hordan},
+  \citenamefont {Amir},\ and\ \citenamefont {Dym}}]{icml_hordanad24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {S.}~\bibnamefont
+  {Hordan}}, \bibinfo {author} {\bibfnamefont {T.}~\bibnamefont {Amir}},\ and\
+  \bibinfo {author} {\bibfnamefont {N.}~\bibnamefont {Dym}},\ }in\ \href@noop
+  {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st International
+  Conference on Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Karczewski}\ \emph {et~al.}(2024)\citenamefont
+  {Karczewski}, \citenamefont {Souza},\ and\ \citenamefont
+  {Garg}}]{icml_karczewskis024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {R.}~\bibnamefont
+  {Karczewski}}, \bibinfo {author} {\bibfnamefont {A.~H.}\ \bibnamefont
+  {Souza}},\ and\ \bibinfo {author} {\bibfnamefont {V.}~\bibnamefont {Garg}},\
+  }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st
+  International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Kong}\ \emph {et~al.}(2024)\citenamefont {Kong},
+  \citenamefont {Huang},\ and\ \citenamefont {Liu}}]{icml_kong0024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {X.}~\bibnamefont
+  {Kong}}, \bibinfo {author} {\bibfnamefont {W.}~\bibnamefont {Huang}},\ and\
+  \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {Liu}},\ }in\ \href@noop
+  {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st International
+  Conference on Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Lin}\ \emph {et~al.}(2024{\natexlab{a}})\citenamefont
+  {Lin}, \citenamefont {Chen}, \citenamefont {Jiao},\ and\ \citenamefont
+  {Mo}}]{icml_lincjmc00hl24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {P.}~\bibnamefont
+  {Lin}}, \bibinfo {author} {\bibfnamefont {P.}~\bibnamefont {Chen}}, \bibinfo
+  {author} {\bibfnamefont {R.}~\bibnamefont {Jiao}},\ and\ \bibinfo {author}
+  {\bibfnamefont {Q.}~\bibnamefont {Mo}},\ }in\ \href@noop {} {\emph {\bibinfo
+  {booktitle} {Proceedings of the 41st International Conference on Machine
+  Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Lin}\ and\ \citenamefont {Lee}(2024)}]{icml_linl24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {B.-J.}\ \bibnamefont
+  {Lin}}\ and\ \bibinfo {author} {\bibfnamefont {C.-Y.}\ \bibnamefont {Lee}},\
+  }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st
+  International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Lin}\ \emph {et~al.}(2024{\natexlab{b}})\citenamefont
+  {Lin}, \citenamefont {Zhu},\ and\ \citenamefont {Ghaffari}}]{icml_linzg24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {T.-Y.}\ \bibnamefont
+  {Lin}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Zhu}},\ and\
+  \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Ghaffari}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st
+  International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Melnyk}\ \emph {et~al.}(2024)\citenamefont {Melnyk},
+  \citenamefont {Felsberg}, \citenamefont {Wadenback},\ and\ \citenamefont
+  {Robinson}}]{icml_melnykfwrl24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {P.}~\bibnamefont
+  {Melnyk}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Felsberg}},
+  \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Wadenback}},\ and\
+  \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Robinson}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st
+  International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Navon}\ \emph {et~al.}(2024)\citenamefont {Navon},
+  \citenamefont {Shamsian}, \citenamefont {Fetaya},\ and\ \citenamefont
+  {Chechik}}]{icml_navonsfcdm24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {Navon}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Shamsian}},
+  \bibinfo {author} {\bibfnamefont {E.}~\bibnamefont {Fetaya}},\ and\ \bibinfo
+  {author} {\bibfnamefont {G.}~\bibnamefont {Chechik}},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Proceedings of the 41st International
+  Conference on Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Pearce-Crump}\ and\ \citenamefont
+  {Knottenbelt}(2024)}]{icml_pearcecrumpk24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {E.}~\bibnamefont
+  {Pearce-Crump}}\ and\ \bibinfo {author} {\bibfnamefont {W.~J.}\ \bibnamefont
+  {Knottenbelt}},\ }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings
+  of the 41st International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Schiff}\ \emph {et~al.}(2024)\citenamefont {Schiff},
+  \citenamefont {Kao}, \citenamefont {Gokaslan},\ and\ \citenamefont
+  {Dao}}]{icml_schiffkgdgk24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont
+  {Schiff}}, \bibinfo {author} {\bibfnamefont {C.-H.}\ \bibnamefont {Kao}},
+  \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Gokaslan}},\ and\
+  \bibinfo {author} {\bibfnamefont {T.}~\bibnamefont {Dao}},\ }in\ \href@noop
+  {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st International
+  Conference on Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Verma}\ \emph {et~al.}(2024)\citenamefont {Verma},
+  \citenamefont {Souza},\ and\ \citenamefont {Garg}}]{icml_vermas024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont
+  {Verma}}, \bibinfo {author} {\bibfnamefont {A.~H.}\ \bibnamefont {Souza}},\
+  and\ \bibinfo {author} {\bibfnamefont {V.}~\bibnamefont {Garg}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st
+  International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Yan}\ \emph {et~al.}(2024{\natexlab{a}})\citenamefont
+  {Yan}, \citenamefont {Saxton}, \citenamefont {Qian},\ and\ \citenamefont
+  {Qian}}]{icml_yansqqj24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {K.}~\bibnamefont
+  {Yan}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Saxton}},
+  \bibinfo {author} {\bibfnamefont {X.}~\bibnamefont {Qian}},\ and\ \bibinfo
+  {author} {\bibfnamefont {X.}~\bibnamefont {Qian}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Proceedings of the 41st International Conference on
+  Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Zhang}\ \emph
+  {et~al.}(2024{\natexlab{b}})\citenamefont {Zhang}, \citenamefont {Cen},
+  \citenamefont {Han},\ and\ \citenamefont {Zhang}}]{icml_zhangchzz024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont
+  {Zhang}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Cen}}, \bibinfo
+  {author} {\bibfnamefont {J.}~\bibnamefont {Han}},\ and\ \bibinfo {author}
+  {\bibfnamefont {Z.}~\bibnamefont {Zhang}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Proceedings of the 41st International Conference on
+  Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Wang}\ \emph {et~al.}(2024)\citenamefont {Wang},
+  \citenamefont {Hofgard}, \citenamefont {Gao},\ and\ \citenamefont
+  {Walters}}]{icml_0086h00s24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {R.}~\bibnamefont
+  {Wang}}, \bibinfo {author} {\bibfnamefont {E.~F.}\ \bibnamefont {Hofgard}},
+  \bibinfo {author} {\bibfnamefont {H.}~\bibnamefont {Gao}},\ and\ \bibinfo
+  {author} {\bibfnamefont {R.}~\bibnamefont {Walters}},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Proceedings of the 41st International
+  Conference on Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Ziyin}(2024)}]{icml_liu24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {L.}~\bibnamefont
+  {Ziyin}},\ }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of
+  the 41st International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Weissenbacher}\ \emph {et~al.}(2024)\citenamefont
+  {Weissenbacher}, \citenamefont {Agarwal},\ and\ \citenamefont
+  {Kawahara}}]{icml_weissenbacherak24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
+  {Weissenbacher}}, \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont
+  {Agarwal}},\ and\ \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont
+  {Kawahara}},\ }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of
+  the 41st International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Yang}\ \emph
+  {et~al.}(2024{\natexlab{a}})\citenamefont {Yang}, \citenamefont {Dehmamy},
+  \citenamefont {Walters},\ and\ \citenamefont {Yu}}]{icml_yangd0y24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {Yang}}, \bibinfo {author} {\bibfnamefont {N.}~\bibnamefont {Dehmamy}},
+  \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont {Walters}},\ and\ \bibinfo
+  {author} {\bibfnamefont {R.}~\bibnamefont {Yu}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Proceedings of the 41st International Conference on
+  Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Ashman}\ \emph
+  {et~al.}(2024{\natexlab{b}})\citenamefont {Ashman}, \citenamefont {Diaconu},
+  \citenamefont {Weller},\ and\ \citenamefont {Bruinsma}}]{nips_ashmandwbt24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
+  {Ashman}}, \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Diaconu}},
+  \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Weller}},\ and\ \bibinfo
+  {author} {\bibfnamefont {W.~P.}\ \bibnamefont {Bruinsma}},\ }in\ \href@noop
+  {} {\emph {\bibinfo {booktitle} {Advances in Neural Information Processing
+  Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Bar-Shalom}\ \emph
+  {et~al.}(2024{\natexlab{a}})\citenamefont {Bar-Shalom}, \citenamefont
+  {Eitan}, \citenamefont {Frasca},\ and\ \citenamefont
+  {Maron}}]{nips_barshalomefm24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {G.}~\bibnamefont
+  {Bar-Shalom}}, \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {Eitan}},
+  \bibinfo {author} {\bibfnamefont {F.}~\bibnamefont {Frasca}},\ and\ \bibinfo
+  {author} {\bibfnamefont {H.}~\bibnamefont {Maron}},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Advances in Neural Information Processing
+  Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Cen}\ \emph {et~al.}(2024)\citenamefont {Cen},
+  \citenamefont {Li}, \citenamefont {Lin},\ and\ \citenamefont
+  {Ren}}]{nips_cenllrw024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {Cen}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Li}}, \bibinfo
+  {author} {\bibfnamefont {N.}~\bibnamefont {Lin}},\ and\ \bibinfo {author}
+  {\bibfnamefont {Y.}~\bibnamefont {Ren}},\ }in\ \href@noop {} {\emph {\bibinfo
+  {booktitle} {Advances in Neural Information Processing Systems}}}\ (\bibinfo
+  {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Cornet}\ \emph {et~al.}(2024)\citenamefont {Cornet},
+  \citenamefont {Bartosh}, \citenamefont {Schmidt},\ and\ \citenamefont
+  {Naesseth}}]{nips_cornetbsn24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {F.~R.~J.}\
+  \bibnamefont {Cornet}}, \bibinfo {author} {\bibfnamefont {G.}~\bibnamefont
+  {Bartosh}}, \bibinfo {author} {\bibfnamefont {M.~N.}\ \bibnamefont
+  {Schmidt}},\ and\ \bibinfo {author} {\bibfnamefont {C.~A.}\ \bibnamefont
+  {Naesseth}},\ }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Advances in
+  Neural Information Processing Systems}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Elaldi}\ \emph {et~al.}(2024)\citenamefont {Elaldi},
+  \citenamefont {Gerig},\ and\ \citenamefont {Dey}}]{nips_elaldigd24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {Elaldi}}, \bibinfo {author} {\bibfnamefont {G.}~\bibnamefont {Gerig}},\ and\
+  \bibinfo {author} {\bibfnamefont {N.}~\bibnamefont {Dey}},\ }in\ \href@noop
+  {} {\emph {\bibinfo {booktitle} {Advances in Neural Information Processing
+  Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Hassan}\ \emph {et~al.}(2024)\citenamefont {Hassan},
+  \citenamefont {Shenoy}, \citenamefont {Lee},\ and\ \citenamefont
+  {Stark}}]{nips_hassanslstb24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
+  {Hassan}}, \bibinfo {author} {\bibfnamefont {N.}~\bibnamefont {Shenoy}},
+  \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Lee}},\ and\ \bibinfo
+  {author} {\bibfnamefont {H.}~\bibnamefont {Stark}},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Advances in Neural Information Processing
+  Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Hu}\ \emph {et~al.}(2024)\citenamefont {Hu},
+  \citenamefont {Tang}, \citenamefont {Yu},\ and\ \citenamefont
+  {Sun}}]{nips_hutys24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {X.}~\bibnamefont
+  {Hu}}, \bibinfo {author} {\bibfnamefont {X.}~\bibnamefont {Tang}}, \bibinfo
+  {author} {\bibfnamefont {R.}~\bibnamefont {Yu}},\ and\ \bibinfo {author}
+  {\bibfnamefont {J.}~\bibnamefont {Sun}},\ }in\ \href@noop {} {\emph {\bibinfo
+  {booktitle} {Advances in Neural Information Processing Systems}}}\ (\bibinfo
+  {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Kalogeropoulos}\ \emph {et~al.}(2024)\citenamefont
+  {Kalogeropoulos}, \citenamefont {Bouritsas},\ and\ \citenamefont
+  {Panagakis}}]{nips_kalogeropoulosb24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {I.}~\bibnamefont
+  {Kalogeropoulos}}, \bibinfo {author} {\bibfnamefont {G.}~\bibnamefont
+  {Bouritsas}},\ and\ \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont
+  {Panagakis}},\ }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Advances in
+  Neural Information Processing Systems}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Lee}\ and\ \citenamefont {Cho}(2024)}]{nips_leec24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {Lee}}\ and\ \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Cho}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Advances in Neural Information
+  Processing Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Lin}\ \emph {et~al.}(2024{\natexlab{c}})\citenamefont
+  {Lin}, \citenamefont {Talmon},\ and\ \citenamefont {Levie}}]{nips_lintl24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Y.-W.~E.}\
+  \bibnamefont {Lin}}, \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont
+  {Talmon}},\ and\ \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont
+  {Levie}},\ }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Advances in
+  Neural Information Processing Systems}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Ma}\ \emph {et~al.}(2024)\citenamefont {Ma},
+  \citenamefont {Wang}, \citenamefont {Lim},\ and\ \citenamefont
+  {Jegelka}}]{nips_ma0lj024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {G.}~\bibnamefont
+  {Ma}}, \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {Wang}}, \bibinfo
+  {author} {\bibfnamefont {D.}~\bibnamefont {Lim}},\ and\ \bibinfo {author}
+  {\bibfnamefont {S.}~\bibnamefont {Jegelka}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Advances in Neural Information Processing Systems}}}\
+  (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Mitchel}\ \emph {et~al.}(2024)\citenamefont
+  {Mitchel}, \citenamefont {Taylor},\ and\ \citenamefont
+  {Sitzmann}}]{nips_mitchelts24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {T.~W.}\ \bibnamefont
+  {Mitchel}}, \bibinfo {author} {\bibfnamefont {M.~J.}\ \bibnamefont
+  {Taylor}},\ and\ \bibinfo {author} {\bibfnamefont {V.}~\bibnamefont
+  {Sitzmann}},\ }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Advances in
+  Neural Information Processing Systems}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Park}\ and\ \citenamefont
+  {Shen}(2024)}]{nips_parks24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {Park}}\ and\ \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {Shen}},\
+  }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Advances in Neural
+  Information Processing Systems}}}\ (\bibinfo {year} {2024})\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Pertigkiozoglou}\ \emph {et~al.}(2024)\citenamefont
+  {Pertigkiozoglou}, \citenamefont {Chatzipantazis}, \citenamefont {Trivedi},\
+  and\ \citenamefont {Daniilidis}}]{nips_pertigkiozoglou24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {S.}~\bibnamefont
+  {Pertigkiozoglou}}, \bibinfo {author} {\bibfnamefont {E.}~\bibnamefont
+  {Chatzipantazis}}, \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont
+  {Trivedi}},\ and\ \bibinfo {author} {\bibfnamefont {K.}~\bibnamefont
+  {Daniilidis}},\ }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Advances in
+  Neural Information Processing Systems}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Shin}\ \emph {et~al.}(2024)\citenamefont {Shin},
+  \citenamefont {He}, \citenamefont {Vankadari},\ and\ \citenamefont
+  {Cheng}}]{nips_shinhvc0mt24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {S.}~\bibnamefont
+  {Shin}}, \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {He}}, \bibinfo
+  {author} {\bibfnamefont {M.}~\bibnamefont {Vankadari}},\ and\ \bibinfo
+  {author} {\bibfnamefont {T.~Y.}\ \bibnamefont {Cheng}},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Advances in Neural Information Processing
+  Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Spinner}\ \emph {et~al.}(2024)\citenamefont
+  {Spinner}, \citenamefont {Breso}, \citenamefont {de~Haan},\ and\
+  \citenamefont {Plehn}}]{nips_spinnerbhptb24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {Spinner}}, \bibinfo {author} {\bibfnamefont {V.}~\bibnamefont {Breso}},
+  \bibinfo {author} {\bibfnamefont {P.}~\bibnamefont {de~Haan}},\ and\ \bibinfo
+  {author} {\bibfnamefont {T.}~\bibnamefont {Plehn}},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Advances in Neural Information Processing
+  Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Tran}\ \emph
+  {et~al.}(2024{\natexlab{a}})\citenamefont {Tran}, \citenamefont {Vo},
+  \citenamefont {Huu},\ and\ \citenamefont {The}}]{nips_tranvhtn24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {H.~V.}\ \bibnamefont
+  {Tran}}, \bibinfo {author} {\bibfnamefont {T.~N.}\ \bibnamefont {Vo}},
+  \bibinfo {author} {\bibfnamefont {T.}~\bibnamefont {Huu}},\ and\ \bibinfo
+  {author} {\bibfnamefont {A.~N.}\ \bibnamefont {The}},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Advances in Neural Information Processing
+  Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Wang}\ and\ \citenamefont
+  {Jornsten}(2024)}]{nips_wangj24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Z.}~\bibnamefont
+  {Wang}}\ and\ \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont
+  {Jornsten}},\ }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Advances in
+  Neural Information Processing Systems}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Xu}\ \emph {et~al.}(2024{\natexlab{b}})\citenamefont
+  {Xu}, \citenamefont {Chen}, \citenamefont {Liu},\ and\ \citenamefont
+  {Zakharov}}]{nips_xu0lzadg24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont
+  {Xu}}, \bibinfo {author} {\bibfnamefont {D.}~\bibnamefont {Chen}}, \bibinfo
+  {author} {\bibfnamefont {K.}~\bibnamefont {Liu}},\ and\ \bibinfo {author}
+  {\bibfnamefont {S.}~\bibnamefont {Zakharov}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Advances in Neural Information Processing Systems}}}\
+  (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Yerxa}\ \emph {et~al.}(2024)\citenamefont {Yerxa},
+  \citenamefont {Feather}, \citenamefont {Simoncelli},\ and\ \citenamefont
+  {Chung}}]{nips_yerxafsc24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {T.~E.}\ \bibnamefont
+  {Yerxa}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Feather}},
+  \bibinfo {author} {\bibfnamefont {E.~P.}\ \bibnamefont {Simoncelli}},\ and\
+  \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Chung}},\ }in\ \href@noop
+  {} {\emph {\bibinfo {booktitle} {Advances in Neural Information Processing
+  Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Yu}\ \emph {et~al.}(2024)\citenamefont {Yu},
+  \citenamefont {Choi}, \citenamefont {Lee},\ and\ \citenamefont
+  {Hong}}]{nips_yuclh024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {Yu}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Choi}}, \bibinfo
+  {author} {\bibfnamefont {D.-J.}\ \bibnamefont {Lee}},\ and\ \bibinfo {author}
+  {\bibfnamefont {H.~G.}\ \bibnamefont {Hong}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Advances in Neural Information Processing Systems}}}\
+  (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Zaverkin}\ \emph {et~al.}(2024)\citenamefont
+  {Zaverkin}, \citenamefont {Alesiani}, \citenamefont {Maruyama},\ and\
+  \citenamefont {Errica}}]{nips_zaverkinamectwn24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {V.}~\bibnamefont
+  {Zaverkin}}, \bibinfo {author} {\bibfnamefont {F.}~\bibnamefont {Alesiani}},
+  \bibinfo {author} {\bibfnamefont {T.}~\bibnamefont {Maruyama}},\ and\
+  \bibinfo {author} {\bibfnamefont {F.}~\bibnamefont {Errica}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Advances in Neural Information
+  Processing Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Yan}\ \emph {et~al.}(2024{\natexlab{b}})\citenamefont
+  {Yan}, \citenamefont {Ran}, \citenamefont {Wang},\ and\ \citenamefont
+  {Pan}}]{nips_0001rwpy24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {G.}~\bibnamefont
+  {Yan}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Ran}}, \bibinfo
+  {author} {\bibfnamefont {R.}~\bibnamefont {Wang}},\ and\ \bibinfo {author}
+  {\bibfnamefont {K.}~\bibnamefont {Pan}},\ }in\ \href@noop {} {\emph {\bibinfo
+  {booktitle} {Advances in Neural Information Processing Systems}}}\ (\bibinfo
+  {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Shaw}\ \emph {et~al.}(2024)\citenamefont {Shaw},
+  \citenamefont {Magner},\ and\ \citenamefont {Moon}}]{nips_0003mm24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {B.}~\bibnamefont
+  {Shaw}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Magner}},\ and\
+  \bibinfo {author} {\bibfnamefont {K.~R.}\ \bibnamefont {Moon}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Advances in Neural Information
+  Processing Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Allingham}\ \emph {et~al.}(2024)\citenamefont
+  {Allingham}, \citenamefont {Mlodozeniec}, \citenamefont {Padhy},\ and\
+  \citenamefont {Antoran}}]{nips_allinghammpa0tn24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.~U.}\ \bibnamefont
+  {Allingham}}, \bibinfo {author} {\bibfnamefont {B.}~\bibnamefont
+  {Mlodozeniec}}, \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Padhy}},\
+  and\ \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Antoran}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Advances in Neural Information
+  Processing Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Laird}\ \emph {et~al.}(2024)\citenamefont {Laird},
+  \citenamefont {Hsu}, \citenamefont {Bapat},\ and\ \citenamefont
+  {Walters}}]{nips_lairdhb024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {L.}~\bibnamefont
+  {Laird}}, \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Hsu}}, \bibinfo
+  {author} {\bibfnamefont {A.}~\bibnamefont {Bapat}},\ and\ \bibinfo {author}
+  {\bibfnamefont {R.}~\bibnamefont {Walters}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Advances in Neural Information Processing Systems}}}\
+  (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Ziyin}\ \emph {et~al.}(2024)\citenamefont {Ziyin},
+  \citenamefont {Wang}, \citenamefont {Li},\ and\ \citenamefont
+  {Wu}}]{nips_liuwlw24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {L.}~\bibnamefont
+  {Ziyin}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Wang}},
+  \bibinfo {author} {\bibfnamefont {H.}~\bibnamefont {Li}},\ and\ \bibinfo
+  {author} {\bibfnamefont {L.}~\bibnamefont {Wu}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Advances in Neural Information Processing Systems}}}\
+  (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Tran}\ \emph
+  {et~al.}(2024{\natexlab{b}})\citenamefont {Tran}, \citenamefont {Ta},
+  \citenamefont {Mandal},\ and\ \citenamefont {Tran-Thanh}}]{nips_trantmt24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {N.~P.}\ \bibnamefont
+  {Tran}}, \bibinfo {author} {\bibfnamefont {T.-A.}\ \bibnamefont {Ta}},
+  \bibinfo {author} {\bibfnamefont {D.}~\bibnamefont {Mandal}},\ and\ \bibinfo
+  {author} {\bibfnamefont {L.}~\bibnamefont {Tran-Thanh}},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Advances in Neural Information Processing
+  Systems}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Yang}\ \emph
+  {et~al.}(2024{\natexlab{b}})\citenamefont {Yang}, \citenamefont {Rao},
+  \citenamefont {Dehmamy},\ and\ \citenamefont {Walters}}]{nips_yangrdwy24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {Yang}}, \bibinfo {author} {\bibfnamefont {W.}~\bibnamefont {Rao}}, \bibinfo
+  {author} {\bibfnamefont {N.}~\bibnamefont {Dehmamy}},\ and\ \bibinfo {author}
+  {\bibfnamefont {R.}~\bibnamefont {Walters}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Advances in Neural Information Processing Systems}}}\
+  (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Han}\ \emph {et~al.}(2025)\citenamefont {Han},
+  \citenamefont {Huang}, \citenamefont {Luo}, \citenamefont {Han},
+  \citenamefont {Shen}, \citenamefont {Zhang}, \citenamefont {Zhou},\ and\
+  \citenamefont {Chen}}]{aaai_han0lhszzc25}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {R.}~\bibnamefont
+  {Han}}, \bibinfo {author} {\bibfnamefont {W.}~\bibnamefont {Huang}}, \bibinfo
+  {author} {\bibfnamefont {L.}~\bibnamefont {Luo}}, \bibinfo {author}
+  {\bibfnamefont {X.}~\bibnamefont {Han}}, \bibinfo {author} {\bibfnamefont
+  {J.}~\bibnamefont {Shen}}, \bibinfo {author} {\bibfnamefont {Z.}~\bibnamefont
+  {Zhang}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Zhou}},\ and\
+  \bibinfo {author} {\bibfnamefont {T.}~\bibnamefont {Chen}},\ }in\ \href
+  {https://doi.org/10.1609/aaai.v39i1.32000} {\emph {\bibinfo {booktitle}
+  {Proceedings of the AAAI Conference on Artificial Intelligence}}},\
+  Vol.~\bibinfo {volume} {39}\ (\bibinfo {year} {2025})\ pp.\ \bibinfo {pages}
+  {237--245}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Liu}\ \emph {et~al.}(2025{\natexlab{b}})\citenamefont
+  {Liu}, \citenamefont {Luo}, \citenamefont {Li}, \citenamefont {Caverlee},\
+  and\ \citenamefont {Min}}]{aaai_liullcm25}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {H.}~\bibnamefont
+  {Liu}}, \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {Luo}}, \bibinfo
+  {author} {\bibfnamefont {T.}~\bibnamefont {Li}}, \bibinfo {author}
+  {\bibfnamefont {J.}~\bibnamefont {Caverlee}},\ and\ \bibinfo {author}
+  {\bibfnamefont {M.~R.}\ \bibnamefont {Min}},\ }in\ \href
+  {https://doi.org/10.1609/aaai.v39i18.34071} {\emph {\bibinfo {booktitle}
+  {Proceedings of the AAAI Conference on Artificial Intelligence}}},\
+  Vol.~\bibinfo {volume} {39}\ (\bibinfo {year} {2025})\ pp.\ \bibinfo {pages}
+  {18816--18824}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Wu}\ \emph {et~al.}(2025)\citenamefont {Wu},
+  \citenamefont {Lin}, \citenamefont {Huang}, \citenamefont {Gao},
+  \citenamefont {Tan}, \citenamefont {Liu}, \citenamefont {Wu},\ and\
+  \citenamefont {Li}}]{aaai_wul0g00wl25}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {L.}~\bibnamefont
+  {Wu}}, \bibinfo {author} {\bibfnamefont {H.}~\bibnamefont {Lin}}, \bibinfo
+  {author} {\bibfnamefont {Y.}~\bibnamefont {Huang}}, \bibinfo {author}
+  {\bibfnamefont {Z.}~\bibnamefont {Gao}}, \bibinfo {author} {\bibfnamefont
+  {C.}~\bibnamefont {Tan}}, \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont
+  {Liu}}, \bibinfo {author} {\bibfnamefont {T.}~\bibnamefont {Wu}},\ and\
+  \bibinfo {author} {\bibfnamefont {S.~Z.}\ \bibnamefont {Li}},\ }in\ \href
+  {https://doi.org/10.1609/aaai.v39i1.32074} {\emph {\bibinfo {booktitle}
+  {Proceedings of the AAAI Conference on Artificial Intelligence}}},\
+  Vol.~\bibinfo {volume} {39}\ (\bibinfo {year} {2025})\ pp.\ \bibinfo {pages}
+  {895--904}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Hussain}\ \emph {et~al.}(2024)\citenamefont
+  {Hussain}, \citenamefont {Zaki},\ and\ \citenamefont
+  {Subramanian}}]{icml_hussainzs24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.~S.}\ \bibnamefont
+  {Hussain}}, \bibinfo {author} {\bibfnamefont {M.~J.}\ \bibnamefont {Zaki}},\
+  and\ \bibinfo {author} {\bibfnamefont {D.}~\bibnamefont {Subramanian}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st
+  International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Bar-Shalom}\ \emph
+  {et~al.}(2024{\natexlab{b}})\citenamefont {Bar-Shalom}, \citenamefont
+  {Bevilacqua},\ and\ \citenamefont {Maron}}]{icml_barshalombm24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {G.}~\bibnamefont
+  {Bar-Shalom}}, \bibinfo {author} {\bibfnamefont {B.}~\bibnamefont
+  {Bevilacqua}},\ and\ \bibinfo {author} {\bibfnamefont {H.}~\bibnamefont
+  {Maron}},\ }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of
+  the 41st International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Gao}\ \emph {et~al.}(2024)\citenamefont {Gao},
+  \citenamefont {Dong}, \citenamefont {Tan},\ and\ \citenamefont
+  {Xia}}]{icml_gaod0xhl24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Z.}~\bibnamefont
+  {Gao}}, \bibinfo {author} {\bibfnamefont {D.}~\bibnamefont {Dong}}, \bibinfo
+  {author} {\bibfnamefont {C.}~\bibnamefont {Tan}},\ and\ \bibinfo {author}
+  {\bibfnamefont {J.}~\bibnamefont {Xia}},\ }in\ \href@noop {} {\emph {\bibinfo
+  {booktitle} {Proceedings of the 41st International Conference on Machine
+  Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Black}\ \emph {et~al.}(2024)\citenamefont {Black},
+  \citenamefont {Wan}, \citenamefont {Mishne},\ and\ \citenamefont
+  {Nayyeri}}]{icml_blackwmn024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
+  {Black}}, \bibinfo {author} {\bibfnamefont {Z.}~\bibnamefont {Wan}}, \bibinfo
+  {author} {\bibfnamefont {G.}~\bibnamefont {Mishne}},\ and\ \bibinfo {author}
+  {\bibfnamefont {A.}~\bibnamefont {Nayyeri}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Proceedings of the 41st International Conference on
+  Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Khona}\ \emph {et~al.}(2024)\citenamefont {Khona},
+  \citenamefont {Okawa}, \citenamefont {Hula},\ and\ \citenamefont
+  {Ramesh}}]{icml_khonaohrndlt24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
+  {Khona}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Okawa}},
+  \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Hula}},\ and\ \bibinfo
+  {author} {\bibfnamefont {R.}~\bibnamefont {Ramesh}},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Proceedings of the 41st International
+  Conference on Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Li}\ \emph {et~al.}(2024)\citenamefont {Li},
+  \citenamefont {Wang}, \citenamefont {Ma},\ and\ \citenamefont
+  {Liu}}]{icml_li0m0zc24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {H.}~\bibnamefont
+  {Li}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Wang}}, \bibinfo
+  {author} {\bibfnamefont {T.}~\bibnamefont {Ma}},\ and\ \bibinfo {author}
+  {\bibfnamefont {S.}~\bibnamefont {Liu}},\ }in\ \href@noop {} {\emph {\bibinfo
+  {booktitle} {Proceedings of the 41st International Conference on Machine
+  Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Liang}\ \emph {et~al.}(2024)\citenamefont {Liang},
+  \citenamefont {Chen},\ and\ \citenamefont {Liang}}]{icml_liangcl24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {Liang}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Chen}},\ and\
+  \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Liang}},\ }in\ \href@noop
+  {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st International
+  Conference on Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Liu}\ \emph {et~al.}(2024{\natexlab{b}})\citenamefont
+  {Liu}, \citenamefont {Mao}, \citenamefont {Jiang},\ and\ \citenamefont
+  {Li}}]{icml_liumj024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {Liu}}, \bibinfo {author} {\bibfnamefont {Q.}~\bibnamefont {Mao}}, \bibinfo
+  {author} {\bibfnamefont {W.}~\bibnamefont {Jiang}},\ and\ \bibinfo {author}
+  {\bibfnamefont {J.}~\bibnamefont {Li}},\ }in\ \href@noop {} {\emph {\bibinfo
+  {booktitle} {Proceedings of the 41st International Conference on Machine
+  Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {de~Luca}\ and\ \citenamefont
+  {Fountoulakis}(2024)}]{icml_lucaf24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.~B.}\ \bibnamefont
+  {de~Luca}}\ and\ \bibinfo {author} {\bibfnamefont {K.}~\bibnamefont
+  {Fountoulakis}},\ }in\ \href@noop {} {\emph {\bibinfo {booktitle}
+  {Proceedings of the 41st International Conference on Machine Learning}}}\
+  (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Xing}\ \emph {et~al.}(2024)\citenamefont {Xing},
+  \citenamefont {Wang}, \citenamefont {Li},\ and\ \citenamefont
+  {Huang}}]{icml_xing0lhs24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont
+  {Xing}}, \bibinfo {author} {\bibfnamefont {X.}~\bibnamefont {Wang}}, \bibinfo
+  {author} {\bibfnamefont {Y.}~\bibnamefont {Li}},\ and\ \bibinfo {author}
+  {\bibfnamefont {H.}~\bibnamefont {Huang}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Proceedings of the 41st International Conference on
+  Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Tang}\ \emph {et~al.}(2024)\citenamefont {Tang},
+  \citenamefont {Yang}, \citenamefont {Long},\ and\ \citenamefont
+  {Yan}}]{icml_tangyly24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont
+  {Tang}}, \bibinfo {author} {\bibfnamefont {N.}~\bibnamefont {Yang}}, \bibinfo
+  {author} {\bibfnamefont {M.}~\bibnamefont {Long}},\ and\ \bibinfo {author}
+  {\bibfnamefont {J.}~\bibnamefont {Yan}},\ }in\ \href@noop {} {\emph {\bibinfo
+  {booktitle} {Proceedings of the 41st International Conference on Machine
+  Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Bai}\ \emph {et~al.}(2024)\citenamefont {Bai},
+  \citenamefont {Cui}, \citenamefont {Li},\ and\ \citenamefont
+  {Wang}}]{icml_0001c00h24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {L.}~\bibnamefont
+  {Bai}}, \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont {Cui}}, \bibinfo
+  {author} {\bibfnamefont {M.}~\bibnamefont {Li}},\ and\ \bibinfo {author}
+  {\bibfnamefont {Y.}~\bibnamefont {Wang}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Proceedings of the 41st International Conference on
+  Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Zhong}\ \emph {et~al.}(2024)\citenamefont {Zhong},
+  \citenamefont {Hu}, \citenamefont {Xue},\ and\ \citenamefont
+  {Li}}]{icml_0001hxl024}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {H.}~\bibnamefont
+  {Zhong}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Hu}}, \bibinfo
+  {author} {\bibfnamefont {Y.}~\bibnamefont {Xue}},\ and\ \bibinfo {author}
+  {\bibfnamefont {T.}~\bibnamefont {Li}},\ }in\ \href@noop {} {\emph {\bibinfo
+  {booktitle} {Proceedings of the 41st International Conference on Machine
+  Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Anders}\ \emph {et~al.}(2024)\citenamefont {Anders},
+  \citenamefont {Nicoli}, \citenamefont {Wu},\ and\ \citenamefont
+  {Elosegui}}]{icml_andersnwepfjkn24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {C.~J.}\ \bibnamefont
+  {Anders}}, \bibinfo {author} {\bibfnamefont {K.~A.}\ \bibnamefont {Nicoli}},
+  \bibinfo {author} {\bibfnamefont {B.}~\bibnamefont {Wu}},\ and\ \bibinfo
+  {author} {\bibfnamefont {N.}~\bibnamefont {Elosegui}},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Proceedings of the 41st International
+  Conference on Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {He}\ \emph {et~al.}(2024)\citenamefont {He},
+  \citenamefont {Liu}, \citenamefont {Liu},\ and\ \citenamefont
+  {Li}}]{icml_hel0ll24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {He}}, \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Liu}}, \bibinfo
+  {author} {\bibfnamefont {X.}~\bibnamefont {Liu}},\ and\ \bibinfo {author}
+  {\bibfnamefont {L.}~\bibnamefont {Li}},\ }in\ \href@noop {} {\emph {\bibinfo
+  {booktitle} {Proceedings of the 41st International Conference on Machine
+  Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Mariella}\ \emph {et~al.}(2024)\citenamefont
+  {Mariella}, \citenamefont {Akhriev}, \citenamefont {Tacchino},\ and\
+  \citenamefont {Zoufal}}]{icml_mariellaatzghkt24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {N.}~\bibnamefont
+  {Mariella}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Akhriev}},
+  \bibinfo {author} {\bibfnamefont {F.}~\bibnamefont {Tacchino}},\ and\
+  \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Zoufal}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st
+  International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Motamedi}\ and\ \citenamefont
+  {Ronagh}(2024)}]{icml_motamedir24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
+  {Motamedi}}\ and\ \bibinfo {author} {\bibfnamefont {P.}~\bibnamefont
+  {Ronagh}},\ }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of
+  the 41st International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Ozgul}\ \emph {et~al.}(2024)\citenamefont {Ozgul},
+  \citenamefont {Li}, \citenamefont {Mahdavi},\ and\ \citenamefont
+  {Wang}}]{icml_ozgullmw24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {G.}~\bibnamefont
+  {Ozgul}}, \bibinfo {author} {\bibfnamefont {X.}~\bibnamefont {Li}}, \bibinfo
+  {author} {\bibfnamefont {M.}~\bibnamefont {Mahdavi}},\ and\ \bibinfo {author}
+  {\bibfnamefont {C.}~\bibnamefont {Wang}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Proceedings of the 41st International Conference on
+  Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Sprueill}\ \emph {et~al.}(2024)\citenamefont
+  {Sprueill}, \citenamefont {Edwards}, \citenamefont {Agarwal},\ and\
+  \citenamefont {Olarte}}]{icml_sprueilleaosjlj24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {H.~W.}\ \bibnamefont
+  {Sprueill}}, \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Edwards}},
+  \bibinfo {author} {\bibfnamefont {K.}~\bibnamefont {Agarwal}},\ and\ \bibinfo
+  {author} {\bibfnamefont {M.~V.}\ \bibnamefont {Olarte}},\ }in\ \href@noop {}
+  {\emph {\bibinfo {booktitle} {Proceedings of the 41st International
+  Conference on Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut
+  {NoStop}%
+\bibitem [{\citenamefont {Thabet}\ \emph {et~al.}(2024)\citenamefont {Thabet},
+  \citenamefont {Djellabi}, \citenamefont {Sokolov},\ and\ \citenamefont
+  {Kasture}}]{icml_thabetdskhh24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {S.}~\bibnamefont
+  {Thabet}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Djellabi}},
+  \bibinfo {author} {\bibfnamefont {I.~O.}\ \bibnamefont {Sokolov}},\ and\
+  \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Kasture}},\ }in\
+  \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 41st
+  International Conference on Machine Learning}}}\ (\bibinfo {year}
+  {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Zhang}\ \emph
+  {et~al.}(2024{\natexlab{c}})\citenamefont {Zhang}, \citenamefont {Zhang},
+  \citenamefont {Fang},\ and\ \citenamefont {Wang}}]{icml_zhangz00l24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont
+  {Zhang}}, \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Zhang}},
+  \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Fang}},\ and\ \bibinfo
+  {author} {\bibfnamefont {L.}~\bibnamefont {Wang}},\ }in\ \href@noop {} {\emph
+  {\bibinfo {booktitle} {Proceedings of the 41st International Conference on
+  Machine Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Zhao}\ \emph {et~al.}(2024)\citenamefont {Zhao},
+  \citenamefont {Qiao}, \citenamefont {Zhang},\ and\ \citenamefont
+  {Gao}}]{icml_zhaoqzg24}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {Zhao}}, \bibinfo {author} {\bibfnamefont {W.}~\bibnamefont {Qiao}}, \bibinfo
+  {author} {\bibfnamefont {P.}~\bibnamefont {Zhang}},\ and\ \bibinfo {author}
+  {\bibfnamefont {H.}~\bibnamefont {Gao}},\ }in\ \href@noop {} {\emph {\bibinfo
+  {booktitle} {Proceedings of the 41st International Conference on Machine
+  Learning}}}\ (\bibinfo {year} {2024})\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Lee}\ \emph {et~al.}(2025)\citenamefont {Lee},
+  \citenamefont {Cho},\ and\ \citenamefont {Kim}}]{aaai_leeck25}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
+  {Lee}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Cho}},\ and\
+  \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Kim}},\ }in\ \href
+  {https://doi.org/10.1609/aaai.v39i17.33995} {\emph {\bibinfo {booktitle}
+  {Proceedings of the AAAI Conference on Artificial Intelligence}}},\
+  Vol.~\bibinfo {volume} {39}\ (\bibinfo {year} {2025})\ pp.\ \bibinfo {pages}
+  {18137--18144}\BibitemShut {NoStop}%
+\end{thebibliography}%
