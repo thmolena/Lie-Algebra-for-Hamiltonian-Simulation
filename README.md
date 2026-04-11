@@ -1,7 +1,5 @@
 # Lie GPT for Hamiltonian Simulation: Generator Prediction in Dynamical Lie Algebras Beyond Product Formulas
 
-**Author:** Molena Huynh &nbsp;·&nbsp; **Venue:** PRX Quantum (submitted April 2026)  
-**Paper:** [research_paper/main.tex](research_paper/main.tex) &nbsp;·&nbsp; **Compiled PDF:** [research_paper/research_paper.pdf](research_paper/research_paper.pdf)  
 **Project page:** [index.html](index.html)
 
 ---
