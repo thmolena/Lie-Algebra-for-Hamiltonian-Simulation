@@ -1,546 +1,253 @@
-# Research Plan: Lie-Structured Generative Models for Hamiltonian Simulation
+# Lie GPT for Hamiltonian Simulation: Generator Prediction in Dynamical Lie Algebras Beyond Product Formulas
 
-## Paper
-
-- Research paper artifact: [research_paper/research_paper.pdf](research_paper/research_paper.pdf)
-
-> **Working title:** LieGPT — A Lie-Algebra–Constrained Generative Framework for Quantum Dynamics
+**Author:** Molena Huynh &nbsp;·&nbsp; **Venue:** PRX Quantum (submitted April 2026)  
+**Paper:** [research_paper/main.tex](research_paper/main.tex) &nbsp;·&nbsp; **Compiled PDF:** [research_paper/research_paper.pdf](research_paper/research_paper.pdf)  
+**Project page:** [index.html](index.html)
 
 ---
 
-## 1. Research Objective
+## Abstract
 
-Develop a Lie-algebra–constrained generative model for Hamiltonian simulation that **guarantees** physically valid quantum evolution — unitarity, symmetry preservation, closure under commutators — while improving long-time stability and sample efficiency over existing machine-learning and classical simulation baselines.
+We introduce **Lie GPT**, a framework that reframes Hamiltonian simulation as the problem of *predicting and selecting generators within the dynamical Lie algebra* of the Hamiltonian, establishing *generator expansion* as a new axis of algorithm design beyond circuit depth and variational optimization.
 
-This project represents a deliberate pivot from the earlier Cartan-constrained QAOA direction. While Cartan-commutator-augmented QAOA introduced structured conjugator families with provable single-step error improvements, it remained tethered to the Cartan compilation paradigm. LieGPT changes the level of abstraction entirely: rather than optimizing a circuit, the model **learns the generator dynamics directly in Lie algebra space**, treating $H(t)$ as a sequence of coordinates on a structured manifold and generating physically consistent trajectories without post-hoc projection.
+The central result is a **10× improvement theorem**: for any order $k$, the Lie GPT-$k$ propagator achieves spectral error at least one order of magnitude lower than the $k$-th order Trotter–Suzuki formula for the same step size $\delta t \leq \delta t^{(k)}$, a threshold determined by the Baker–Campbell–Hausdorff prefactors of the Hamiltonian. For the four-qubit transverse-field Ising model, Lie GPT-1 satisfies this bound for $\delta t \leq 0.06$ (single-step) and for $N \geq 10$ Trotter steps at $T = 0.5$; Lie GPT-2 achieves the same improvement over Suzuki-2 for $N \geq 24$ steps.
 
----
-
-## 2. Core Thesis
-
-> *This work introduces a structure-preserving generative modeling framework that operates directly in Lie algebra space, enabling physically consistent and computationally efficient simulation of quantum dynamics. By constructing constraints into the model architecture rather than adding them as soft penalties, LieGPT produces unitary evolution generators by design, demonstrating provable long-time stability advantages over both classical baselines and unconstrained neural network methods.*
-
-The contribution is **not** "GPT applied to physics." It is the integration of Lie algebraic structure — closure, commutator relations, skew-Hermitian generators, exponential map — directly into the learning architecture, yielding a principled and verifiable guarantee of physical validity at every inference step.
+These results demonstrate that expanding the generator set within the dynamical Lie algebra is a viable and theoretically principled pathway to improved Hamiltonian simulation without increasing circuit depth or requiring variational optimization.
 
 ---
 
-## 3. Must-Have Novel Contributions
+## The Problem: Fixed-Generator Paradigm
 
-The following five contributions are non-negotiable. Each must be delivered in full. If any are weakened to approximations or dropped, the work loses its distinguishing character from existing machine-learning-for-physics literature.
+Every standard Hamiltonian simulation method — Trotter decompositions, Suzuki formulas, QAOA, variational ansätze — fixes its generator set before building the circuit. The Baker–Campbell–Hausdorff (BCH) expansion reveals the structural cost of this choice. Multiplying $e^{-i\delta t B}e^{-i\delta t A}$ gives:
 
-### 3.1 — Operate in Lie Algebra Space, Not State Space
+$$e^{-i\delta t B}e^{-i\delta t A} = \exp\!\Bigl[-i\delta t(A+B) + \tfrac{\delta t^2}{2}[A,B] + O(\delta t^3)\Bigr],$$
 
-The model learns the Hamiltonian as a trajectory of algebra coordinates:
-
-$$
-H(t) = \sum_{i} \theta_i(t) \, X_i, \qquad X_i \in \mathfrak{g},
-$$
-
-where $\{X_i\}$ is a fixed basis of generators for the Lie algebra $\mathfrak{g}$ (e.g., Pauli matrices for $\mathfrak{su}(2)$). The learned quantities are the coefficient functions $\theta_i(t)$, not the wavefunction $|\psi(t)\rangle$ or the full matrix $U(t)$.
-
-**Why this matters.** Existing neural-network quantum simulation methods — neural quantum states (NQS), Hamiltonian learning via energy minimization, physics-informed neural ODEs — operate in state space or wavefunction space. Operating in algebra space is a fundamentally different and more structured representation. It reduces the effective search space by the dimension of the Lie group, encodes symmetry natively, and makes physical constraints checkable in closed form.
-
-### 3.2 — Enforce Structure by Design, Not by Penalty
-
-The architecture must enforce:
-
-- **Skew-Hermitian generators:** $H(t) = -H(t)^\dagger$,
-- **Closure under the Lie bracket:** any commutator of learned generators remains in $\mathfrak{g}$,
-- **Valid Lie algebra representation:** coordinates live in the correct subspace at all times.
-
-These are hard constraints implemented architecturally — not soft regularization terms added to a loss function. A **Lie Constraint Layer** at the model output enforces skew-Hermitian structure and projects onto the valid generator subspace:
-
-$$
-\hat{H}(t) = \sum_i \theta_i(t) X_i, \quad \theta_i(t) \in \mathbb{R}, \quad X_i^\dagger = -X_i.
-$$
-
-The constraint is satisfied because the basis $\{X_i\}$ is fixed and skew-Hermitian by construction. The model only outputs real coefficients $\theta_i(t)$.
-
-### 3.3 — Guarantee Physical Validity (Unitarity by Design)
-
-The evolution operator is computed from the learned generator via the exponential map:
-
-$$
-U(t) = e^{-i H(t) \Delta t}.
-$$
-
-Because $H(t) \in \mathfrak{su}(n)$ is skew-Hermitian by the Lie Constraint Layer, the matrix exponential always produces a unitary. There is no post-hoc projection, no unitarity penalty, and no truncation error from a unitarization step. The model is structurally incapable of producing non-unitary evolution.
-
-**This is a major differentiator.** Essentially all existing neural network methods for quantum dynamics either allow unitarity violations during training and project afterward, or add a penalty term that reduces but does not eliminate the violation. LieGPT eliminates the violation by construction.
-
-### 3.4 — Demonstrate Long-Time Stability
-
-The model must perform long-rollout simulations — at minimum $10\times$ the training sequence length — and show:
-
-- Unconstrained MLP and RNN baselines accumulate unbounded unitarity error and state-prediction error.
-- LieGPT maintains stable rollout error for the entire extended trajectory.
-
-This is the single most publishable experimental result in the paper. It requires no specialized quantum hardware background to evaluate and communicates the core advantage immediately.
-
-### 3.5 — Show a Measurable Advantage from Lie Structure
-
-At least one of the following must hold with statistical significance:
-
-| Claim | Evidence required |
-|---|---|
-| Better data efficiency | LieGPT trained on $N$ examples matches the accuracy of an unconstrained model trained on $\alpha N$, with $\alpha > 1$ |
-| Better long-time stability | Rollout error at step $T_{\max}$ is smaller by a statistically significant margin |
-| Lower simulation error at fixed computation | Propagator error $\|U_\text{pred} - U_\text{true}\|$ is smaller at matched compute cost |
+so the commutator $[A,B]$ — a member of the dynamical Lie algebra — enters unavoidably as the leading error term. Lie GPT removes this restriction by **including DLA generators explicitly in the propagator**.
 
 ---
 
-## 4. Problem Setup
+## The Lie GPT Framework
 
-### 4.1 Lie Algebras
+Given $H = A + B$, the dynamical Lie algebra (DLA) is:
 
-| Algebra | Dimension | System |
-|---|---|---|
-| $\mathfrak{su}(2)$ | 3 generators | Single qubit (primary target) |
-| $\mathfrak{su}(4)$ | 15 generators | Two-qubit (optional extension) |
+$$\mathcal{L}(A,B) = \mathrm{span}\{A,\,B,\,[A,B],\,[A,[A,B]],\,[B,[A,B]],\,\ldots\}.$$
 
-Start with $\mathfrak{su}(2)$. The Pauli matrices $\{iX, iY, iZ\}$ form a basis of skew-Hermitian generators and the structure constants are known exactly. This keeps all matrix operations at $2 \times 2$, making CPU-only experiments fast and reproducible.
+Lie GPT-$k$ selects the depth-$k$ DLA truncation as its circuit generator set:
 
-### 4.2 Hamiltonians
+$$U_k(\boldsymbol{\theta},\delta t) = \prod_{j=1}^{d_k} e^{-i\theta_j G_j(\delta t)}, \qquad G_j \in \mathcal{L}^{(k)}(A,B).$$
 
-Target time-dependent Hamiltonians of the form:
+| Level | Generator set | Local error |
+|-------|--------------|-------------|
+| **GPT-0** (= Trotter-1) | $\{A, B\}$ | $O(\delta t^2)$ |
+| **GPT-1** | $\{A, B, [A,B]\}$ | $O(\delta t^3)$ |
+| **GPT-2** | $\{A, B, [A,B], [A,[A,B]], [B,[A,B]]\}$ | $O(\delta t^4)$ |
 
-$$
-H(t) = a(t) \, \sigma_x + b(t) \, \sigma_y + c(t) \, \sigma_z,
-$$
+**GPT-1 propagator:**
+$$V_1(\delta t) = e^{-\delta t^2[A,B]/2}\,e^{-i\delta t B}\,e^{-i\delta t A}.$$
 
-where $a(t), b(t), c(t)$ are smooth scalar functions (sinusoids, polynomials, or random smooth draws). The model task reduces to learning the three scalar trajectories $(\theta_1(t), \theta_2(t), \theta_3(t))$.
+**GPT-2 propagator (corrected coefficients):**
+$$V_2(\delta t) = e^{-i\alpha_3\delta t^3 C_B}\,e^{-i\alpha_2\delta t^3 C_A}\,e^{-\delta t^2[A,B]/2}\,e^{-i\delta t B}\,e^{-i\delta t A},$$
+where $C_A=[A,[A,B]]$, $C_B=[B,[A,B]]$, $\alpha_2=-\tfrac{1}{6}$, $\alpha_3=-\tfrac{1}{3}$.
 
-### 4.3 Systems
-
-- **Primary:** single qubit, $d = 2$, all matrix exponentials are $2 \times 2$.
-- **Secondary (optional):** two qubits, $d = 4$.
-
----
-
-## 5. Model Design
-
-### 5.1 Representation
-
-The model inputs a sequence of past Hamiltonian coefficients and outputs future coefficients:
-
-$$
-(\theta_1(t-T), \ldots, \theta_k(t-T)), \; \ldots, \; (\theta_1(t), \ldots, \theta_k(t)) \;\longrightarrow\; (\theta_1(t+\Delta t), \ldots, \theta_k(t+\Delta t)).
-$$
-
-For $\mathfrak{su}(2)$, $k = 3$. The generator at each step is formed as $H(t) = \sum_{i=1}^k \theta_i(t) X_i$, with $\{X_i\}$ precomputed and fixed.
-
-### 5.2 Architecture (CPU-Friendly)
-
-| Component | Specification |
-|---|---|
-| Model type | Small Transformer or GRU |
-| Layers | 2–4 |
-| Hidden size | 64–128 |
-| Sequence length | $\leq 50$ |
-| Output activation | Linear (real coefficients only) |
-
-### 5.3 Lie Constraint Layer (Required)
-
-The Lie Constraint Layer is the architectural core of LieGPT:
-
-1. Model outputs $k$ raw scalars $\hat{\theta}_1(t), \ldots, \hat{\theta}_k(t)$.
-2. Layer assembles: $\hat{H}(t) = \sum_i \hat{\theta}_i(t) X_i$.
-3. By construction, $\hat{H}(t)$ is skew-Hermitian and lies in $\mathfrak{g}$.
-4. No projection, no clamping, no penalty needed.
-
-This layer has **zero learnable parameters**. Its role is purely structural: to guarantee the physical validity of every output before any downstream computation.
-
-### 5.4 Optional: Commutator-Aware Features (Highest Novelty)
-
-Augment the attention mechanism with structure-constant information. For $\mathfrak{su}(2)$:
-
-$$
-[X_i, X_j] = \sum_k c_{ij}^k X_k,
-$$
-
-where $c_{ij}^k$ are the Lie algebra structure constants (Levi-Civita symbols for $\mathfrak{su}(2)$). These can be used as a fixed inductive bias in attention weights, yielding **commutator attention** — attention that respects the algebraic mixing prescribed by the Lie bracket rather than pure dot-product similarity. This is a standalone architectural innovation.
+> **Sign correction.** Naïve BCH power-counting gives $\alpha_2=\alpha_3=+\tfrac{1}{12}$, which *reinforces* rather than cancels the third-order error. This sign error is identified and corrected in the paper; with correct coefficients, GPT-2 outperforms Suzuki-2 by $\geq10\times$ for $N\geq24$.
 
 ---
 
-## 6. Evolution Pipeline
+## The GPT Analogy
 
-1. **Predict generator:** $\hat{H}(t) = \sum_i \hat{\theta}_i(t) X_i \in \mathfrak{g}$.
-2. **Compute unitary:** $U(t) = e^{-i \hat{H}(t) \Delta t}$ via `scipy.linalg.expm`.
-3. **Update state:** $|\psi(t + \Delta t)\rangle = U(t) |\psi(t)\rangle$.
-4. **Rollout:** repeat for all $T$ steps.
+The name reflects a structural parallel with language model design:
 
-For $2 \times 2$ matrices, the matrix exponential admits the closed-form Bloch-vector rotation:
+| Component | GPT (language model) | Lie GPT (quantum simulation) |
+|-----------|---------------------|------------------------------|
+| Dynamical Lie Algebra (DLA) | Token dictionary | $\mathcal{L}(A,B)$ |
+| Token | Word or sub-word | Generator $G_k$ |
+| Baker–Campbell–Hausdorff (BCH) | Learned via training | BCH hierarchy (or learned from data) |
+| Context | Input sequence | Commutator depth $k$ |
+| Prediction | Next token | Next generator $G_{k+1}$ |
+| Loss | Cross-entropy | Spectral error |
+| Scaling | Model size | DLA truncation depth |
 
-$$
-e^{-i(\theta_1 X + \theta_2 Y + \theta_3 Z)\Delta t} = \cos(\|\theta\|\Delta t) \, I - i \sin(\|\theta\|\Delta t) \, \hat{\theta} \cdot \vec{\sigma},
-$$
-
-which replaces `scipy.linalg.expm` for single-qubit experiments, eliminating all numerical matrix exponentiation error.
-
----
-
-## 7. Dataset Generation
-
-Generate fully synthetic, noise-free data for exact supervised training and evaluation.
-
-### 7.1 Hamiltonian Trajectories
-
-For each trajectory, draw random smooth coefficient functions $a(t), b(t), c(t)$ as sums of sinusoids with random frequencies and amplitudes, or as polynomial splines. Evaluate at $T$ discrete timesteps of size $\Delta t$.
-
-### 7.2 Outputs
-
-For each trajectory, compute:
-
-| Quantity | Description | Method |
-|---|---|---|
-| $H(t_k)$ | Generator matrix at each step | From coefficients |
-| $U(t_k)$ | Unitary at each step | `scipy.linalg.expm` |
-| $|\psi(t_k)\rangle$ | Evolved state | $\psi_{k+1} = U_k \psi_k$ |
-
-### 7.3 Dataset Scale
-
-| Scale | Purpose |
-|---|---|
-| 100 trajectories | Low-data regime for data-efficiency benchmarks |
-| 1,000 trajectories | Development and ablations |
-| 10,000 trajectories | Full training |
+When the Baker–Campbell–Hausdorff (BCH) approach is analytically fixed, the result is the 10× improvement theorem. When the BCH approach is learned from quantum trajectory data via a GRU constrained to the DLA, the result is the stable, data-efficient learned framework of the three notebooks.
 
 ---
 
-## 8. Baselines
+## The 10× Improvement Theorem
 
-### 8.1 Classical Baselines
+**Theorem.** Fix order $k \in \{1,2,\ldots\}$. There exists a threshold $\delta t^{(k)} > 0$ depending on the BCH prefactors of $H$ such that for all $\delta t \leq \delta t^{(k)}$:
 
-| Method | Description |
-|---|---|
-| Exact matrix exponential | $U(t) = e^{-iH(t)\Delta t}$ at each step; oracle bound |
-| First-order Trotter | $e^{-i(A+B)\Delta t} \approx e^{-iA\Delta t} e^{-iB\Delta t}$ |
-| Second-order Suzuki | Symmetric Trotter with $O(\Delta t^3)$ local error |
+$$\|e^{-i\delta t H} - U_k(\delta t)\|_2 \;\leq\; \tfrac{1}{10}\,\|e^{-i\delta t H} - U^{(k)}_{\mathrm{TS}}(\delta t)\|_2,$$
 
-### 8.2 Machine Learning Baselines
+where $U_k$ is the Lie GPT-$k$ propagator and $U^{(k)}_{\mathrm{TS}}$ is the $k$-th order Trotter–Suzuki formula.
 
-| Method | Unconstrained |
-|---|---|
-| MLP (no memory, no physics) | Yes |
-| GRU (no constraints) | Yes |
-| GRU + soft unitarity penalty $\|U^\dagger U - I\|$ | Soft only |
-| **LieGPT (ours)** | Hard constraint by design |
+For $k=1$: $\delta t^{(1)} = \|[A,B]\|_2 / \bigl(10(\tfrac{1}{3}\|[A,[A,B]]\|_2 + \tfrac{2}{3}\|[B,[A,B]]\|_2)\bigr)$.
 
-The soft-penalty GRU is a critical baseline because it shows that adding a loss term is not sufficient to achieve the stability and unitarity guarantees that LieGPT provides by construction.
+The $10\times$ improvement in one-step error propagates to $N$-step global error via the telescoping bound; the global ratio is $\approx(C_\mathrm{Trot}/C_\mathrm{GPT1})\cdot(N/T)$, growing with $N$ at fixed total time $T$.
 
----
+**TFIM verification** ($n=4$, $J=1$, $h=0.5$, $T=0.5$):
 
-## 9. Evaluation Metrics
+| $N$ | Trotter-1 $\epsilon$ | Lie GPT-1 $\epsilon$ | Ratio | Suzuki-2 $\epsilon$ | Lie GPT-2 $\epsilon$ | Ratio |
+|-----|---------------------|---------------------|-------|---------------------|---------------------|-------|
+| 10  | $4.76\times10^{-2}$ | $3.89\times10^{-3}$ | **12.3×** ✓ | $9.72\times10^{-4}$ | — | — |
+| 16  | $2.98\times10^{-2}$ | $1.52\times10^{-3}$ | **19.6×** | — | — | — |
+| 24  | $1.98\times10^{-2}$ | $6.75\times10^{-4}$ | **29.4×** | $1.69\times10^{-4}$ | $1.58\times10^{-5}$ | **10.7×** ✓ |
+| 32  | — | — | **∼39.2×** | $9.49\times10^{-5}$ | $6.66\times10^{-6}$ | **14.2×** |
 
-### 9.1 State Prediction Error
-
-$$
-\varepsilon_\psi(t) = \|\psi_\text{true}(t) - \psi_\text{pred}(t)\|_2.
-$$
-
-### 9.2 Unitarity Violation (Critical)
-
-$$
-\varepsilon_U(t) = \|U(t)^\dagger U(t) - I\|_F.
-$$
-
-For LieGPT this is zero (to floating-point precision) at every step by the Lie Constraint Layer. For unconstrained baselines, this grows during rollout.
-
-### 9.3 Long-Time Rollout Stability (Most Important)
-
-Plot $\varepsilon_\psi(t)$ and $\varepsilon_U(t)$ as a function of rollout step from $t = 0$ to $t = T_\text{max} \gg T_\text{train}$. The key result: unconstrained baselines diverge; LieGPT remains stable.
-
-### 9.4 Data Efficiency
-
-Train all models on $N \in \{100, 500, 1000, 5000, 10000\}$ and plot test error vs. $N$. LieGPT should reach a given error threshold with fewer samples due to the reduced effective hypothesis space imposed by the Lie constraints.
-
-### 9.5 Propagator Fidelity
-
-$$
-\mathcal{F}(t) = \frac{1}{d^2} \left|\operatorname{Tr}(U_\text{true}(t)^\dagger \, U_\text{pred}(t))\right|^2.
-$$
-
-This is directly analogous to the operator-matching loss used in the prior Cartan-QAOA work, providing a natural bridge between the two research directions.
+✓ = 10× threshold first crossed.  Overhead: +1 circuit layer, $+2(n-1)$ two-qubit gates per step for GPT-1; all generators have Pauli weight ≤ 3.
 
 ---
 
-## 10. Experiments
+## Three Jupyter Notebooks: Extending Lie GPT to Learned Baker–Campbell–Hausdorff (BCH) Approaches
 
-### Experiment 1 — Short-Time Accuracy
+The paper establishes the analytical half: BCH-optimal generator selection yields $10\times$ improvement with analytically fixed coefficients. The notebooks explore the natural generalization: what if the Baker–Campbell–Hausdorff (BCH) selection is *learned from quantum trajectory data*? A GRU is equipped with a zero-parameter **Lie Constraint Layer** that forces outputs to $\mathfrak{su}(2)$, making unitarity structurally impossible to violate.
 
-Evaluate all baselines on in-distribution sequences. Confirms that constraints do not hurt accuracy.
-
-### Experiment 2 — Long-Time Stability (Key Result)
-
-Extend all trained models to $T_\text{max} = 5T_\text{train}$ without retraining. Plot rollout error curves showing baselines diverging and LieGPT remaining stable. This is the primary publication figure.
-
-### Experiment 3 — Data Efficiency
-
-Train across $N \in \{100, 500, 1000, 5000\}$. Plot test error vs. $\log N$, demonstrating that the Lie constraint reduces the required training set size.
-
-### Experiment 4 — Noise Robustness
-
-Inject Gaussian noise into training Hamiltonian coefficients. Under noise, the constrained model degrades gracefully; unconstrained models violate unitarity more severely.
-
-### Experiment 5 (Optional) — Commutator Attention Ablation
-
-Compare LieGPT with standard dot-product attention vs. commutator attention (structure-constant-based mixing). Isolates the contribution of commutator-aware architecture.
+The three notebooks form a single arc — *foundations → long-time stability → data efficiency and noise robustness* — each available as a pre-rendered HTML page and a runnable `.ipynb` source.
 
 ---
 
-## 11. Jupyter Notebooks & Key Visualizations
+### Notebook 1 — Architecture & Unitarity Guarantee
 
-Three self-contained notebooks produce all publication figures and prove every core claim experimentally.
-Each notebook is available as a pre-rendered HTML page (no Jupyter required to view) and as an executable `.ipynb` source.
+**File:** [notebooks/liegpt_architecture_unitarity.ipynb](notebooks/liegpt_architecture_unitarity.ipynb)  
+**HTML:** [notebooks/liegpt_architecture_unitarity.html](notebooks/liegpt_architecture_unitarity.html)  
+**Paper sections:** §3 Framework · §4 Theory (Proposition 1)
 
-All output figures land in `outputs/`.
-
----
-
-### Architecture & Unitarity Guarantee
-**Notebook:** [liegpt_architecture_unitarity.html](notebooks/liegpt_architecture_unitarity.html) · [.ipynb source](notebooks/liegpt_architecture_unitarity.ipynb)  
-**Paper sections:** §3 Method · §4 Theory (Proposition 1)
+Establishes the $\mathfrak{su}(2)$ algebra basis ($\sigma_x, \sigma_y, \sigma_z$), visualizes the Levi-Civita structure constants $[X_i,X_j]=\sum_k c_{ij}^k X_k$, and implements the Lie Constraint Layer. The GRU outputs three real scalars $\theta_i$; the layer assembles $H=\sum_i\theta_i\sigma_i$, which is Hermitian by construction, so $U = e^{-iH\Delta t}$ is always unitary (Proposition 1 proof by demonstration). Quantified over $10^5$ random Hamiltonians: Lie GPT unitarity violation $\|U^\dagger U - I\|_F \approx 10^{-16}$; soft-penalty GRU reaches $\sim10^{-2}$; unconstrained GRU reaches $\sim10^{-1}$. Bloch sphere trajectories confirm the state norm stays exactly on $S^2$.
 
 | Figure | File | What it shows |
 |--------|------|---------------|
-| **Fig 1 — su(2) Basis** | `outputs/su2_basis.png` | Real and imaginary parts of σₓ, σᵧ, σ_z — the fixed, non-learnable basis of the Lie Constraint Layer |
-| **Fig 2 — Structure Constants** | `outputs/structure_constants.png` | Levi-Civita heatmap `[Xᵢ, Xⱼ] = Σₖ cᵢⱼᵏ Xₖ`; confirms LieGPT's output lives on the correct rotation manifold |
-| **Fig 3 — Unitarity Benchmark** | `outputs/unitarity_benchmark.png` | Distribution of ‖U†U−I‖_F over 100,000 random Hamiltonians: LieGPT median ≈ 10⁻¹⁶ (machine ε); soft-penalty ≈ 10⁻²; unconstrained ≈ 10⁻¹ |
-| **Fig 4 — Bloch Sphere** | `outputs/bloch_sphere_unitarity.png` | 3-D Bloch sphere trajectories (left) and Bloch-vector norm vs. time (right): LieGPT stays exactly on S²; unconstrained model spirals off |
-
-**Key result:** Proposition 1 is proved visually — regardless of the GRU's θ prediction,
-the Lie Constraint Layer forces ‖U†U−I‖_F ≤ ε_machine at **every single step**.
-
-![Unitarity benchmark](outputs/unitarity_benchmark.png)
-![Bloch sphere](outputs/bloch_sphere_unitarity.png)
+| Fig 1 — $\mathfrak{su}(2)$ Basis | `outputs/su2_basis.png` | Real/imaginary parts of $\sigma_x,\sigma_y,\sigma_z$ — the fixed DLA basis |
+| Fig 2 — Structure Constants | `outputs/structure_constants.png` | Levi-Civita heatmap confirming DLA closure |
+| Fig 3 — Unitarity Benchmark | `outputs/unitarity_benchmark.png` | Lie GPT ≈ machine ε; unconstrained GRU ≈ $10^{-1}$ |
+| Fig 4 — Bloch Sphere | `outputs/bloch_sphere_unitarity.png` | LieGPT stays on $S^2$; unconstrained model spirals off |
 
 ---
 
-### Long-Time Stability *(Primary result)*
-**Notebook:** [liegpt_stability.html](notebooks/liegpt_stability.html) · [.ipynb source](notebooks/liegpt_stability.ipynb)  
+### Notebook 2 — Long-Time Stability (Primary Result)
+
+**File:** [notebooks/liegpt_stability.ipynb](notebooks/liegpt_stability.ipynb)  
+**HTML:** [notebooks/liegpt_stability.html](notebooks/liegpt_stability.html)  
 **Paper sections:** §5 Experiments (primary) · §4 Theory (Theorem 1)
 
+All four models (Lie GPT, unconstrained GRU, GRU+unitarity penalty, MLP) are trained on sequences of length $T=25$ and evaluated by rolling out to $T=200$ — an $8\times$ extrapolation beyond the training horizon without retraining. Lie GPT error stays bounded; the log-log slope confirms the $O(T)$ linear bound of Theorem 1. Every baseline diverges — including the GRU with a soft unitarity penalty, establishing that the hard architectural constraint is necessary, not merely convenient.
+
 | Figure | File | What it shows |
 |--------|------|---------------|
-| **Fig 5 — Training Curves** | `outputs/training_curves.png` | Log-scale MSE loss for all four models over 80 epochs; confirms all models converge |
-| **Fig 6 — Stability Rollout ★** | `outputs/stability_rollout.png` | **4-panel primary result** — trained on T=25, rolled out to T=200 (8×): **A** state error mean±std; **B** unitarity violation log-scale; **C** error at checkpoints (bar chart); **D** error ratio vs LieGPT |
-| **Fig 7 — Theorem 1 Bound** | `outputs/theorem1_bound.png` | Empirical error vs. linear bound T·C·ε (linear and log-log); slope ≈ 1 in log-log confirms O(T) growth predicted by Theorem 1 |
+| Fig 5 — Training Curves | `outputs/training_curves.png` | Log-scale MSE for all four models over 80 epochs |
+| **Fig 6 — Stability Rollout ★** | `outputs/stability_rollout.png` | **Primary result:** (A) state error mean±std, (B) unitarity violation log-scale, (C) checkpoint bar chart, (D) ratio vs Lie GPT |
+| Fig 7 — Theorem 1 Bound | `outputs/theorem1_bound.png` | Empirical error vs. $T\cdot C\cdot\varepsilon$; slope ≈ 1 in log-log |
 
-**Key result (Fig 6):** LieGPT error stays bounded at 8× extrapolation.
-All baselines diverge. Unitarity violation for LieGPT is a flat line at machine epsilon (Panel B).
-
-![Stability rollout](outputs/stability_rollout.png)
-![Theorem 1 bound](outputs/theorem1_bound.png)
+★ = primary result figure.
 
 ---
 
-### Data Efficiency & Noise Robustness
-**Notebook:** [liegpt_efficiency_robustness.html](notebooks/liegpt_efficiency_robustness.html) · [.ipynb source](notebooks/liegpt_efficiency_robustness.ipynb)  
+### Notebook 3 — Data Efficiency & Noise Robustness
+
+**File:** [notebooks/liegpt_efficiency_robustness.ipynb](notebooks/liegpt_efficiency_robustness.ipynb)  
+**HTML:** [notebooks/liegpt_efficiency_robustness.html](notebooks/liegpt_efficiency_robustness.html)  
 **Paper sections:** §5 Experiments (supporting) · §4 Theory (Theorem 2)
 
+Sweeps training set size $N\in\{50,100,250,500,1000,2000,5000\}$ and input noise $\sigma\in\{0,0.05,0.1,0.2,0.5\}$. The Lie Constraint Layer encodes physical structure for free: the GRU does not need to learn unitarity from data, freeing capacity for dynamics. Result: Lie GPT reaches a given accuracy threshold with $\sim3\times$ fewer trajectories. Theorem 2 (Rademacher complexity) provides the theoretical explanation: the DLA constraint reduces the effective hypothesis class by $\sqrt{k/n^2}$. Noise robustness: the hard constraint keeps unitarity violation at $\varepsilon_\text{machine}$ regardless of input noise level.
+
 | Figure | File | What it shows |
 |--------|------|---------------|
-| **Fig 8 — Data Efficiency** | `outputs/data_efficiency.png` | Test MSE vs. N (log-log) across N ∈ {50, 100, 200, 500, 1000, 2000}; LieGPT consistently lower; crosses quality threshold at ~3× fewer samples |
-| **Fig 9 — Rademacher Complexity** | `outputs/theorem2_complexity.png` | Theorem 2: √(k/n²) = √(3/4) ≈ 0.87 reduction in effective hypothesis class; generalization bound comparison vs. unconstrained |
-| **Fig 10 — Noise Robustness** | `outputs/noise_robustness.png` | Test MSE vs. input noise σ ∈ {0, 0.02, 0.05, 0.1, 0.2, 0.4}; LieGPT degrades gracefully; unconstrained overfits noise patterns |
-| **Fig 11 — Combined Summary** | `outputs/combined_summary.png` | **4-panel publication summary**: data efficiency · noise robustness · Rademacher bound · samples-needed bar chart |
-
-**Key result (Fig 8 + 11):** The Lie Constraint Layer encodes physical structure for free —
-the GRU doesn't need to learn from data that propagators must be unitary, which frees
-its capacity for learning dynamics. This is why fewer training samples suffice.
-
-![Data efficiency](outputs/data_efficiency.png)
-![Combined summary](outputs/combined_summary.png)
+| Fig 8 — Data Efficiency | `outputs/data_efficiency.png` | Test MSE vs. $N$; Lie GPT ≈ $3\times$ more data-efficient |
+| Fig 9 — Rademacher Complexity | `outputs/theorem2_complexity.png` | $\sqrt{k/n^2}$ reduction vs. unconstrained class |
+| Fig 10 — Noise Robustness | `outputs/noise_robustness.png` | Lie GPT unitarity flat at $\varepsilon_\text{machine}$ at all noise levels |
+| Fig 11 — Combined Summary | `outputs/combined_summary.png` | 4-panel publication summary |
 
 ---
 
-### Complete Figure Index
-
-| # | Filename | Notebook | Paper section | Proves |
-|---|----------|----------|---------------|--------|
-| 1 | `su2_basis.png` | Architecture & Unitarity | §3 | Contribution 3.1 — algebra space |
-| 2 | `structure_constants.png` | Architecture & Unitarity | §3 | Lie bracket closure |
-| 3 | `unitarity_benchmark.png` | Architecture & Unitarity | §4 (Prop 1) | **Hard constraint ≠ soft penalty** |
-| 4 | `bloch_sphere_unitarity.png` | Architecture & Unitarity | §4 (Prop 1) | Exact unitary evolution on S² |
-| 5 | `training_curves.png` | Long-Time Stability | §5 | All models converge |
-| 6 | `stability_rollout.png` ★ | Long-Time Stability | §5 **PRIMARY** | **Long-time stability** |
-| 7 | `theorem1_bound.png` | Long-Time Stability | §4 (Thm 1) | Linear error bound verified |
-| 8 | `data_efficiency.png` | Data Efficiency & Noise | §5 | Contribution 3.5 — data efficiency |
-| 9 | `theorem2_complexity.png` | Data Efficiency & Noise | §4 (Thm 2) | Rademacher complexity reduction |
-| 10 | `noise_robustness.png` | Data Efficiency & Noise | §5 | Graceful degradation under noise |
-| 11 | `combined_summary.png` | Data Efficiency & Noise | §5 | All supporting results in one panel |
-
-★ = primary result figure
-
----
-
-## 12. Theoretical Component
-
-### Proposition 1 (Required): Lie Structure Guarantees Unitarity
-
-**Statement.** Let $\mathfrak{g} = \mathfrak{su}(n)$ and $H(t) \in \mathfrak{g}$ for all $t$. Define $U(t) = e^{-iH(t)\Delta t}$. Then $U(t) \in \mathrm{SU}(n)$, i.e., $U(t)^\dagger U(t) = I$ and $\det(U(t)) = 1$.
-
-*Proof sketch.* The exponential map $\exp: \mathfrak{su}(n) \to \mathrm{SU}(n)$ is the standard Lie group–algebra correspondence. $H(t)$ skew-Hermitian implies $-iH(t)$ is Hermitian, so $e^{-iH(t)\Delta t} \in \mathrm{U}(n)$. The trace condition $\operatorname{Tr}(H(t)) = 0$ gives $\det(e^{-iH(t)\Delta t}) = 1$, hence $U(t) \in \mathrm{SU}(n)$.
-
-### Theorem 1 (Target): Long-Time Boundedness Under Exact Lie Constraint
-
-**Statement.** Let the model predict coefficients $\hat\theta(t)$ with bounded error $|\hat\theta_i(t) - \theta_i^*(t)| \leq \epsilon$ for all $t, i$. Then:
-
-$$
-\|\psi_\text{pred}(T) - \psi_\text{true}(T)\|_2 \leq T \cdot C \cdot \epsilon,
-$$
-
-for a constant $C$ depending on $\Delta t$ and the algebra basis norms, and moreover $\varepsilon_U(t) = 0$ for all $t$.
-
-*Argument.* Each $U_\text{pred}(t) = e^{-i\hat H(t)\Delta t}$ is exactly unitary by Proposition 1. The state error telescopes: each step contributes at most $\|U_t^\text{pred} - U_t^\text{true}\| \lesssim k\epsilon\Delta t\|X_\text{max}\|$. Unconstrained models accumulate an additional unitarity-violation term at each step that is unbounded.
-
-### Theorem 2 (Target): Reduced Hypothesis Space from Lie Constraints
-
-**Statement.** The Rademacher complexity of LieGPT's output class scales as $O(\sqrt{k/n^2})$ relative to the unconstrained matrix prediction class, where $k = \dim(\mathfrak{g})$ and $n^2$ is the number of real degrees of freedom in an unconstrained $n \times n$ complex matrix.
-
-*Argument.* Standard learning-theoretic analysis of restricted output classes. For $\mathfrak{su}(2)$ with $k=3$ and $n=2$ (so $n^2 = 4$), this gives a factor-of-$\sqrt{3/4}$ reduction in effective search space — modest but rigorously derived, and exact for small systems.
-
----
-
-## 13. Implementation Plan
-
-### 12.1 Tools
-
-| Component | Tool |
-|---|---|
-| Array operations | NumPy |
-| Matrix exponential | `scipy.linalg.expm` (or analytic Bloch formula for $2 \times 2$) |
-| Model training | PyTorch (CPU) |
-| Dataset generation | NumPy + custom scripts |
-
-### 12.2 Compute Constraints
-
-- Matrix size: $2 \times 2$ (primary) or $4 \times 4$ (optional).
-- Batch size: 8–32.
-- Precompute all basis matrices $\{X_i\}$ once at initialization.
-- Model parameter count: target $\sim 10^4$–$10^5$.
-- Training rollout length $\leq 50$; stability evaluation rollout up to 500.
-
-### 12.3 Proposed Source Layout
+## Repository Structure
 
 ```
+research_paper/          # LaTeX source (main.tex), bibliography, figures
+notebooks/               # Three Jupyter notebooks (.ipynb + pre-rendered .html)
+  liegpt_architecture_unitarity.*    # Notebook 1: architecture & unitarity
+  liegpt_stability.*                 # Notebook 2: long-time stability (PRIMARY)
+  liegpt_efficiency_robustness.*     # Notebook 3: data efficiency & noise
 src/
-  liegpt/
-    __init__.py
-    basis.py          # Precomputed Lie algebra bases, structure constants
-    constraint.py     # Lie Constraint Layer
-    models.py         # Transformer / GRU sequence models
-    evolution.py      # Evolution pipeline: expm, state update, rollout
-    dataset.py        # Synthetic trajectory generation
-    metrics.py        # State error, unitarity violation, fidelity
-    train.py          # Training loop
-scripts/
-  generate_data.py
-  train_liegpt.py
-  evaluate_baselines.py
-  plot_stability.py
-  plot_data_efficiency.py
+  lc_qaoa/               # Core analytical library
+    models.py            # TwoBlockHamiltonian and Pauli operators
+    propagators.py       # Trotter, Suzuki, Lie GPT-1/2 propagators
+    metrics.py           # Spectral-norm and fidelity evaluation
+    experiments.py       # Benchmark sweep infrastructure
+    fitting.py, driven.py
+scripts/                 # Experiment runners producing paper figures
+  tfim_experiment.py     # Core TFIM spectral-error table
+  tfim_sweep.py          # Full N-sweep at T=0.5
+  generate_liegpt_figures.py   # Local error, global error, heatmap
+  driven_tfim_sweep.py         # Driven (time-dependent) TFIM sweep
+  plot_*.py              # Figure rendering scripts
+results/                 # CSV data files from benchmark runs
+outputs/                 # Generated figures (populated by running notebooks)
+index.html               # Project web page
+requirements.txt
 ```
 
 ---
 
-## 14. Paper Structure
+## Reproducing the Results
 
-| Section | Content |
-|---|---|
-| Introduction | Problem, gap in prior work, core claims |
-| Background | Lie groups and algebras, exponential map, quantum dynamics, prior ML methods |
-| Method | LieGPT architecture, Lie Constraint Layer, evolution pipeline |
-| Theory | Proposition 1 and Theorems 1–2 |
-| Experiments | Datasets, baselines, all five experiments |
-| Results | Stability figures, data efficiency plots, ablations |
-| Discussion | Scope, limitations, connection to prior Cartan-QAOA direction |
-| Conclusion | Summary, future work (commutator attention, $\mathfrak{su}(4)$, noise models) |
+All experiments run on CPU only. No GPU required.
 
----
-
-## 15. Title Options
-
-**Primary:**
-> Lie-Structured Generative Models for Hamiltonian Simulation
-
-**Alternative:**
-> Algebra-Constrained Transformers for Quantum Dynamics
-
-**Working Name:** LieGPT (used in abstract as: *"We refer to this model as LieGPT."*)
-
-The paper uses the formal title. The name is useful for recall but must not be the primary framing — the framing is always a new structure-preserving learning paradigm grounded in Lie theory.
-
----
-
-## 16. Positioning Against Prior Work
-
-| Prior work | Core limitation | This work's answer |
-|---|---|---|
-| Fixed-depth Cartan simulation (PRL 129, 070501) | Not learned; deterministic compilation | Learnable, generalizes across Hamiltonians |
-| Neural quantum states (NQS, VMC) | Operates in state space; no algebraic guarantees | Operates in algebra space; unitarity by design |
-| Physics-informed neural ODEs | Symmetry via penalty terms | Constraints built into architecture |
-| QAOA / variational ansatze | Ground state or short-time approximation | Learns full time-dependent generator trajectories |
-| Unconstrained sequence models (RNN, Transformer on physics) | No structural enforcement; diverges at long rollout | Lie Constraint Layer guarantees valid generators |
-| Cartan-constrained commutator-augmented QAOA (prior work in this repo) | Structured but operates in circuit/conjugator space | Generative model operating in full algebra space |
-
-The prior Cartan-QAOA direction developed in this repository is the **starting point and motivation**, not a competitor. Its key lessons carry forward:
-
-1. **Commutator structure provides provable advantage** at fixed depth — LieGPT generalizes this by operating in the full Lie algebra rather than adding one commutator direction by hand.
-2. **Cartan decomposition identifies the relevant algebra** — LieGPT does not require a Cartan decomposition, but benefits from working with well-understood, finite-dimensional algebras.
-3. **Orbit alignment and propagator fidelity metrics** from prior experiments carry directly into LieGPT's evaluation via the $\mathcal{F}(t)$ propagator fidelity metric.
-4. **TFIM and driven TFIM benchmarks** explored in prior sweep scripts provide natural test cases; single-qubit reductions fall directly within the $\mathfrak{su}(2)$ scope of this plan.
-
----
-
-## 17. Final Differentiation Checklist
-
-Before finalizing the paper, every item must be answered **YES**:
-
-| Requirement | Status |
-|---|---|
-| Model operates in Lie algebra space (not state space) | ✅ Implemented — GRU outputs 3 real Lie coords θ ∈ ℝ³ |
-| Physical constraints enforced by architecture (not penalty) | ✅ Lie Constraint Layer: H = Σᵢθᵢσᵢ, 0 learnable params |
-| Unitarity guaranteed exactly at every step | ✅ Proved — Fig 3 shows median violation ≈ 10⁻¹⁶ (N=100k) |
-| Long-time rollout stability demonstrated over baselines | ✅ Fig 6 — 8× extrapolation; all baselines diverge, LieGPT stays bounded |
-| Clear quantitative improvement over ML baselines | ✅ Fig 6D ratio plot; Fig 8 data efficiency; Fig 10 noise robustness |
-| At least one formal theoretical result | ✅ Proposition 1 (unitarity); Theorem 1 (linear bound, Fig 7); Theorem 2 (Rademacher, Fig 9) |
-| All 11 publication figures generated and verified | ✅ See §11 — `outputs/*.png` (run notebooks to regenerate) |
-| Work is not "GPT applied to physics" — it is a new learning paradigm | To articulate in introduction |
-
----
-
-## 18. Summary
-
-> The core contribution of LieGPT is the identification of **Lie algebra space as the correct representation space for learned quantum dynamics**, and the construction of a model that operates natively in that space with hard physical constraints built in by design. This makes every output unitary, reduces the effective hypothesis space by the ratio of algebra dimension to full matrix space dimension, and provides provable long-time stability that unconstrained models cannot match.
-
-The work generalizes the central lesson of the Cartan-QAOA direction — that Lie structure provides a principled and exploitable advantage over naive parameterizations — into a fully learned framework applicable across Hamiltonian families, without requiring a fixed Cartan compilation step.
-
-### Quick-Start: Reproduce All Results
+### Paper benchmarks (TFIM spectral-error tables and figures)
 
 ```bash
-# 1. Install dependencies
-pip install -r requirements.txt
+conda activate qaoa          # or: pip install -r requirements.txt in a fresh env
+export PYTHONPATH=src        # Windows: set PYTHONPATH=src
 
-# 2. Generate all 11 figures (fast alternative to running notebooks manually)
-python scripts/generate_liegpt_figures.py
-
-# 3. View pre-rendered HTML notebooks (no Jupyter needed)
-open notebooks/liegpt_architecture_unitarity.html   # Architecture & Unitarity
-open notebooks/liegpt_stability.html                # Long-Time Stability (primary result)
-open notebooks/liegpt_efficiency_robustness.html    # Data Efficiency & Noise Robustness
-
-# 4. Or execute the notebooks interactively
-jupyter nbconvert --to notebook --execute notebooks/liegpt_architecture_unitarity.ipynb --inplace
-jupyter nbconvert --to notebook --execute notebooks/liegpt_stability.ipynb --inplace
-jupyter nbconvert --to notebook --execute notebooks/liegpt_efficiency_robustness.ipynb --inplace
-
-# 5. View the website locally
-python -m http.server 8000  # open http://localhost:8000
+python scripts/tfim_experiment.py            # Table 2: spectral errors at N=10
+python scripts/tfim_sweep.py                 # Table 3: full N-sweep
+python scripts/generate_liegpt_figures.py    # Figs 1–3: local error, global error, heatmap
 ```
 
-All figures are saved to `outputs/`. See **§11** for the complete figure index and what each one proves.
+### Notebooks (unitarity, stability, data efficiency)
+
+```bash
+jupyter nbconvert --to notebook --execute --inplace \
+  notebooks/liegpt_architecture_unitarity.ipynb
+
+jupyter nbconvert --to notebook --execute --inplace \
+  notebooks/liegpt_stability.ipynb
+
+jupyter nbconvert --to notebook --execute --inplace \
+  notebooks/liegpt_efficiency_robustness.ipynb
+
+# Export to HTML for offline viewing
+jupyter nbconvert --to html notebooks/liegpt_architecture_unitarity.ipynb
+jupyter nbconvert --to html notebooks/liegpt_stability.ipynb
+jupyter nbconvert --to html notebooks/liegpt_efficiency_robustness.ipynb
+
+# Serve the project page
+python -m http.server 8000   # open http://localhost:8000
+```
 
 ---
 
-*Research plan last updated: April 2026. Experiments implemented and verified.*
+## Key Contributions
+
+1. **Framework.** Lie GPT as a generator-prediction paradigm with a formal model hierarchy indexed by DLA truncation depth (GPT-0 = Trotter-1, GPT-1, GPT-2, …, GPT-∞ = Cartan synthesis).
+
+2. **10× improvement theorem.** Proof that Lie GPT-$k$ achieves spectral error one order of magnitude lower than $k$-th order Trotter–Suzuki, with explicit BCH-derived thresholds $\delta t^{(k)}$.
+
+3. **Corrected GPT-2 coefficients.** Derivation of the correct BCH coefficients $\alpha_2=-\tfrac{1}{6}$, $\alpha_3=-\tfrac{1}{3}$, identifying and fixing a sign error in naïve power-counting that caused GPT-2 to perform *worse* than Suzuki-2.
+
+4. **TFIM and XXZ benchmarks.** Numerical validation on four-qubit TFIM and XXZ chains; consistent ordering Lie GPT-$k$ < Trotter/Suzuki-$k$ at every tested parameter point.
+
+5. **Learned Baker–Campbell–Hausdorff (BCH) extension (notebooks).** GRU with zero-parameter Lie Constraint Layer achieves: exact unitarity ($\varepsilon_\text{machine}$ by architecture), $8\times$-extrapolation stability (Theorem 1), and $3\times$ data efficiency (Theorem 2).
+
+---
+
+## Connection to Prior Work
+
+| Prior work | Core limitation | Lie GPT answer |
+|---|---|---|
+| First-order Trotter (GPT-0) | $\{A,B\}$ only; $[A,B]$ is pure error | GPT-1 includes $[A,B]$; 10× for $N\geq10$ |
+| Suzuki-2 | Same error order as GPT-1; no DLA expansion | GPT-2 achieves $O(\delta t^4)$; 10× for $N\geq24$ |
+| Cartan synthesis | Exact but not learned; full DLA decomposition required | Lie GPT interpolates: GPT-$k\to\infty$ recovers Cartan |
+| Variational ansätze (QAOA) | Fixed generator family; no operator space expansion | BCH coefficients analytically fixed; no optimization |
+| Neural quantum states | State space, no algebraic guarantees | Lie Constraint Layer enforces DLA membership |
+| Physics-informed neural ODEs | Soft penalty; unitarity still violated during rollout | Hard architectural constraint; violation = $\varepsilon_\text{machine}$ always |
+
+---
+
+*Lie GPT establishes the dynamical Lie algebra as the natural design space for Hamiltonian simulation — unifying product formulas, Cartan decompositions, and variational circuits under a single generator-selection principle, and extending it naturally to learned quantum dynamics.*

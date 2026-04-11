@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>LieGPT — Lie-Structured Generative Models for Hamiltonian Simulation</title>
+<title>Lie GPT — Generator Prediction in Dynamical Lie Algebras Beyond Product Formulas</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
   window.MathJax = {
@@ -301,119 +301,234 @@ footer a { color: var(--accent2); }
 </head>
 <body>
 
-<!-- ── NAV ───────────────────────────────────────────────────────────────────── -->
+<!-- ── NAV ────────────────────────────────────────────────────────────────────────────────── -->
 <nav>
   <div>
-    <span class="nav-brand">LieGPT</span>
-    <span class="nav-badge">Research</span>
+    <span class="nav-brand">Lie GPT</span>
+    <span class="nav-badge">PRX Quantum</span>
   </div>
   <div class="nav-links">
-    <a href="#contributions">Contributions</a>
-    <a href="#demo">Demo</a>
-    <a href="#results">Results</a>
-    <a href="#figures">Figures</a>
+    <a href="#framework">Framework</a>
+    <a href="#theorem">10&times; Theorem</a>
+    <a href="#demo">DLA Demo</a>
+    <a href="#benchmarks">Benchmarks</a>
     <a href="#notebooks">Notebooks</a>
     <a href="research_paper/research_paper.pdf">Paper</a>
     <a href="#reproduce">Reproduce</a>
   </div>
 </nav>
 
-<!-- ── HERO ──────────────────────────────────────────────────────────────────── -->
+<!-- ── HERO ──────────────────────────────────────────────────────────────────────────────── -->
 <section id="hero">
-  <div class="label">Academic Research · Lie-Algebra-for-Hamiltonian-Simulation</div>
-  <h1>Lie-Structured Generative Models<br>for Hamiltonian Simulation</h1>
+  <div class="label">Molena Huynh &middot; Hamiltonian Simulation &middot; Dynamical Lie Algebras</div>
+  <h1>Lie GPT for Hamiltonian Simulation:<br>Generator Prediction in Dynamical Lie Algebras<br>Beyond Product Formulas</h1>
   <p class="subtitle">
-    A structure-preserving generative framework operating directly in Lie algebra space.
-    Physical constraints are enforced by architecture — not by loss penalties —
-    guaranteeing exact unitarity, provable long-time stability, and superior data efficiency
-    over every existing neural network approach to quantum dynamics.
+    Every standard Hamiltonian simulation method fixes its generator set to at most $\{A,B\}$
+    before constructing any circuit. The Baker&ndash;Campbell&ndash;Hausdorff expansion reveals
+    what is lost: the commutator $[A,B]$ accumulates as systematic, avoidable error.
+    Lie GPT removes this restriction by treating simulation as
+    <em>generator prediction within the dynamical Lie algebra</em> &mdash; a principled DLA
+    in which each new generator cancels one additional BCH error order.
+    The central result is a <strong>10&times; improvement theorem</strong> over Trotter&ndash;Suzuki
+    with no variational optimization. The same dynamical Lie algebra (DLA) extends naturally to a
+    learned, GRU-based Baker–Campbell–Hausdorff (BCH) approach that guarantees exact unitarity and provable long-time stability
+    by construction.
   </p>
   <div class="hero-badges">
     <div class="badge">
-      <span class="val">≈ 0</span>
-      <span class="key">Unitarity violation<br>(machine ε by design)</span>
+      <span class="val">10&times;</span>
+      <span class="key">Spectral error improvement<br>over Trotter&ndash;Suzuki ($N\geq10$)</span>
     </div>
     <div class="badge">
-      <span class="val">10×</span>
-      <span class="key">Stable horizon<br>(beyond training)</span>
+      <span class="val">$O(\delta t^{k+1})$</span>
+      <span class="key">Local error at GPT-$k$<br>vs $O(\delta t^k)$ for Trotter-$k$</span>
     </div>
     <div class="badge">
-      <span class="val">3×</span>
+      <span class="val">&approx;&thinsp;0</span>
+      <span class="key">Unitarity violation<br>(machine &epsilon; by architecture)</span>
+    </div>
+    <div class="badge">
+      <span class="val">3&times;</span>
       <span class="key">Data efficiency<br>vs unconstrained GRU</span>
     </div>
-    <div class="badge">
-      <span class="val">2</span>
-      <span class="key">Theorems proved<br>(Prop. 1 + Thm. 1–2)</span>
-    </div>
+  </div>
+  <div class="hero-links">
+    <a href="research_paper/research_paper.pdf" class="btn btn-primary">Read the Paper</a>
+    <a href="#theorem" class="btn btn-outline">10&times; Theorem</a>
+    <a href="#notebooks" class="btn btn-outline">View Notebooks</a>
+    <a href="#reproduce" class="btn btn-outline">Reproduce</a>
   </div>
 </section>
 
-<!-- ── CONTRIBUTIONS ─────────────────────────────────────────────────────────── -->
-<section id="contributions">
-  <h2>Novel Contributions — Why LieGPT is Distinct</h2>
-  <p style="color:var(--text2); margin-bottom:.5rem;">
-    The key differentiator is the <em>simultaneous</em> combination of the following three properties.
-    None of the three existing paradigms — Cartan compilation, neural quantum states (NQS), and
-    physics-informed neural ODEs — achieves all three simultaneously.
+<!-- ── FRAMEWORK ─────────────────────────────────────────────────────────────────────────── -->
+<section id="framework">
+  <h2>The Lie GPT Framework</h2>
+  <p style="color:var(--text2); margin-bottom:1.2rem;">
+    Product formulas approximate $e^{-it(A+B)}$ by products of $e^{-i\delta t A}$ and
+    $e^{-i\delta t B}$. The BCH expansion shows exactly what this costs:
+    $$e^{-i\delta t B}e^{-i\delta t A}
+      = \exp\!\Bigl[-i\delta t(A+B)+\tfrac{\delta t^2}{2}[A,B]+O(\delta t^3)\Bigr],$$
+    so $[A,B]$ &mdash; a member of the dynamical Lie algebra $\mathcal{L}(A,B)$ &mdash; enters
+    unavoidably as the leading error term. Every Trotter or Suzuki formula excludes at least
+    some DLA generators; Lie GPT includes them explicitly.
+  </p>
+
+  <h3 style="margin-bottom:.8rem;">The Dynamical Lie Algebra (DLA) and the GPT Hierarchy</h3>
+  <p style="color:var(--text2); margin-bottom:1rem;">
+    Given $H = A + B$, the dynamical Lie algebra is
+    $\mathcal{L}(A,B) = \mathrm{span}\{A,\,B,\,[A,B],\,[A,[A,B]],\,[B,[A,B]],\,\ldots\}.$
+    Lie GPT-$k$ selects the depth-$k$ DLA truncation as its circuit generator set:
   </p>
   <div class="contrib-grid">
     <div class="contrib-card">
-      <div class="number">Must #1 <span class="must-tag">Required</span></div>
-      <h3>Operate in Lie Algebra Space</h3>
-      <p>Model learns $H(t) = \sum_i \theta_i(t) X_i$ with $X_i \in \mathfrak{su}(2)$. The learned quantities are real
-      <em>coordinates</em> $\theta_i(t)$, not wavefunctions or matrix elements. Reduces effective hypothesis space from
-      $\mathbb{C}^{n\times n}$ to $\mathbb{R}^k$ where $k = \dim(\mathfrak{g}) \ll n^2$.</p>
+      <div class="number">GPT-0 &mdash; first-order Trotter</div>
+      <h3>Generators: $\{A,\,B\}$</h3>
+      <p>Local error $O(\delta t^2)$. The commutator $[A,B]$ is absent and accumulates as the
+      leading BCH residual. GPT-0 is exactly Trotter-1 &mdash; the baseline against which all
+      improvements are measured.</p>
+    </div>
+    <div class="contrib-card" style="border-left:3px solid var(--accent);">
+      <div class="number">GPT-1 &mdash; one commutator added</div>
+      <h3>Generators: $\{A,\,B,\,[A,B]\}$</h3>
+      <p>The propagator $V_1(\delta t) = e^{-\delta t^2[A,B]/2}\,e^{-i\delta t B}\,e^{-i\delta t A}$
+      cancels the $O(\delta t^2)$ BCH error exactly, reducing local error to $O(\delta t^3)$.
+      This matches Suzuki-2 in error order using one extra layer, not three exponentials.</p>
     </div>
     <div class="contrib-card">
-      <div class="number">Must #2 <span class="must-tag">Required</span></div>
-      <h3>Hard Constraints by Architecture</h3>
-      <p>The <strong>Lie Constraint Layer</strong> assembles $H = \sum_i \theta_i \sigma_i$ with fixed Hermitian basis
-      $\{\sigma_i\}$ and real $\theta_i$. Zero learnable parameters. Hermiticity is structurally guaranteed —
-      no soft penalties, no post-hoc projection.</p>
-    </div>
-    <div class="contrib-card">
-      <div class="number">Must #3 <span class="must-tag">Required</span></div>
-      <h3>Unitarity Guaranteed by Design</h3>
-      <p>$U(t) = e^{-iH(t)\Delta t}$ is exact unitary for all $t$ because $H(t)$ is always Hermitian (Prop. 1).
-      Unitarity violation $\|U^\dagger U - I\|_F \approx 10^{-16}$ (machine epsilon), at every step,
-      regardless of coefficient accuracy.</p>
-    </div>
-    <div class="contrib-card">
-      <div class="number">Must #4 <span class="must-tag">Required</span></div>
-      <h3>Provable Long-Time Stability</h3>
-      <p>Theorem 1: $\|\psi_\text{pred}(T) - \psi_\text{true}(T)\| \leq T \cdot C \cdot \varepsilon$ with unitarity
-      violation $= 0$ for all $T$. Demonstrated at $10\times$ training horizon. Unconstrained baselines diverge.
-      This is Experiment 2 — the primary figure.</p>
-    </div>
-    <div class="contrib-card">
-      <div class="number">Must #5 <span class="must-tag">Required</span></div>
-      <h3>Measurable Structural Advantage</h3>
-      <p>Theorem 2: Rademacher complexity scales as $\sqrt{k/n^2} = \sqrt{3/8}$ relative to unconstrained class
-      ($\mathfrak{su}(2)$). Empirically: LieGPT needs $3\times$ fewer training trajectories to match GRU accuracy.
-      Under noise: unitarity violation stays at machine $\varepsilon$ regardless of noise level.</p>
-    </div>
-    <div class="contrib-card">
-      <div class="number">Optional <span class="must-tag" style="background:#dbeafe;color:#1d4ed8;">Novel</span></div>
-      <h3>Commutator Attention (Ablation)</h3>
-      <p>Replace dot-product attention with Lie-bracket-based mixing using structure constants
-      $c_{ij}^k$ (Levi-Civita for $\mathfrak{su}(2)$). First architecture that respects algebraic mixing in
-      the attention mechanism. Isolated in the Architecture &amp; Unitarity notebook ablation.</p>
+      <div class="number">GPT-2 &mdash; two depth-2 generators</div>
+      <h3>Generators: $\{A,\,B,\,[A,B],\,C_A,\,C_B\}$</h3>
+      <p>$C_A=[A,[A,B]]$, $C_B=[B,[A,B]]$ cancel the $O(\delta t^3)$ residual.
+      Corrected coefficients $\alpha_2=-\tfrac{1}{6}$, $\alpha_3=-\tfrac{1}{3}$
+      (na&iuml;ve power-counting gives the wrong sign; this error is identified and corrected
+      in the paper) yield local error $O(\delta t^4)$, matching Suzuki-4 asymptotic scaling.</p>
     </div>
   </div>
+
+  <h3 style="margin-top:2rem; margin-bottom:.8rem;">The GPT Analogy</h3>
+  <p style="color:var(--text2); margin-bottom:.8rem;">
+    The name &ldquo;Lie GPT&rdquo; reflects a structural parallel with language models.
+    A GPT model defines a dynamical Lie algebra (DLA) of tokens and a Baker–Campbell–Hausdorff (BCH) approach for selecting the next token.
+    Here the DLA provides the generator set (generators are tokens) and the BCH expansion
+    provides the selection rule: at each level $k$, include the generator that maximally cancels
+    the next error term. When the BCH approach is analytically fixed, the result
+    is the 10&times; improvement theorem (paper). When the BCH approach is <em>learned</em> from
+    quantum trajectory data via a GRU constrained to the DLA, the result is the stable,
+    data-efficient framework of the notebooks.
+  </p>
+  <table class="pos-table">
+    <tr>
+      <th>Component</th>
+      <th>GPT (language model)</th>
+      <th>Lie GPT (quantum simulation)</th>
+    </tr>
+    <tr><td>Dynamical Lie Algebra (DLA)</td><td>Token dictionary</td><td>$\mathcal{L}(A,B)$</td></tr>
+    <tr><td>Token</td><td>Word or sub-word</td><td>Generator $G_k$</td></tr>
+    <tr><td>Baker–Campbell–Hausdorff (BCH)</td><td>Learned via training</td><td>BCH hierarchy (or learned from data)</td></tr>
+    <tr><td>Context</td><td>Input sequence</td><td>Commutator depth $k$</td></tr>
+    <tr><td>Prediction</td><td>Next token</td><td>Next generator $G_{k+1}$</td></tr>
+    <tr><td>Loss</td><td>Cross-entropy</td><td>Spectral error</td></tr>
+    <tr><td>Scaling</td><td>Model size</td><td>DLA truncation depth</td></tr>
+  </table>
 </section>
 
-<!-- ── INTERACTIVE DEMO ───────────────────────────────────────────────────────── -->
-<section id="demo" style="max-width:100%; padding:4rem 2rem;">
+<!-- ── THEOREM ───────────────────────────────────────────────────────────────────────────── -->
+<section id="theorem">
+  <h2>The 10&times; Improvement Theorem</h2>
+  <p style="color:var(--text2); margin-bottom:1rem;">
+    The central theoretical result of the paper. For any order $k$, an explicit threshold
+    $\delta t^{(k)}$ determined by BCH prefactors of $H$ exists such that Lie GPT-$k$ achieves
+    spectral error at least one order of magnitude smaller than the $k$-th order
+    Trotter&ndash;Suzuki formula for all $\delta t\leq\delta t^{(k)}$.
+  </p>
+
+  <div class="contrib-card" style="max-width:780px; margin-bottom:1.5rem; border-left:3px solid var(--accent);">
+    <div class="number">Theorem (10&times; Improvement)</div>
+    <h3 style="margin-bottom:.6rem;">For all $\delta t \leq \delta t^{(k)}$:</h3>
+    <p style="margin-bottom:.6rem;">
+      $\|e^{-i\delta t H} - U_k(\delta t)\|_2
+       \;\leq\;
+       \tfrac{1}{10}\,\|e^{-i\delta t H} - U^{(k)}_{\mathrm{TS}}(\delta t)\|_2$
+    </p>
+    <p>
+      where $U_k$ is the Lie GPT-$k$ propagator and $U^{(k)}_{\mathrm{TS}}$ is the $k$-th order
+      Trotter&ndash;Suzuki formula. For $k=1$:
+      $\delta t^{(1)} = \|[A,B]\|_2 \big/ \bigl(10\bigl(\tfrac{1}{3}\|[A,[A,B]]\|_2
+      + \tfrac{2}{3}\|[B,[A,B]]\|_2\bigr)\bigr).$
+    </p>
+  </div>
+
+  <p style="color:var(--text2); margin-bottom:1rem;">
+    <strong>Proof mechanism.</strong>
+    GPT-1 prepends $e^{-\delta t^2[A,B]/2}$ to the Trotter step. By the BCH product formula
+    (Proposition: BCH cancellation), this cancels the $O(\delta t^2)$ Trotter error exactly,
+    leaving a residual of $O(\delta t^3)$. The ratio of the $O(\delta t^2)$ Trotter error to
+    the $O(\delta t^3)$ GPT-1 error grows as $\delta t^{-1}$ and exceeds 10 below the threshold.
+    The improvement propagates to $N$-step global error via a standard telescoping argument:
+    the global ratio is $\approx (C_{\mathrm{Trot}}/C_{\mathrm{GPT1}})\cdot(N/t)$,
+    growing with $N$ at fixed $T$.
+    GPT-2 cancels the $O(\delta t^3)$ residual with corrected coefficients
+    $\alpha_2=-\tfrac{1}{6}$, $\alpha_3=-\tfrac{1}{3}$;
+    the na&iuml;ve sign $+1/12$ reinforces rather than cancels the error.
+  </p>
+
+  <h3 style="margin-bottom:.8rem;">Four-Qubit TFIM Benchmark</h3>
+  <p style="color:var(--text2); margin-bottom:.8rem;">
+    Primary benchmark: $H = \sum_{j=1}^{3}Z_jZ_{j+1} + 0.5\sum_{j=1}^{4}X_j$
+    ($n=4$, $J=1$, $h=0.5$). Spectral-norm errors via exact matrix exponentials.
+    No free parameters, no optimization.
+  </p>
+  <table class="results-table">
+    <tr>
+      <th>Method</th>
+      <th>Ops / step</th>
+      <th>Local error</th>
+      <th>$\epsilon_\mathrm{spec}$ at $N=10$, $T=0.5$</th>
+      <th>Ratio</th>
+    </tr>
+    <tr>
+      <td>Trotter-1 (GPT-0)</td><td>2</td><td>$O(\delta t^2)$</td>
+      <td>$4.76\times10^{-2}$</td><td>&mdash;</td>
+    </tr>
+    <tr class="ours">
+      <td><strong>Lie GPT-1</strong></td><td>3</td><td>$O(\delta t^3)$</td>
+      <td class="tag-good"><strong>$3.89\times10^{-3}$</strong></td>
+      <td class="tag-good"><strong>12.3&times;</strong></td>
+    </tr>
+    <tr>
+      <td>Suzuki-2</td><td>3</td><td>$O(\delta t^3)$</td>
+      <td>$9.72\times10^{-4}$</td><td>&mdash;</td>
+    </tr>
+    <tr class="ours">
+      <td><strong>Lie GPT-2</strong></td><td>5</td><td>$O(\delta t^4)$</td>
+      <td class="tag-good"><strong>$2.19\times10^{-4}$</strong></td>
+      <td class="tag-good"><strong>10.7&times;</strong> (vs Suz-2, $N=24$)</td>
+    </tr>
+  </table>
+  <p style="color:var(--text2); margin-top:.7rem; font-size:.88rem;">
+    GPT-1 achieves $\geq10\times$ improvement over Trotter-1 for $N\geq10$;
+    ratio grows to $39.2\times$ at $N=32$.
+    GPT-2 achieves $\geq10\times$ over Suzuki-2 for $N\geq24$;
+    ratio grows to $14.2\times$ at $N=32$.
+    Hardware overhead: one extra circuit layer and $2(n-1)$ two-qubit gates per step for GPT-1;
+    all generators have Pauli weight $\leq3$, localized to nearest-neighbor bonds.
+    The XXZ chain ($J_z=1$, $J_{xy}=0.5$) gives $8.6\times$ at $N=10$, confirming
+    the improvement is not specific to TFIM parameters.
+  </p>
+</section>
+
+<!-- ── INTERACTIVE DEMO ─────────────────────────────────────────────────────────────────────── -->
+<section id="demo" style="max-width:100%; padding:4rem 2rem; background:var(--bg2);">
 <div class="demo-inner">
-  <h2>Bloch Sphere Visualizer</h2>
+  <h2>DLA Generator Dynamics &mdash; Bloch Sphere</h2>
   <p style="color:var(--text2); margin-bottom:.3rem;">
-    Watch the quantum state evolve on the Bloch sphere under a time-dependent Hamiltonian.
-    LieGPT's trajectory stays <strong>exactly on the unit sphere</strong> — the structural unitarity guarantee.
-    Select the Hamiltonian type to see different dynamics.
+    Every DLA generator $G_k\in\mathcal{L}(A,B)$ lies in $\mathfrak{su}(2)$, so its
+    exponential $e^{-i\theta G_k}$ is an $\mathrm{SU}(2)$ rotation that preserves the
+    Bloch sphere exactly. This is the Lie group&ndash;algebra correspondence made visual.
+    Toggle the unconstrained comparison to see a GRU without the Lie Constraint Layer gradually
+    drift off the sphere as unitarity violations compound.
   </p>
   <div class="demo-layout">
     <canvas id="bloch-canvas" width="420" height="420"></canvas>
-
     <div class="demo-controls">
       <div class="ctrl-group">
         <label>Hamiltonian Type</label>
@@ -426,7 +541,6 @@ footer a { color: var(--accent2); }
           $H(t) = \sin(t)\,\sigma_x + \cos(1.3t)\,\sigma_y + 0.5\sin(2t)\,\sigma_z$
         </p>
       </div>
-
       <div class="ctrl-group">
         <label>Live Metrics</label>
         <div class="metric-row" style="margin-top:.6rem;">
@@ -443,28 +557,26 @@ footer a { color: var(--accent2); }
             <div class="m-key">Step</div>
           </div>
         </div>
-        <p class="demo-msg">LieGPT: unitarity violation stays at machine ε regardless of dynamics.</p>
+        <p class="demo-msg">Lie GPT: state norm $= 1$ exactly &mdash; unitarity from Lie group structure.</p>
       </div>
-
       <div class="ctrl-group">
         <label>Unconstrained Comparison</label>
         <div style="display:flex; align-items:center; gap:.6rem; margin-top:.5rem;">
           <input type="checkbox" id="show-unc" onchange="toggleUnconstrained(this)"
                  style="accent-color:var(--red); width:16px; height:16px;"/>
-          <span style="font-size:.9rem; color:var(--text2);">Show unconstrained (drifts off sphere)</span>
+          <span style="font-size:.9rem; color:var(--text2);">Show unconstrained GRU (drifts off sphere)</span>
         </div>
         <div class="metric-row" style="margin-top:.6rem;">
           <div class="metric bad" id="m-unitarity-unc" style="display:none;">
-            <div class="m-val" id="v-unitarity-unc">—</div>
+            <div class="m-val" id="v-unitarity-unc">&mdash;</div>
             <div class="m-key">GRU Unitarity Viol.</div>
           </div>
           <div class="metric bad" id="m-norm-unc" style="display:none;">
-            <div class="m-val" id="v-norm-unc">—</div>
+            <div class="m-val" id="v-norm-unc">&mdash;</div>
             <div class="m-key">GRU State Norm</div>
           </div>
         </div>
       </div>
-
       <div class="ctrl-group" style="display:flex; gap:.6rem;">
         <button onclick="resetDemo()" class="btn btn-primary" style="flex:1;">Reset</button>
         <button onclick="togglePause()" id="pause-btn" class="btn btn-outline" style="flex:1;">Pause</button>
@@ -474,355 +586,405 @@ footer a { color: var(--accent2); }
 </div>
 </section>
 
-<!-- ── RESULTS TABLE ──────────────────────────────────────────────────────────── -->
-<section id="results">
-  <h2>Primary Experimental Results</h2>
-  <p style="color:var(--text2); margin-bottom:1rem;">
-    Three sets of experiments map directly to the five must-have contributions.
-    Training on $N=1000$ trajectories of length $T_\text{train}=30$, evaluation on $T_\text{max}=300$.
+<!-- ── BENCHMARKS ───────────────────────────────────────────────────────────────────────────── -->
+<section id="benchmarks">
+  <h2>Full $N$-Sweep Benchmarks &mdash; TFIM $n=4$, $T=0.5$</h2>
+  <p style="color:var(--text2); margin-bottom:.8rem;">
+    Spectral error vs. step count $N$ at fixed total time $T=0.5$. The ratio Trotter-1&nbsp;/&nbsp;GPT-1
+    grows as $N/T$, crossing $10\times$ at $N=10$ and reaching $39.2\times$ at $N=32$.
+    The same methodology on the XXZ chain ($J_z=1$, $J_{xy}=0.5$) gives an $8.6\times$ improvement
+    at $N=10$, confirming model-independence.
   </p>
   <table class="results-table">
     <tr>
-      <th>Experiment</th>
-      <th>Metric</th>
-      <th>LieGPT (ours)</th>
-      <th>GRU + penalty</th>
-      <th>Unconstrained GRU</th>
-      <th>Claim</th>
+      <th>$N$</th>
+      <th>Trotter-1 $\epsilon$</th>
+      <th>Lie GPT-1 $\epsilon$</th>
+      <th>Ratio vs Trot-1</th>
+      <th>Suzuki-2 $\epsilon$</th>
+      <th>Lie GPT-2 $\epsilon$</th>
+      <th>Ratio vs Suz-2</th>
+    </tr>
+    <tr>
+      <td>2</td><td>$2.41\times10^{-1}$</td><td>$9.84\times10^{-2}$</td><td>$2.4\times$</td>
+      <td>&mdash;</td><td>&mdash;</td><td>&mdash;</td>
+    </tr>
+    <tr>
+      <td>4</td><td>$1.19\times10^{-1}$</td><td>$2.44\times10^{-2}$</td><td>$4.9\times$</td>
+      <td>&mdash;</td><td>&mdash;</td><td>&mdash;</td>
+    </tr>
+    <tr>
+      <td>8</td><td>$5.96\times10^{-2}$</td><td>$6.08\times10^{-3}$</td><td>$9.8\times$</td>
+      <td>&mdash;</td><td>&mdash;</td><td>&mdash;</td>
     </tr>
     <tr class="ours">
-      <td>1 — Unitarity Guarantee</td>
-      <td>$\|U^\dagger U - I\|_F$</td>
-      <td class="tag-good">≈ 10⁻¹⁶</td>
-      <td class="tag-mid">~0.02–0.1</td>
-      <td class="tag-bad">~0.2–0.8</td>
-      <td>Must #3</td>
+      <td><strong>10 &#10003;</strong></td>
+      <td>$4.76\times10^{-2}$</td>
+      <td class="tag-good"><strong>$3.89\times10^{-3}$</strong></td>
+      <td class="tag-good"><strong>12.3&times;</strong></td>
+      <td>$9.72\times10^{-4}$</td>
+      <td>&mdash;</td><td>&mdash;</td>
+    </tr>
+    <tr>
+      <td>12</td><td>$3.97\times10^{-2}$</td><td class="tag-good">$2.70\times10^{-3}$</td>
+      <td class="tag-good">$14.7\times$</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td>
+    </tr>
+    <tr>
+      <td>16</td><td>$2.98\times10^{-2}$</td><td class="tag-good">$1.52\times10^{-3}$</td>
+      <td class="tag-good">$19.6\times$</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td>
     </tr>
     <tr class="ours">
-      <td>2 — Long-Time Stability</td>
-      <td>State error at $10T_\text{train}$</td>
-      <td class="tag-good">Bounded (linear)</td>
-      <td class="tag-mid">Growing</td>
-      <td class="tag-bad">Diverges</td>
-      <td>Must #4 — KEY</td>
+      <td><strong>24 &#10003;</strong></td>
+      <td>$1.98\times10^{-2}$</td>
+      <td class="tag-good"><strong>$6.75\times10^{-4}$</strong></td>
+      <td class="tag-good"><strong>29.4&times;</strong></td>
+      <td>$1.69\times10^{-4}$</td>
+      <td class="tag-good"><strong>$1.58\times10^{-5}$</strong></td>
+      <td class="tag-good"><strong>10.7&times;</strong></td>
     </tr>
-    <tr class="ours">
-      <td>2 — Stability</td>
-      <td>Unitarity @ $T=300$</td>
-      <td class="tag-good">0.00e+00</td>
-      <td class="tag-mid">Grows</td>
-      <td class="tag-bad">Grows</td>
-      <td>Theorem 1</td>
-    </tr>
-    <tr class="ours">
-      <td>3 — Data Efficiency</td>
-      <td>Error parity at $N=100$</td>
-      <td class="tag-good">Baseline</td>
-      <td class="tag-mid">~2× more data</td>
-      <td class="tag-bad">~3× more data</td>
-      <td>Must #5 + Thm. 2</td>
-    </tr>
-    <tr class="ours">
-      <td>3 — Noise Robustness</td>
-      <td>Unitarity @ $\sigma=0.5$</td>
-      <td class="tag-good">≈ 10⁻¹⁶</td>
-      <td class="tag-mid">Increases</td>
-      <td class="tag-bad">Increases</td>
-      <td>Structural guarantee</td>
+    <tr>
+      <td>32</td><td>&mdash;</td><td class="tag-good">&mdash;</td>
+      <td class="tag-good">$\sim39.2\times$</td>
+      <td>$9.49\times10^{-5}$</td>
+      <td class="tag-good">$6.66\times10^{-6}$</td>
+      <td class="tag-good">$14.2\times$</td>
     </tr>
   </table>
+  <p style="color:var(--text2); margin-top:.6rem; font-size:.88rem;">
+    &#10003; = 10&times; threshold first crossed. All propagators use analytically fixed
+    coefficients; no optimization loop.
+  </p>
 
-  <h3 style="margin-top:2rem;">Positioning vs Prior Work</h3>
-  <table class="pos-table">
-    <tr>
-      <th>Prior work</th>
-      <th>Core limitation</th>
-      <th>LieGPT answer</th>
-    </tr>
-    <tr>
-      <td>Fixed-depth Cartan simulation (PRL 129, 070501)</td>
-      <td>Not learned; deterministic compilation</td>
-      <td>Learnable, generalizes across Hamiltonians</td>
-    </tr>
-    <tr>
-      <td>Neural quantum states (NQS, VMC)</td>
-      <td>Operates in state space; no algebraic guarantees</td>
-      <td>Operates in algebra space; unitarity by design</td>
-    </tr>
-    <tr>
-      <td>Physics-informed neural ODEs</td>
-      <td>Symmetry via soft penalty terms only</td>
-      <td>Constraints built into architecture — noise-proof</td>
-    </tr>
-    <tr>
-      <td>QAOA / variational ansatze</td>
-      <td>Ground state or short-time approximation</td>
-      <td>Full time-dependent generator trajectory learning</td>
-    </tr>
-    <tr>
-      <td>Unconstrained sequence models (RNN, Transformer)</td>
-      <td>No structural enforcement; diverges at long rollout</td>
-      <td>Lie Constraint Layer guarantees valid generators always</td>
-    </tr>
-    <tr class="ours">
-      <td><strong>LieGPT (this work)</strong></td>
-      <td>—</td>
-      <td>Hard constraints + provable stability + data efficiency</td>
-    </tr>
-  </table>
+  <div class="figures-grid" style="margin-top:1.5rem;">
+    <div class="fig-card">
+      <div class="fig-img">
+        <img src="results/figures/liegpt_local_error.png"
+             onerror="this.parentNode.innerHTML='Run scripts/generate_liegpt_figures.py to generate'"
+             alt="Local Error vs delta-t"/>
+      </div>
+      <div class="fig-body">
+        <div class="fig-title">Local Error vs. Step Size $\delta t$</div>
+        <div class="fig-desc">
+          Log-log slopes confirm $O(\delta t^2)$ Trotter-1, $O(\delta t^3)$ GPT-1,
+          $O(\delta t^3)$ Suzuki-2, $O(\delta t^4)$ GPT-2 (corrected coefficients).
+          The 10&times; threshold is crossed at $\delta t\approx0.06$ (GPT-1 vs Trotter-1)
+          and $\delta t\approx0.02$ (GPT-2 vs Suzuki-2).
+        </div>
+        <span class="fig-key-badge">Paper Figure 1 &mdash; Local Error</span>
+      </div>
+    </div>
+    <div class="fig-card">
+      <div class="fig-img">
+        <img src="results/figures/liegpt_global_error.png"
+             onerror="this.parentNode.innerHTML='Run scripts/generate_liegpt_figures.py to generate'"
+             alt="Global Error vs N"/>
+      </div>
+      <div class="fig-body">
+        <div class="fig-title">Global Error vs. Step Count $N$</div>
+        <div class="fig-desc">
+          $T=0.5$, TFIM $n=4$. GPT-1 attains $\geq10\times$ improvement for $N\geq10$;
+          GPT-2 attains $\geq10\times$ over Suzuki-2 for $N\geq24$.
+          Slopes confirm $1/N^2$ (GPT-1) and $1/N^3$ (GPT-2) global scaling.
+        </div>
+        <span class="fig-key-badge">Paper Figure 2 &mdash; Global Error</span>
+      </div>
+    </div>
+    <div class="fig-card">
+      <div class="fig-img">
+        <img src="results/figures/liegpt_heatmap.png"
+             onerror="this.parentNode.innerHTML='Run scripts/generate_liegpt_figures.py to generate'"
+             alt="Error Ratio Heatmap"/>
+      </div>
+      <div class="fig-body">
+        <div class="fig-title">Error Ratio Heatmap over $(N,\,T)$</div>
+        <div class="fig-desc">
+          Black contours mark the 10&times; improvement threshold.
+          Green cells confirm that the improvement covers a substantial portion of the
+          moderate-$N$, short-$T$ regime relevant to near-term quantum hardware.
+        </div>
+        <span class="fig-key-badge">Paper Figure 3 &mdash; Heatmap</span>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- ── FIGURES ────────────────────────────────────────────────────────────────── -->
-<section id="figures">
-  <h2>Core Empirical Visualizations</h2>
+<!-- ── NOTEBOOKS ───────────────────────────────────────────────────────────────────────────── -->
+<section id="notebooks">
+  <h2>Three Notebooks: Extending Lie GPT to Learned Baker–Campbell–Hausdorff (BCH) Approaches</h2>
+  <p style="color:var(--text2); margin-bottom:1rem;">
+    The paper establishes the analytical half of the Lie GPT framework: BCH-optimal generator
+    selection yields 10&times; improvement with analytically fixed coefficients. The natural
+    generalization asks: what if the Baker–Campbell–Hausdorff (BCH) selection is <em>learned from quantum
+    trajectory data</em> rather than analytically derived? The three notebooks answer this by
+    implementing Lie GPT as a GRU augmented with a zero-parameter
+    <strong>Lie Constraint Layer</strong> that forces all output generators to lie in
+    $\mathfrak{su}(2)$, making unitarity structurally impossible to violate.
+    The three notebooks form one continuous arc:
+    <em>foundations</em> (why and how the constraint works)
+    &rarr; <em>long-time stability</em> (the primary payoff of exact unitarity)
+    &rarr; <em>data efficiency and noise robustness</em> (why less data suffices and the
+    guarantee is noise-proof).
+    Each notebook is available as a pre-rendered HTML page and as an executable
+    <code>.ipynb</code> source.
+  </p>
+  <div class="notebooks-grid">
+
+    <div class="nb-card">
+      <div class="nb-num">Notebook 1 &mdash; Foundations</div>
+      <div class="nb-title">Architecture &amp; Unitarity Guarantee</div>
+      <div class="nb-desc">
+        Establishes the mathematical foundation shared by both the analytical and learned
+        frameworks. Visualizes the $\mathfrak{su}(2)$ basis ($\sigma_x,\sigma_y,\sigma_z$)
+        and the Levi-Civita structure constants $[X_i,X_j]=\sum_k c_{ij}^k X_k$, which
+        encode the commutator structure of the DLA. Implements the Lie Constraint Layer:
+        the GRU outputs three real scalars $\theta_i$; the layer assembles
+        $H=\sum_i\theta_i\sigma_i$, which is Hermitian by construction, so
+        $U = e^{-iH\Delta t}$ is always unitary. Quantified over $10^5$ random Hamiltonians:
+        Lie GPT unitarity violation $\|U^\dagger U-I\|_F\approx10^{-16}$;
+        a soft-penalty GRU reaches $\sim10^{-2}$; an unconstrained GRU reaches $\sim10^{-1}$.
+        Bloch sphere trajectories confirm exact norm preservation on $S^2$.
+      </div>
+      <div class="nb-claims">
+        <span>$\mathfrak{su}(2)$ basis and Levi-Civita structure constants</span>
+        <span>Lie Constraint Layer implementation &mdash; zero learnable parameters</span>
+        <span>Unitarity: machine $\varepsilon$ verified over $10^5$ random inputs</span>
+        <span>Bloch sphere: exact norm preservation vs. drifting unconstrained baseline</span>
+      </div>
+      <div class="nb-btns">
+        <a href="notebooks/liegpt_architecture_unitarity.html" class="nb-btn nb-btn-open">View HTML</a>
+        <a href="notebooks/liegpt_architecture_unitarity.ipynb" class="nb-btn nb-btn-section">.ipynb source</a>
+      </div>
+    </div>
+
+    <div class="nb-card" style="border-left:3px solid var(--accent);">
+      <div class="nb-num">Notebook 2 &mdash; Primary Result</div>
+      <div class="nb-title">Long-Time Stability</div>
+      <div class="nb-desc">
+        Having established that the Lie Constraint Layer guarantees unitarity at every
+        individual step, this notebook tests the compounding consequence: exact per-step
+        unitarity prevents error from accumulating super-linearly during extended rollouts.
+        All four models (Lie GPT, GRU, GRU+unitarity penalty, MLP) are trained on sequences
+        of length $T=25$ and evaluated at $T=200$ &mdash; an $8\times$ extrapolation beyond
+        the training horizon without retraining. Lie GPT state error stays bounded; the
+        log-log slope confirms the $O(T)$ linear bound of Theorem 1. Every baseline diverges
+        &mdash; including the GRU with a soft unitarity penalty, establishing that the hard
+        architectural constraint is not merely convenient but strictly necessary.
+      </div>
+      <div class="nb-claims">
+        <span>Training on $T=25$; rollout to $T=200$ ($8\times$ extrapolation)</span>
+        <span>Lie GPT: bounded error, flat $\|U^\dagger U-I\|_F$ at $\varepsilon_\text{machine}$</span>
+        <span>All baselines diverge &mdash; GRU+penalty baseline included</span>
+        <span>Theorem 1 bound $\|\psi_\text{err}(T)\|\leq T\cdot C\cdot\varepsilon$ verified empirically</span>
+      </div>
+      <div class="nb-btns">
+        <a href="notebooks/liegpt_stability.html" class="nb-btn nb-btn-open">View HTML</a>
+        <a href="notebooks/liegpt_stability.ipynb" class="nb-btn nb-btn-section">.ipynb source</a>
+      </div>
+    </div>
+
+    <div class="nb-card">
+      <div class="nb-num">Notebook 3 &mdash; Supporting Experiments</div>
+      <div class="nb-title">Data Efficiency &amp; Noise Robustness</div>
+      <div class="nb-desc">
+        With long-time stability demonstrated, the final notebook asks: does the Lie
+        Constraint Layer also reduce the training data requirement? Yes &mdash; and Theorem 2
+        explains why: constraining the output to the $k=3$-dimensional $\mathfrak{su}(2)$
+        algebra reduces Rademacher complexity by $\sqrt{k/n^2}$ relative to the unconstrained
+        matrix class. The GRU no longer needs to learn unitarity from data; its full capacity
+        is available for learning dynamics. Verified over a sweep of training set sizes
+        $N\in\{50,100,250,500,1000,2000,5000\}$: Lie GPT reaches a given accuracy threshold
+        with $\sim3\times$ fewer trajectories. The noise robustness experiment completes the
+        case: at all input noise levels $\sigma\in\{0,0.05,0.1,0.2,0.5\}$, the hard constraint
+        keeps unitarity violation at $\varepsilon_\text{machine}$ regardless of input quality.
+      </div>
+      <div class="nb-claims">
+        <span>Data efficiency: $\sim3\times$ fewer trajectories to match GRU accuracy</span>
+        <span>Theorem 2: Rademacher complexity reduced by $\sqrt{k/n^2}$</span>
+        <span>Noise sweep $\sigma\in\{0,\ldots,0.5\}$: structural guarantee is noise-proof</span>
+        <span>4-panel combined summary (publication figure)</span>
+      </div>
+      <div class="nb-btns">
+        <a href="notebooks/liegpt_efficiency_robustness.html" class="nb-btn nb-btn-open">View HTML</a>
+        <a href="notebooks/liegpt_efficiency_robustness.ipynb" class="nb-btn nb-btn-section">.ipynb source</a>
+      </div>
+    </div>
+
+  </div>
+
+  <h3 style="margin-top:2rem; margin-bottom:.8rem;">Notebook Output Figures</h3>
   <p style="color:var(--text2); margin-bottom:.5rem;">
-    These figures are generated by running the three experiment notebooks.
-    Execute the notebooks (see Reproducibility) to populate <code>outputs/</code>.
+    Execute the notebooks (see Reproducibility) to populate <code>outputs/</code>;
+    the panels below will display the actual results.
   </p>
   <div class="figures-grid">
     <div class="fig-card">
       <div class="fig-img">
         <img src="outputs/unitarity_benchmark.png"
-             onerror="this.parentNode.innerHTML='Run the Architecture notebook to generate this figure'"
+             onerror="this.parentNode.innerHTML='Run Architecture notebook to generate this figure'"
              alt="Unitarity Benchmark"/>
       </div>
       <div class="fig-body">
         <div class="fig-title">Unitarity Violation Distribution</div>
-        <div class="fig-desc">Over $10^5$ random Hamiltonians: LieGPT at machine
-        $\varepsilon$, unconstrained GRU 10⁸–10¹⁰× larger.</div>
-        <span class="fig-key-badge">Architecture &amp; Unitarity</span>
+        <div class="fig-desc">Over $10^5$ random Hamiltonians. Lie GPT at machine
+        $\varepsilon$; unconstrained GRU $10^8$&ndash;$10^{10}\times$ larger.</div>
+        <span class="fig-key-badge">Notebook 1 &mdash; Architecture</span>
       </div>
     </div>
     <div class="fig-card">
       <div class="fig-img">
         <img src="outputs/bloch_sphere_unitarity.png"
-             onerror="this.parentNode.innerHTML='Run the Architecture notebook to generate this figure'"
+             onerror="this.parentNode.innerHTML='Run Architecture notebook to generate this figure'"
              alt="Bloch Sphere"/>
       </div>
       <div class="fig-body">
         <div class="fig-title">Bloch Sphere Trajectories</div>
-        <div class="fig-desc">LieGPT state norm stays at exactly 1.000000. Unconstrained
-        model leaks off the sphere with growing divergence.</div>
-        <span class="fig-key-badge">Architecture &amp; Unitarity</span>
+        <div class="fig-desc">Lie GPT state norm stays exactly 1.000000. Unconstrained
+        model spirals off the sphere with growing unitarity violations.</div>
+        <span class="fig-key-badge">Notebook 1 &mdash; Architecture</span>
       </div>
     </div>
-    <div class="fig-card" style="border-color: var(--accent);">
+    <div class="fig-card" style="border-color:var(--accent);">
       <div class="fig-img">
         <img src="outputs/stability_rollout.png"
-             onerror="this.parentNode.innerHTML='Run the Stability notebook to generate this figure (KEY RESULT)'"
+             onerror="this.parentNode.innerHTML='Run Stability notebook to generate this figure (KEY RESULT)'"
              alt="Stability Rollout"/>
       </div>
       <div class="fig-body">
-        <div class="fig-title">🔴 Long-Time Stability — PRIMARY FIGURE</div>
-        <div class="fig-desc">Rollout to $10\times$ training horizon. LieGPT remains
-        stable. All unconstrained baselines diverge. This is the strongest result in the paper.</div>
-        <span class="fig-key-badge">Long-Time Stability · KEY</span>
+        <div class="fig-title">Long-Time Stability &mdash; Primary Figure</div>
+        <div class="fig-desc">
+          4-panel: (A) state error mean&plusmn;std, (B) unitarity violation log-scale, (C)
+          error at checkpoints, (D) error ratio vs. Lie GPT.
+          Lie GPT stable at $8\times$ extrapolation; all baselines diverge.
+        </div>
+        <span class="fig-key-badge">Notebook 2 &mdash; Key Result</span>
       </div>
     </div>
     <div class="fig-card">
       <div class="fig-img">
         <img src="outputs/theorem1_bound.png"
-             onerror="this.parentNode.innerHTML='Run the Stability notebook to generate this figure'"
+             onerror="this.parentNode.innerHTML='Run Stability notebook to generate this figure'"
              alt="Theorem 1 Bound"/>
       </div>
       <div class="fig-body">
         <div class="fig-title">Theorem 1 Verification</div>
-        <div class="fig-desc">Observed state error vs. theoretical bound $T \cdot C \cdot \varepsilon$.
-        LieGPT stays well below the bound — proven linear error growth.</div>
-        <span class="fig-key-badge">Long-Time Stability</span>
+        <div class="fig-desc">Empirical error vs. linear bound $T\cdot C\cdot\varepsilon$.
+        Log-log slope $\approx1$ confirms $O(T)$ error growth &mdash; bound is tight.</div>
+        <span class="fig-key-badge">Notebook 2 &mdash; Stability</span>
       </div>
     </div>
     <div class="fig-card">
       <div class="fig-img">
         <img src="outputs/data_efficiency.png"
-             onerror="this.parentNode.innerHTML='Run the Efficiency notebook to generate this figure'"
+             onerror="this.parentNode.innerHTML='Run Efficiency notebook to generate this figure'"
              alt="Data Efficiency"/>
       </div>
       <div class="fig-body">
         <div class="fig-title">Data Efficiency</div>
-        <div class="fig-desc">Error vs training set size $N$. LieGPT reaches accuracy
-        threshold with $\sim 3\times$ fewer trajectories, consistent with Theorem 2.</div>
-        <span class="fig-key-badge">Data Efficiency &amp; Noise</span>
-      </div>
-    </div>
-    <div class="fig-card">
-      <div class="fig-img">
-        <img src="outputs/noise_robustness.png"
-             onerror="this.parentNode.innerHTML='Run the Efficiency notebook to generate this figure'"
-             alt="Noise Robustness"/>
-      </div>
-      <div class="fig-body">
-        <div class="fig-title">Noise Robustness</div>
-        <div class="fig-desc">LieGPT unitarity violation stays at machine $\varepsilon$ at
-        all noise levels — the structural guarantee cannot be broken by training noise.</div>
-        <span class="fig-key-badge">Data Efficiency &amp; Noise</span>
+        <div class="fig-desc">Test error vs. $N$ (log-log). Lie GPT reaches accuracy
+        threshold with $\sim3\times$ fewer trajectories, consistent with Theorem 2.</div>
+        <span class="fig-key-badge">Notebook 3 &mdash; Efficiency</span>
       </div>
     </div>
     <div class="fig-card">
       <div class="fig-img">
         <img src="outputs/combined_summary.png"
-             onerror="this.parentNode.innerHTML='Run the Efficiency notebook to generate this figure'"
+             onerror="this.parentNode.innerHTML='Run Efficiency notebook to generate this figure'"
              alt="Combined Summary"/>
       </div>
       <div class="fig-body">
         <div class="fig-title">Combined Advantage Summary</div>
-        <div class="fig-desc">2×2 panel: data efficiency + noise robustness for all three models.
-        The publication-facing figure consolidating Contribution 3.5.</div>
-        <span class="fig-key-badge">Data Efficiency &amp; Noise</span>
-      </div>
-    </div>
-    <div class="fig-card">
-      <div class="fig-img">
-        <img src="outputs/theorem2_complexity.png"
-             onerror="this.parentNode.innerHTML='Run the Efficiency notebook to generate this figure'"
-             alt="Theorem 2"/>
-      </div>
-      <div class="fig-body">
-        <div class="fig-title">Theorem 2: Rademacher Complexity</div>
-        <div class="fig-desc">Theoretical bound $\sqrt{k/n^2} = \sqrt{3/8}$ vs. empirical
-        data efficiency curve. Theory and experiment are consistent.</div>
-        <span class="fig-key-badge">Data Efficiency &amp; Noise</span>
-      </div>
-    </div>
-    <div class="fig-card">
-      <div class="fig-img">
-        <img src="outputs/su2_basis.png"
-             onerror="this.parentNode.innerHTML='Run the Architecture notebook to generate this figure'"
-             alt="su(2) Basis"/>
-      </div>
-      <div class="fig-body">
-        <div class="fig-title">su(2) Lie Algebra Basis</div>
-        <div class="fig-desc">Real and imaginary parts of the three Pauli matrices $\sigma_x, \sigma_y, \sigma_z$,
-        the fixed Hermitian basis of the Lie Constraint Layer.</div>
-        <span class="fig-key-badge">Architecture &amp; Unitarity</span>
-      </div>
-    </div>
-    <div class="fig-card">
-      <div class="fig-img">
-        <img src="outputs/training_curves.png"
-             onerror="this.parentNode.innerHTML='Run the Stability notebook to generate this figure'"
-             alt="Training Curves"/>
-      </div>
-      <div class="fig-body">
-        <div class="fig-title">Training Loss Curves</div>
-        <div class="fig-desc">MSE loss (log scale) during training for all four models.
-        LieGPT converges competitively despite having a stricter output constraint.</div>
-        <span class="fig-key-badge">Long-Time Stability</span>
-      </div>
-    </div>
-    <div class="fig-card">
-      <div class="fig-img">
-        <img src="outputs/structure_constants.png"
-             onerror="this.parentNode.innerHTML='Run the Architecture notebook to generate this figure'"
-             alt="Structure Constants"/>
-      </div>
-      <div class="fig-body">
-        <div class="fig-title">Levi-Civita Structure Constants</div>
-        <div class="fig-desc">Heatmap of $c_{ij}^k$ where $[X_i, X_j]=\sum_k c_{ij}^k X_k$.
-        Levi-Civita pattern confirms LieGPT operates in the correct 3-D rotation algebra.</div>
-        <span class="fig-key-badge">Architecture &amp; Unitarity</span>
+        <div class="fig-desc">4-panel publication figure: data efficiency, noise robustness,
+        Rademacher bound, samples-needed bar chart.</div>
+        <span class="fig-key-badge">Notebook 3 &mdash; Efficiency</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── NOTEBOOKS ─────────────────────────────────────────────────────────────── -->
-<section id="notebooks">
-  <h2>Executed Notebook Record</h2>
-  <p style="color:var(--text2); margin-bottom:.5rem;">
-    Each notebook is available as a pre-rendered HTML page (no Jupyter required) and as an executable <code>.ipynb</code> source.
-    Together they constitute the complete empirical and theoretical case for LieGPT.
+<!-- ── POSITIONING ──────────────────────────────────────────────────────────────────────────── -->
+<section id="positioning">
+  <h2>Positioning vs. Prior Work</h2>
+  <p style="color:var(--text2); margin-bottom:.8rem;">
+    The paper (Sec. 7) identifies three natural criticism points; the table below answers each,
+    together with the comparison points for the machine-learning framing of the notebooks.
   </p>
-  <div class="notebooks-grid">
-    <div class="nb-card">
-      <div class="nb-num">Foundations</div>
-      <div class="nb-title">Architecture &amp; Unitarity Guarantee</div>
-      <div class="nb-desc">
-        Establishes the three foundational contributions: Lie algebra space, hard constraints by design,
-        and exact unitarity. Contains Proposition 1 proof, $\mathfrak{su}(2)$ basis visualization,
-        structure constants, Lie Constraint Layer implementation, and quantitative unitarity comparison
-        over $10^5$ random Hamiltonians.
-      </div>
-      <div class="nb-claims">
-        <span>Must #1 — Lie algebra space representation</span>
-        <span>Must #2 — Lie Constraint Layer (0 params)</span>
-        <span>Must #3 — Unitarity proven to machine ε</span>
-        <span>Bloch sphere trajectory visualization</span>
-      </div>
-      <div class="nb-btns">
-        <a href="notebooks/liegpt_architecture_unitarity.html" class="nb-btn nb-btn-open">View HTML</a>
-        <a href="#figures" class="nb-btn nb-btn-section">View Figures</a>
-      </div>
-    </div>
-
-    <div class="nb-card" style="border-left: 3px solid var(--accent);">
-      <div class="nb-num">🔴 Primary Result</div>
-      <div class="nb-title">Long-Time Stability</div>
-      <div class="nb-desc">
-        The key experimental contribution. Trains all four models (LieGPT, GRU, GRU+penalty, MLP)
-        on short sequences and evaluates on $10\times$ longer rollouts. Contains training curves,
-        the primary rollout figure (4-panel), Theorem 1 bound verification, and
-        statistical analysis over 30 test trajectories.
-      </div>
-      <div class="nb-claims">
-        <span>Must #4 — Long-time stability demonstrated</span>
-        <span>Theorem 1 — linear error bound verified</span>
-        <span>Statistical analysis: mean ± std over 30 trajectories</span>
-        <span>Primary result figure: 4-panel stability comparison</span>
-      </div>
-      <div class="nb-btns">
-        <a href="notebooks/liegpt_stability.html" class="nb-btn nb-btn-open">View HTML</a>
-        <a href="#figures" class="nb-btn nb-btn-section">View Figures</a>
-      </div>
-    </div>
-
-    <div class="nb-card">
-      <div class="nb-num">Supporting Experiments</div>
-      <div class="nb-title">Data Efficiency &amp; Noise Robustness</div>
-      <div class="nb-desc">
-        Two-experiment notebook completing the empirical case for Contribution 3.5.
-        Sweeps training set sizes $N \in \{50, 100, 250, 500, 1000, 2000, 5000\}$ and noise levels
-        $\sigma \in \{0, 0.05, 0.1, 0.2, 0.5\}$. Contains Theorem 2 Rademacher complexity
-        illustration and combined summary figure.
-      </div>
-      <div class="nb-claims">
-        <span>Must #5 — Data efficiency advantage quantified</span>
-        <span>Theorem 2 — complexity argument illustrated</span>
-        <span>Noise robustness: structural guarantee noise-proof</span>
-        <span>Combined summary: supporting comparison figure</span>
-      </div>
-      <div class="nb-btns">
-        <a href="notebooks/liegpt_efficiency_robustness.html" class="nb-btn nb-btn-open">View HTML</a>
-        <a href="#figures" class="nb-btn nb-btn-section">View Figures</a>
-      </div>
-    </div>
-  </div>
+  <table class="pos-table">
+    <tr>
+      <th>Prior work</th>
+      <th>Core limitation</th>
+      <th>Lie GPT answer</th>
+    </tr>
+    <tr>
+      <td>First-order Trotter (GPT-0)</td>
+      <td>Generator set $\{A,B\}$ only; $[A,B]$ accumulates as $O(\delta t^2)$ error per step</td>
+      <td>GPT-1 includes $[A,B]$ explicitly, cancels the error exactly; $10\times$ for $N\geq10$</td>
+    </tr>
+    <tr>
+      <td>Suzuki-2 (symmetric Trotter)</td>
+      <td>$O(\delta t^3)$ local error, same as GPT-1; no principled extension to richer DLA sets</td>
+      <td>GPT-2 achieves $O(\delta t^4)$ with corrected coefficients; $\geq10\times$ for $N\geq24$</td>
+    </tr>
+    <tr>
+      <td>Cartan / fixed-depth synthesis</td>
+      <td>Exact but not learned; requires full Cartan decomposition of the entire DLA</td>
+      <td>Lie GPT interpolates: GPT-$k\to\infty$ recovers Cartan; GPT-1/2 are efficient partial steps</td>
+    </tr>
+    <tr>
+      <td>Variational ans&auml;tze (QAOA)</td>
+      <td>Optimize angles in a fixed generator family &mdash; operator space does not expand</td>
+      <td>Lie GPT expands the generator set; BCH coefficients are analytically fixed, not optimized</td>
+    </tr>
+    <tr>
+      <td>Neural quantum states (NQS)</td>
+      <td>Operate in state / wavefunction space; no algebraic structure guarantees</td>
+      <td>Notebooks: Lie Constraint Layer enforces $H(t)\in\mathfrak{su}(2)$ at every step</td>
+    </tr>
+    <tr>
+      <td>Physics-informed neural ODEs</td>
+      <td>Symmetry via soft loss penalty; unitarity still violated during training and rollout</td>
+      <td>Hard architectural constraint; $\|U^\dagger U-I\|_F\leq\varepsilon_\text{machine}$ always</td>
+    </tr>
+    <tr class="ours">
+      <td><strong>Lie GPT (this work)</strong></td>
+      <td>&mdash;</td>
+      <td>dynamical Lie algebra (DLA) as generator space &middot; Baker–Campbell–Hausdorff (BCH) as selection rule &middot; 10&times; theorem &middot;
+          exact unitarity &middot; provable stability &middot; data efficiency</td>
+    </tr>
+  </table>
 </section>
 
-<!-- ── REPRODUCE ──────────────────────────────────────────────────────────────── -->
+<!-- ── REPRODUCE ────────────────────────────────────────────────────────────────────────────── -->
 <section id="reproduce">
   <h2>Reproducibility</h2>
   <p style="color:var(--text2); margin-bottom:1rem;">
-    All experiments run on CPU. No GPU required. Complete execution takes approximately
-    15–30 minutes on a standard laptop.
+    All experiments run on CPU only. No GPU required. Paper benchmarks (<code>scripts/</code>)
+    complete within minutes; the full notebook suite takes 15&ndash;30 minutes.
   </p>
   <div class="repro-steps">
     <div class="repro-step">
       <div>
         <strong>Install dependencies</strong>
-        <pre>conda activate qaoa  # or create a new env
+        <pre>conda activate qaoa   # or create a new environment
 pip install -r requirements.txt</pre>
       </div>
     </div>
     <div class="repro-step">
       <div>
         <strong>Set Python path</strong>
-        <pre>export PYTHONPATH=src  # or set PYTHONPATH=src on Windows</pre>
+        <pre>export PYTHONPATH=src   # Windows: set PYTHONPATH=src</pre>
       </div>
     </div>
     <div class="repro-step">
       <div>
-        <strong>Execute notebooks</strong>
+        <strong>Reproduce paper benchmarks (TFIM spectral-error tables and figures)</strong>
+        <pre>python scripts/tfim_experiment.py            # core TFIM table
+python scripts/tfim_sweep.py                 # full N-sweep
+python scripts/generate_liegpt_figures.py    # paper figures (local/global error, heatmap)</pre>
+      </div>
+    </div>
+    <div class="repro-step">
+      <div>
+        <strong>Execute notebooks (unitarity, stability, data efficiency)</strong>
         <pre>jupyter nbconvert --to notebook --execute --inplace \
   notebooks/liegpt_architecture_unitarity.ipynb
 jupyter nbconvert --to notebook --execute --inplace \
@@ -833,7 +995,7 @@ jupyter nbconvert --to notebook --execute --inplace \
     </div>
     <div class="repro-step">
       <div>
-        <strong>Export to HTML (for viewing without Jupyter)</strong>
+        <strong>Export notebooks to HTML for offline viewing</strong>
         <pre>jupyter nbconvert --to html notebooks/liegpt_architecture_unitarity.ipynb
 jupyter nbconvert --to html notebooks/liegpt_stability.ipynb
 jupyter nbconvert --to html notebooks/liegpt_efficiency_robustness.ipynb</pre>
@@ -841,41 +1003,42 @@ jupyter nbconvert --to html notebooks/liegpt_efficiency_robustness.ipynb</pre>
     </div>
     <div class="repro-step">
       <div>
-        <strong>Serve this website locally</strong>
+        <strong>Serve this page locally</strong>
         <pre>python -m http.server 8000
 open http://localhost:8000</pre>
       </div>
     </div>
   </div>
   <p style="color:var(--text2); margin-top:1rem; font-size:.9rem;">
-    After executing the notebooks, all figures in <code>outputs/</code> will be populated
-    and the figure panels above on this page will display the actual results.
+    After executing the notebooks, all figures in <code>outputs/</code> are populated and the
+    figure panels in the Notebooks section above will display the actual results.
   </p>
 </section>
 
-<!-- ── FOOTER ─────────────────────────────────────────────────────────────────── -->
+<!-- ── FOOTER ─────────────────────────────────────────────────────────────────────────────────────── -->
 <footer>
   <div class="footer-links">
-    <a href="#contributions">Contributions</a>
-    <a href="#demo">Demo</a>
-    <a href="#results">Results</a>
-    <a href="#figures">Figures</a>
+    <a href="#framework">Framework</a>
+    <a href="#theorem">10&times; Theorem</a>
+    <a href="#demo">DLA Demo</a>
+    <a href="#benchmarks">Benchmarks</a>
     <a href="#notebooks">Notebooks</a>
+    <a href="#positioning">Positioning</a>
     <a href="#reproduce">Reproduce</a>
     <a href="research_paper/research_paper.pdf">Paper</a>
-    <a href="README.md">Research Plan</a>
-    <a href="https://github.com/thmolena/Lie-Algebra-for-Hamiltonian-Simulation">GitHub</a>
+    <a href="README.md">README</a>
   </div>
   <p>
-    LieGPT — Lie-Structured Generative Models for Hamiltonian Simulation ·
-    April 2026
+    Lie GPT for Hamiltonian Simulation: Generator Prediction in Dynamical Lie Algebras
+    Beyond Product Formulas &middot; Molena Huynh &middot; April 2026
   </p>
   <p style="margin-top:.5rem; font-size:.8rem;">
-    Released under project LICENSE ·
-    <a href="research_paper/research_paper.pdf">Research Paper</a> ·
-    <a href="README.md">Research Plan (README)</a>
+    Released under project LICENSE &middot;
+    <a href="research_paper/research_paper.pdf">Research Paper</a> &middot;
+    <a href="README.md">README</a>
   </p>
 </footer>
+
 
 <!-- ── THREE.JS BLOCH SPHERE DEMO ─────────────────────────────────────────────── -->
 <script>
