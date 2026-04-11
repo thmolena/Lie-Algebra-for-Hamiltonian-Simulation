@@ -1,8 +1,6 @@
 # Lie GPT for Hamiltonian Simulation: Generator Prediction in Dynamical Lie Algebras Beyond Product Formulas
 
-**Project page:** [index.html](index.html)
 
----
 
 ## Abstract
 
