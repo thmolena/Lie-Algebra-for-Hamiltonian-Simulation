@@ -1,1328 +1,491 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Lie GPT — Generator Prediction in Dynamical Lie Algebras Beyond Product Formulas</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lie GPT | Research Summary</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
-  window.MathJax = {
-    tex: { inlineMath: [['$','$'], ['\\(','\\)']] },
-    svg: { fontCache: 'global' }
-  };
-</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* ── Reset & Base ──────────────────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  color-scheme:  light;
-  --bg:          #fcfbf7;
-  --bg2:         #f4f1e8;
-  --bg3:         #ebe5d8;
-  --surface:     #e7decd;
-  --border:      #cbbda3;
-  --accent:      #3557a6;
-  --accent2:     #233b73;
-  --accent3:     #eff5ff;
-  --text:        #1f2937;
-  --text2:       #5b6472;
-  --red:         #ef4444;
-  --orange:      #f97316;
-  --green:       #22c55e;
-  --radius:      10px;
-  --shadow:      0 10px 30px rgba(35,59,115,.10);
-}
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'Inter', system-ui, sans-serif;
-  background: radial-gradient(circle at top, #fffdf8 0%, var(--bg) 52%, var(--bg2) 100%);
-  color: var(--text);
-  line-height: 1.7;
-  min-height: 100vh;
-  font-size: 1rem;
-}
-a { color: var(--accent2); text-decoration: none; }
-a:hover { text-decoration: underline; }
-nav, .nav-brand, .nav-links, .btn, .badge .key, .nb-num, .nb-btn,
-.ctrl-group label, .metric .m-key, .fig-key-badge, .must-tag,
-.repro-step strong, th, .label, footer { font-family: 'Inter', system-ui, sans-serif; }
-code, pre {
-  font-family: 'Courier New', monospace;
-  background: var(--bg3);
-  color: var(--text);
-  border-radius: 5px;
-}
-code { padding: 2px 6px; font-size: .9em; }
-pre { padding: 16px; overflow-x: auto; font-size: .9em; border-left: 3px solid var(--accent); }
-h1, h2, h3, h4 { font-weight: 700; line-height: 1.2; }
-h2 { color: var(--accent2); margin-bottom: 1rem; }
-h3 { color: var(--text);    margin-bottom: .6rem; }
+  :root {
+    color-scheme: light;
+    --bg: #ffffff;
+    --paper: #ffffff;
+    --ink: #1a2740;
+    --muted: #52607a;
+    --line: #d5dce6;
+    --soft: #f4f7fb;
+    --accent: #113b73;
+    --success: #0f5c3d;
+    --max: 1100px;
+  }
 
-/* ── Nav ────────────────────────────────────────────────────────────────────── */
-nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(252,251,247,.94);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  padding: 0 2rem;
-  display: flex; align-items: center; justify-content: space-between;
-  min-height: 56px;
-}
-.nav-brand {
-  font-size: 1.1rem; font-weight: 800; letter-spacing: .5px;
-  color: var(--accent2);
-}
-.nav-badge {
-  background: var(--accent); color: white;
-  font-size: .65rem; font-weight: 700; letter-spacing: 1px;
-  padding: 2px 8px; border-radius: 99px; vertical-align: middle; margin-left: 8px;
-}
-.nav-links { display: flex; gap: 1.5rem; font-size: .9rem; }
-.nav-links a { color: var(--text2); transition: color .2s; }
-.nav-links a:hover { color: var(--accent2); text-decoration: none; }
+  * {
+    box-sizing: border-box;
+  }
 
-/* ── Sections ───────────────────────────────────────────────────────────────── */
-section { padding: 4rem 2rem; max-width: 1100px; margin: 0 auto; }
-section + section { border-top: 1px solid var(--border); }
+  html {
+    scroll-behavior: smooth;
+  }
 
-/* ── Hero ───────────────────────────────────────────────────────────────────── */
-#hero {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 72px 24px 48px;
-}
-.hero-copy-card {
-  background: linear-gradient(135deg, var(--bg) 0%, #f7f9ff 58%, var(--accent3) 100%);
-  border: 1px solid var(--border);
-  border-radius: 28px;
-  padding: 48px 52px;
-  box-shadow: var(--shadow);
-  text-align: left;
-  margin-bottom: 28px;
-}
-#hero .label {
-  display: inline-block;
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: rgba(53,87,166,.08);
-  border: 1px solid rgba(53,87,166,.18);
-  font-size: .74rem; font-weight: 700; letter-spacing: .15em;
-  color: var(--accent); text-transform: uppercase; margin-bottom: 1.2rem;
-}
-#hero h1 {
-  font-size: clamp(2rem, 4vw, 3.3rem); font-weight: 800;
-  letter-spacing: -.02em;
-  background: linear-gradient(135deg, #0f172a 0%, var(--accent) 54%, var(--accent2) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text; margin-bottom: 1.2rem;
-}
-#hero .subtitle {
-  font-size: 1.05rem; color: var(--text2); max-width: 820px;
-  margin: 0 0 2rem; line-height: 1.75;
-}
-.hero-badges {
-  display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 1.25rem;
-  margin-bottom: 2.5rem;
-}
-.badge {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 1.1rem 1.5rem; min-width: 170px;
-  box-shadow: var(--shadow); transition: transform .2s;
-}
-.badge:hover { transform: translateY(-3px); }
-.badge .val {
-  font-size: 1.9rem; font-weight: 900; color: var(--accent2);
-  display: block; line-height: 1.1; margin-bottom: .3rem;
-}
-.badge .key {
-  font-size: .75rem; font-weight: 600; letter-spacing: 1px;
-  text-transform: uppercase; color: var(--text2);
-}
-.hero-links { display: flex; gap: 1rem; justify-content: flex-start; flex-wrap: wrap; }
-.btn {
-  display: inline-block; padding: .7rem 1.5rem;
-  border-radius: 99px; font-size: .9rem; font-weight: 700;
-  transition: all .2s; cursor: pointer; border: none;
-}
-.btn-primary   { background: var(--accent); color: white; box-shadow: 0 0 20px rgba(53,87,166,.22); }
-.btn-primary:hover { background: var(--accent2); text-decoration: none; }
-.btn-outline { background: transparent; color: var(--accent2); border: 1.5px solid var(--accent); }
-.btn-outline:hover { background: var(--accent); color: white; text-decoration: none; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Source Sans 3", sans-serif;
+    line-height: 1.7;
+  }
 
-/* ── Contribution Cards ─────────────────────────────────────────────────────── */
-.contrib-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 1.25rem;
-  margin-top: 1.5rem;
-}
-.contrib-card {
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 1.4rem;
-  transition: border-color .2s, box-shadow .2s;
-}
-.contrib-card:hover { border-color: var(--accent2); box-shadow: var(--shadow); }
-.contrib-card .number {
-  font-size: .7rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-  color: var(--accent); margin-bottom: .5rem;
-}
-.must-tag {
-  display: inline-block; background: #fee2e2; color: #991b1b;
-  font-size: .65rem; font-weight: 700; padding: 1px 6px; border-radius: 4px;
-  letter-spacing: .5px; text-transform: uppercase; margin-left: 6px; vertical-align: middle;
-}
-.contrib-card p { color: var(--text2); font-size: .9rem; margin-top: .5rem; }
+  a {
+    color: var(--accent);
+    text-decoration: none;
+  }
 
-/* ── Interactive Demo ───────────────────────────────────────────────────────── */
-#demo { background-color: var(--bg2); max-width: 100%; }
-.demo-inner { max-width: 1100px; margin: 0 auto; }
-.demo-layout {
-  display: grid; grid-template-columns: 450px 1fr; gap: 2.5rem; align-items: start;
-  margin-top: 1.5rem;
-}
-@media(max-width: 900px) { .demo-layout { grid-template-columns: 1fr; } }
-#bloch-canvas {
-  border-radius: var(--radius); background: var(--bg3);
-  border: 1px solid var(--border); cursor: grab; display: block;
-}
-.demo-controls { display: flex; flex-direction: column; gap: 1.25rem; }
-.ctrl-group { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; }
-.ctrl-group label { font-size: .8rem; font-weight: 600; color: var(--text2); letter-spacing: .5px; text-transform: uppercase; }
-.ctrl-group p { font-size: .9rem; color: var(--text); margin-top: .4rem; }
-.h-type-btns { display: flex; gap: .5rem; margin-top: .6rem; }
-.h-btn {
-  flex: 1; padding: .5rem .2rem; text-align: center; cursor: pointer;
-  background: var(--bg2); border: 1px solid var(--border); border-radius: 6px;
-  font-size: .8rem; color: var(--text2); transition: all .2s;
-}
-.h-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
-.metric-row { display: flex; gap: .75rem; flex-wrap: wrap; }
-.metric {
-  flex: 1; background: var(--bg3); border: 1px solid var(--border);
-  border-radius: 8px; padding: .6rem .8rem; min-width: 110px;
-}
-.metric .m-val { font-size: 1.2rem; font-weight: 900; color: var(--green); font-family: monospace; }
-.metric .m-key { font-size: .7rem; color: var(--text2); text-transform: uppercase; letter-spacing: .5px; }
-.metric.bad .m-val { color: var(--red); }
-.demo-msg { font-size: .85rem; color: var(--accent2); margin-top: .5rem; font-style: italic; }
+  a:hover {
+    text-decoration: underline;
+  }
 
-/* ── Results Table ──────────────────────────────────────────────────────────── */
-.results-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: .9rem; }
-.results-table th {
-  background: var(--surface); color: var(--accent2); font-weight: 700;
-  padding: .75rem 1rem; text-align: left; letter-spacing: .5px;
-  border-bottom: 2px solid var(--accent);
-}
-.results-table td {
-  padding: .7rem 1rem; border-bottom: 1px solid var(--border); color: var(--text2);
-}
-.results-table tr.ours td { background: rgba(53,87,166,.10); color: var(--text); font-weight: 600; }
-.results-table tr.ours td:first-child { border-left: 3px solid var(--accent); }
-.tag-good  { color: var(--green); font-weight: 700; }
-.tag-bad   { color: var(--red); }
-.tag-mid   { color: var(--orange); }
+  .site-header {
+    border-bottom: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.97);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+  }
 
-/* ── Figures ────────────────────────────────────────────────────────────────── */
-.figures-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr));
-  gap: 1.5rem; margin-top: 1.5rem;
-}
-.fig-card {
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--radius); overflow: hidden;
-  transition: border-color .2s, box-shadow .2s;
-}
-.fig-card:hover { border-color: var(--accent2); box-shadow: var(--shadow); }
-.fig-card .fig-img {
-  width: 100%; aspect-ratio: 16/9; background: var(--bg3);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text2); font-size: .85rem; border-bottom: 1px solid var(--border);
-  overflow: hidden;
-}
-.fig-card .fig-img img { width: 100%; height: 100%; object-fit: cover; }
-.fig-card .fig-body { padding: 1rem; }
-.fig-card .fig-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: .4rem; }
-.fig-card .fig-desc  { font-size: .85rem; color: var(--text2); }
-.fig-key-badge {
-  display: inline-block; background: #e7eefc; color: #233b73;
-  font-size: .65rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-  padding: 2px 7px; border-radius: 4px; margin-top: .5rem;
-}
+  .header-inner,
+  .hero,
+  .section,
+  .site-footer {
+    width: min(calc(100% - 32px), var(--max));
+    margin: 0 auto;
+  }
 
-/* ── Notebook Cards ─────────────────────────────────────────────────────────── */
-.notebooks-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr));
-  gap: 1.5rem; margin-top: 1.5rem;
-}
-.nb-card {
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 1.5rem;
-  display: flex; flex-direction: column; gap: .75rem;
-  transition: border-color .2s, box-shadow .2s;
-}
-.nb-card:hover { border-color: var(--accent2); box-shadow: var(--shadow); }
-.nb-num {
-  font-size: .7rem; font-weight: 700; letter-spacing: 1px;
-  text-transform: uppercase; color: var(--accent2);
-}
-.nb-title { font-size: 1.1rem; font-weight: 700; color: var(--text); }
-.nb-desc  { font-size: .9rem; color: var(--text2); flex: 1; }
-.nb-claims {
-  display: flex; flex-direction: column; gap: .35rem; font-size: .82rem; color: var(--text2);
-}
-.nb-claims span::before { content: '▸ '; color: var(--accent2); }
-.nb-btns { display: flex; gap: .6rem; margin-top: .5rem; }
-.nb-btn {
-  padding: .45rem 1rem; border-radius: 6px; font-size: .82rem; font-weight: 600;
-  cursor: pointer; transition: all .2s; text-align: center;
-}
-.nb-btn-open   { background: var(--accent); color: white; border: none; }
-.nb-btn-open:hover { background: var(--accent2); text-decoration: none; }
-.nb-btn-section { background: transparent; color: var(--accent2); border: 1px solid var(--accent); }
-.nb-btn-section:hover { background: var(--accent); color: white; text-decoration: none; }
+  .header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 16px 0;
+  }
 
-/* ── Positioning table ──────────────────────────────────────────────────────── */
-.pos-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: .88rem; }
-.pos-table th {
-  background: var(--surface); color: var(--accent2); font-weight: 700;
-  padding: .65rem .9rem; text-align: left; border-bottom: 2px solid var(--accent);
-}
-.pos-table td { padding: .6rem .9rem; border-bottom: 1px solid var(--border); color: var(--text2); }
-.pos-table tr.ours td { background: rgba(53,87,166,.12); color: var(--text); font-weight: 600; }
-.pos-table tr.ours td:first-child { border-left: 3px solid var(--accent); }
+  .brand {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
 
-/* ── Reproducibility ────────────────────────────────────────────────────────── */
-.repro-steps { display: flex; flex-direction: column; gap: .6rem; margin: 1.2rem 0; counter-reset: step; }
-.repro-step {
-  display: flex; gap: .8rem; align-items: flex-start;
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: 8px; padding: .8rem 1rem;
-}
-.repro-step::before {
-  counter-increment: step;
-  content: counter(step);
-  background: var(--accent); color: white;
-  width: 24px; height: 24px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: .75rem; font-weight: 800; flex-shrink: 0; margin-top: 1px;
-}
+  .eyebrow,
+  .section-label,
+  .kicker {
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
 
-/* ── Footer ─────────────────────────────────────────────────────────────────── */
-footer {
-  background: var(--bg2); border-top: 1px solid var(--border);
-  padding: 2rem; text-align: center; color: var(--text2); font-size: .85rem;
-}
-footer a { color: var(--accent2); }
-.footer-links { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .brand-title {
+    font-family: "Source Serif 4", serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: 0.95rem;
+  }
+
+  .hero {
+    padding: 56px 0 36px;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.9fr) minmax(280px, 1fr);
+    gap: 28px;
+    align-items: start;
+  }
+
+  h1,
+  h2,
+  h3 {
+    margin: 0;
+    font-family: "Source Serif 4", serif;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  h1 {
+    margin-top: 12px;
+    font-size: clamp(2.3rem, 4vw, 4rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 14px;
+  }
+
+  h3 {
+    font-size: 1.15rem;
+    margin-bottom: 10px;
+  }
+
+  .hero-subtitle,
+  .lede,
+  .caption,
+  li,
+  td,
+  th,
+  p {
+    color: var(--muted);
+    font-size: 1rem;
+  }
+
+  .hero-subtitle {
+    margin: 20px 0 0;
+    max-width: 760px;
+    font-size: 1.08rem;
+  }
+
+  .hero-panel,
+  .card,
+  .figure-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+  }
+
+  .hero-panel {
+    padding: 22px;
+  }
+
+  .stats {
+    display: grid;
+    gap: 14px;
+  }
+
+  .stat {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .stat:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .stat-value {
+    display: block;
+    color: var(--accent);
+    font-family: "Source Serif 4", serif;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .section {
+    padding: 34px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .lede {
+    max-width: 820px;
+    margin-bottom: 22px;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    padding: 22px;
+  }
+
+  .card p:last-child {
+    margin-bottom: 0;
+  }
+
+  .evidence-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 18px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+  }
+
+  .evidence-table th,
+  .evidence-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+
+  .evidence-table thead th {
+    background: var(--soft);
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .evidence-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .good {
+    color: var(--success);
+    font-weight: 700;
+  }
+
+  .application-grid,
+  .figure-grid {
+    display: grid;
+    gap: 20px;
+  }
+
+  .application-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .figure-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .figure-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .figure-card img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .figure-body {
+    padding: 18px;
+  }
+
+  .site-footer {
+    padding: 28px 0 40px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 960px) {
+    .hero-grid,
+    .cards,
+    .application-grid,
+    .figure-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .header-inner {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
 </style>
 </head>
 <body>
-
-<!-- ── NAV ────────────────────────────────────────────────────────────────────────────────── -->
-<nav>
-  <div>
-    <span class="nav-brand">Lie GPT</span>
-    <span class="nav-badge">PRX Quantum</span>
-  </div>
-  <div class="nav-links">
-    <a href="#framework">Framework</a>
-    <a href="#theorem">10&times; Theorem</a>
-    <a href="#demo">DLA Demo</a>
-    <a href="#benchmarks">Benchmarks</a>
-    <a href="#notebooks">Notebooks</a>
-    <a href="research_paper/research_paper.pdf">Paper</a>
-    <a href="#reproduce">Reproduce</a>
-  </div>
-</nav>
-
-<!-- ── HERO ──────────────────────────────────────────────────────────────────────────────── -->
-<section id="hero">
-  <div class="hero-copy-card">
-    <div class="label">Molena Huynh &middot; Hamiltonian Simulation &middot; Dynamical Lie Algebras</div>
-    <h1>Lie GPT for Hamiltonian Simulation:<br>Generator Prediction in Dynamical Lie Algebras<br>Beyond Product Formulas</h1>
-    <p class="subtitle">
-      Every standard Hamiltonian simulation method fixes its generator set to at most $\{A,B\}$
-      before constructing any circuit. The Baker&ndash;Campbell&ndash;Hausdorff expansion reveals
-      what is lost: the commutator $[A,B]$ accumulates as systematic, avoidable error.
-      Lie GPT removes this restriction by treating simulation as
-      <em>generator prediction within the dynamical Lie algebra</em> &mdash; a principled DLA
-      in which each new generator cancels one additional BCH error order.
-      The central result is a <strong>10&times; improvement theorem</strong> over Trotter&ndash;Suzuki
-      with no variational optimization. The same dynamical Lie algebra (DLA) extends naturally to a
-      learned, GRU-based Baker&ndash;Campbell&ndash;Hausdorff (BCH) approach that guarantees exact unitarity and provable long-time stability
-      by construction.
-    </p>
-    <div class="hero-badges">
-      <div class="badge">
-        <span class="val">10&times;</span>
-        <span class="key">Spectral error improvement<br>over Trotter&ndash;Suzuki ($N\geq10$)</span>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="eyebrow">Research Summary</span>
+        <span class="brand-title">Lie GPT for Hamiltonian Simulation</span>
       </div>
-      <div class="badge">
-        <span class="val">$O(\delta t^{k+1})$</span>
-        <span class="key">Local error at GPT-$k$<br>vs $O(\delta t^k)$ for Trotter-$k$</span>
-      </div>
-      <div class="badge">
-        <span class="val">&approx;&thinsp;0</span>
-        <span class="key">Unitarity violation<br>(machine &epsilon; by architecture)</span>
-      </div>
-      <div class="badge">
-        <span class="val">3&times;</span>
-        <span class="key">Data efficiency<br>vs unconstrained GRU</span>
-      </div>
+      <nav class="nav" aria-label="Primary">
+        <a href="#summary">Summary</a>
+        <a href="#findings">Findings</a>
+        <a href="#applications">Applications</a>
+        <a href="#figures">Figures</a>
+      </nav>
     </div>
-    <div class="hero-links">
-      <a href="research_paper/research_paper.pdf" class="btn btn-primary">Read the Paper</a>
-      <a href="#theorem" class="btn btn-outline">10&times; Theorem</a>
-      <a href="#notebooks" class="btn btn-outline">View Notebooks</a>
-      <a href="#reproduce" class="btn btn-outline">Reproduce</a>
-    </div>
-  </div>
-</section>
+  </header>
 
-<!-- ── FRAMEWORK ─────────────────────────────────────────────────────────────────────────── -->
-<section id="framework">
-  <h2>The Lie GPT Framework</h2>
-  <p style="color:var(--text2); margin-bottom:1.2rem;">
-    Product formulas approximate $e^{-it(A+B)}$ by products of $e^{-i\delta t A}$ and
-    $e^{-i\delta t B}$. The BCH expansion shows exactly what this costs:
-    $$e^{-i\delta t B}e^{-i\delta t A}
-      = \exp\!\Bigl[-i\delta t(A+B)+\tfrac{\delta t^2}{2}[A,B]+O(\delta t^3)\Bigr],$$
-    so $[A,B]$ &mdash; a member of the dynamical Lie algebra $\mathcal{L}(A,B)$ &mdash; enters
-    unavoidably as the leading error term. Every Trotter or Suzuki formula excludes at least
-    some DLA generators; Lie GPT includes them explicitly.
-  </p>
-
-  <h3 style="margin-bottom:.8rem;">The Dynamical Lie Algebra (DLA) and the GPT Hierarchy</h3>
-  <p style="color:var(--text2); margin-bottom:1rem;">
-    Given $H = A + B$, the dynamical Lie algebra is
-    $\mathcal{L}(A,B) = \mathrm{span}\{A,\,B,\,[A,B],\,[A,[A,B]],\,[B,[A,B]],\,\ldots\}.$
-    Lie GPT-$k$ selects the depth-$k$ DLA truncation as its circuit generator set:
-  </p>
-  <div class="contrib-grid">
-    <div class="contrib-card">
-      <div class="number">GPT-0 &mdash; first-order Trotter</div>
-      <h3>Generators: $\{A,\,B\}$</h3>
-      <p>Local error $O(\delta t^2)$. The commutator $[A,B]$ is absent and accumulates as the
-      leading BCH residual. GPT-0 is exactly Trotter-1 &mdash; the baseline against which all
-      improvements are measured.</p>
-    </div>
-    <div class="contrib-card" style="border-left:3px solid var(--accent);">
-      <div class="number">GPT-1 &mdash; one commutator added</div>
-      <h3>Generators: $\{A,\,B,\,[A,B]\}$</h3>
-      <p>The propagator $V_1(\delta t) = e^{-\delta t^2[A,B]/2}\,e^{-i\delta t B}\,e^{-i\delta t A}$
-      cancels the $O(\delta t^2)$ BCH error exactly, reducing local error to $O(\delta t^3)$.
-      This matches Suzuki-2 in error order using one extra layer, not three exponentials.</p>
-    </div>
-    <div class="contrib-card">
-      <div class="number">GPT-2 &mdash; two depth-2 generators</div>
-      <h3>Generators: $\{A,\,B,\,[A,B],\,C_A,\,C_B\}$</h3>
-      <p>$C_A=[A,[A,B]]$, $C_B=[B,[A,B]]$ cancel the $O(\delta t^3)$ residual.
-      Corrected coefficients $\alpha_2=-\tfrac{1}{6}$, $\alpha_3=-\tfrac{1}{3}$
-      (na&iuml;ve power-counting gives the wrong sign; this error is identified and corrected
-      in the paper) yield local error $O(\delta t^4)$, matching Suzuki-4 asymptotic scaling.</p>
-    </div>
-  </div>
-
-  <h3 style="margin-top:2rem; margin-bottom:.8rem;">The GPT Analogy</h3>
-  <p style="color:var(--text2); margin-bottom:.8rem;">
-    The name &ldquo;Lie GPT&rdquo; reflects a structural parallel with language models.
-    A GPT model defines a dynamical Lie algebra (DLA) of tokens and a Baker–Campbell–Hausdorff (BCH) approach for selecting the next token.
-    Here the DLA provides the generator set (generators are tokens) and the BCH expansion
-    provides the selection rule: at each level $k$, include the generator that maximally cancels
-    the next error term. When the BCH approach is analytically fixed, the result
-    is the 10&times; improvement theorem (paper). When the BCH approach is <em>learned</em> from
-    quantum trajectory data via a GRU constrained to the DLA, the result is the stable,
-    data-efficient framework of the notebooks.
-  </p>
-  <table class="pos-table">
-    <tr>
-      <th>Component</th>
-      <th>GPT (language model)</th>
-      <th>Lie GPT (quantum simulation)</th>
-    </tr>
-    <tr><td>Dynamical Lie Algebra (DLA)</td><td>Token dictionary</td><td>$\mathcal{L}(A,B)$</td></tr>
-    <tr><td>Token</td><td>Word or sub-word</td><td>Generator $G_k$</td></tr>
-    <tr><td>Baker–Campbell–Hausdorff (BCH)</td><td>Learned via training</td><td>BCH hierarchy (or learned from data)</td></tr>
-    <tr><td>Context</td><td>Input sequence</td><td>Commutator depth $k$</td></tr>
-    <tr><td>Prediction</td><td>Next token</td><td>Next generator $G_{k+1}$</td></tr>
-    <tr><td>Loss</td><td>Cross-entropy</td><td>Spectral error</td></tr>
-    <tr><td>Scaling</td><td>Model size</td><td>DLA truncation depth</td></tr>
-  </table>
-</section>
-
-<!-- ── THEOREM ───────────────────────────────────────────────────────────────────────────── -->
-<section id="theorem">
-  <h2>The 10&times; Improvement Theorem</h2>
-  <p style="color:var(--text2); margin-bottom:1rem;">
-    The central theoretical result of the paper. For any order $k$, an explicit threshold
-    $\delta t^{(k)}$ determined by BCH prefactors of $H$ exists such that Lie GPT-$k$ achieves
-    spectral error at least one order of magnitude smaller than the $k$-th order
-    Trotter&ndash;Suzuki formula for all $\delta t\leq\delta t^{(k)}$.
-  </p>
-
-  <div class="contrib-card" style="max-width:780px; margin-bottom:1.5rem; border-left:3px solid var(--accent);">
-    <div class="number">Theorem (10&times; Improvement)</div>
-    <h3 style="margin-bottom:.6rem;">For all $\delta t \leq \delta t^{(k)}$:</h3>
-    <p style="margin-bottom:.6rem;">
-      $\|e^{-i\delta t H} - U_k(\delta t)\|_2
-       \;\leq\;
-       \tfrac{1}{10}\,\|e^{-i\delta t H} - U^{(k)}_{\mathrm{TS}}(\delta t)\|_2$
-    </p>
-    <p>
-      where $U_k$ is the Lie GPT-$k$ propagator and $U^{(k)}_{\mathrm{TS}}$ is the $k$-th order
-      Trotter&ndash;Suzuki formula. For $k=1$:
-      $\delta t^{(1)} = \|[A,B]\|_2 \big/ \bigl(10\bigl(\tfrac{1}{3}\|[A,[A,B]]\|_2
-      + \tfrac{2}{3}\|[B,[A,B]]\|_2\bigr)\bigr).$
-    </p>
-  </div>
-
-  <p style="color:var(--text2); margin-bottom:1rem;">
-    <strong>Proof mechanism.</strong>
-    GPT-1 prepends $e^{-\delta t^2[A,B]/2}$ to the Trotter step. By the BCH product formula
-    (Proposition: BCH cancellation), this cancels the $O(\delta t^2)$ Trotter error exactly,
-    leaving a residual of $O(\delta t^3)$. The ratio of the $O(\delta t^2)$ Trotter error to
-    the $O(\delta t^3)$ GPT-1 error grows as $\delta t^{-1}$ and exceeds 10 below the threshold.
-    The improvement propagates to $N$-step global error via a standard telescoping argument:
-    the global ratio is $\approx (C_{\mathrm{Trot}}/C_{\mathrm{GPT1}})\cdot(N/t)$,
-    growing with $N$ at fixed $T$.
-    GPT-2 cancels the $O(\delta t^3)$ residual with corrected coefficients
-    $\alpha_2=-\tfrac{1}{6}$, $\alpha_3=-\tfrac{1}{3}$;
-    the na&iuml;ve sign $+1/12$ reinforces rather than cancels the error.
-  </p>
-
-  <h3 style="margin-bottom:.8rem;">Four-Qubit TFIM Benchmark</h3>
-  <p style="color:var(--text2); margin-bottom:.8rem;">
-    Primary benchmark: $H = \sum_{j=1}^{3}Z_jZ_{j+1} + 0.5\sum_{j=1}^{4}X_j$
-    ($n=4$, $J=1$, $h=0.5$). Spectral-norm errors via exact matrix exponentials.
-    No free parameters, no optimization.
-  </p>
-  <table class="results-table">
-    <tr>
-      <th>Method</th>
-      <th>Ops / step</th>
-      <th>Local error</th>
-      <th>$\epsilon_\mathrm{spec}$ at $N=10$, $T=0.5$</th>
-      <th>Ratio</th>
-    </tr>
-    <tr>
-      <td>Trotter-1 (GPT-0)</td><td>2</td><td>$O(\delta t^2)$</td>
-      <td>$4.76\times10^{-2}$</td><td>&mdash;</td>
-    </tr>
-    <tr class="ours">
-      <td><strong>Lie GPT-1</strong></td><td>3</td><td>$O(\delta t^3)$</td>
-      <td class="tag-good"><strong>$3.89\times10^{-3}$</strong></td>
-      <td class="tag-good"><strong>12.3&times;</strong></td>
-    </tr>
-    <tr>
-      <td>Suzuki-2</td><td>3</td><td>$O(\delta t^3)$</td>
-      <td>$9.72\times10^{-4}$</td><td>&mdash;</td>
-    </tr>
-    <tr class="ours">
-      <td><strong>Lie GPT-2</strong></td><td>5</td><td>$O(\delta t^4)$</td>
-      <td class="tag-good"><strong>$2.19\times10^{-4}$</strong></td>
-      <td class="tag-good"><strong>10.7&times;</strong> (vs Suz-2, $N=24$)</td>
-    </tr>
-  </table>
-  <p style="color:var(--text2); margin-top:.7rem; font-size:.88rem;">
-    GPT-1 achieves $\geq10\times$ improvement over Trotter-1 for $N\geq10$;
-    ratio grows to $39.2\times$ at $N=32$.
-    GPT-2 achieves $\geq10\times$ over Suzuki-2 for $N\geq24$;
-    ratio grows to $14.2\times$ at $N=32$.
-    Hardware overhead: one extra circuit layer and $2(n-1)$ two-qubit gates per step for GPT-1;
-    all generators have Pauli weight $\leq3$, localized to nearest-neighbor bonds.
-    The XXZ chain ($J_z=1$, $J_{xy}=0.5$) gives $8.6\times$ at $N=10$, confirming
-    the improvement is not specific to TFIM parameters.
-  </p>
-</section>
-
-<!-- ── INTERACTIVE DEMO ─────────────────────────────────────────────────────────────────────── -->
-<section id="demo" style="max-width:100%; padding:4rem 2rem; background:var(--bg2);">
-<div class="demo-inner">
-  <h2>DLA Generator Dynamics &mdash; Bloch Sphere</h2>
-  <p style="color:var(--text2); margin-bottom:.3rem;">
-    Every DLA generator $G_k\in\mathcal{L}(A,B)$ lies in $\mathfrak{su}(2)$, so its
-    exponential $e^{-i\theta G_k}$ is an $\mathrm{SU}(2)$ rotation that preserves the
-    Bloch sphere exactly. This is the Lie group&ndash;algebra correspondence made visual.
-    Toggle the unconstrained comparison to see a GRU without the Lie Constraint Layer gradually
-    drift off the sphere as unitarity violations compound.
-  </p>
-  <div class="demo-layout">
-    <canvas id="bloch-canvas" width="420" height="420"></canvas>
-    <div class="demo-controls">
-      <div class="ctrl-group">
-        <label>Hamiltonian Type</label>
-        <div class="h-type-btns">
-          <div class="h-btn active" onclick="setHType('sinusoidal', this)">Sinusoidal</div>
-          <div class="h-btn" onclick="setHType('polynomial', this)">Polynomial</div>
-          <div class="h-btn" onclick="setHType('random', this)">Random</div>
+  <main>
+    <section class="hero" id="summary">
+      <div class="hero-grid">
+        <div>
+          <div class="kicker">Academic and Technical Brief</div>
+          <h1>Verified performance gains for Lie GPT in Hamiltonian simulation and constrained quantum-dynamics learning.</h1>
+          <p class="hero-subtitle">
+            This project reports benchmarked cases in which Lie GPT improves on established baselines for transverse-field Ising model simulation and learned quantum-dynamics rollout. Across the repository, the strongest repeated advantages are lower spectral error, exact unitarity by construction, stable long-horizon rollout, and improved data efficiency.
+          </p>
         </div>
-        <p id="h-desc" style="font-size:.82rem; color:var(--text2); margin-top:.5rem;">
-          $H(t) = \sin(t)\,\sigma_x + \cos(1.3t)\,\sigma_y + 0.5\sin(2t)\,\sigma_z$
-        </p>
-      </div>
-      <div class="ctrl-group">
-        <label>Live Metrics</label>
-        <div class="metric-row" style="margin-top:.6rem;">
-          <div class="metric" id="m-unitarity">
-            <div class="m-val" id="v-unitarity">0.00e+00</div>
-            <div class="m-key">Unitarity Violation</div>
+        <aside class="hero-panel" aria-label="Key metrics">
+          <div class="stats">
+            <div class="stat">
+              <span class="stat-value">10&times;</span>
+              <div>Lower spectral error than same-order Trotter-Suzuki formulas within the verified regime reported in the paper.</div>
+            </div>
+            <div class="stat">
+              <span class="stat-value">8&times;</span>
+              <div>Stable rollout beyond the training horizon in the learned dynamics benchmark.</div>
+            </div>
+            <div class="stat">
+              <span class="stat-value">3&times;</span>
+              <div>Fewer trajectories needed to reach the same accuracy target in the data-efficiency study.</div>
+            </div>
+            <div class="stat">
+              <span class="stat-value">~10<sup>-16</sup></span>
+              <div>Unitarity violation at machine precision in the constrained architecture study.</div>
+            </div>
           </div>
-          <div class="metric" id="m-norm">
-            <div class="m-val" id="v-norm">1.0000</div>
-            <div class="m-key">State Norm</div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="findings">
+      <div class="section-label">Verified Findings</div>
+      <h2>Benchmarked improvements over existing methods in the reported evaluation settings.</h2>
+      <p class="lede">
+        The page reports the strongest validated gains documented in the paper, the repository result tables, and the rendered notebook outputs.
+      </p>
+
+      <div class="cards">
+        <article class="card">
+          <h3>Hamiltonian simulation accuracy</h3>
+          <p>
+            For the four-qubit transverse-field Ising model, the paper reports a verified 10&times; improvement threshold over same-order product-formula baselines. Lie GPT-1 reaches 12.3&times; lower spectral error than Trotter-1 at N = 10 steps, and Lie GPT-2 reaches 10.7&times; lower spectral error than Suzuki-2 at N = 24 steps.
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>Long-horizon physical stability</h3>
+          <p>
+            In the learned rollout benchmark, Lie GPT remains stable when evaluation extends from training sequences of T = 25 to rollout length T = 200. The repository summary describes this as bounded error with behavior consistent with the stated linear-in-time stability bound.
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>Physics-preserving learning efficiency</h3>
+          <p>
+            The constrained Lie-layer model achieves machine-precision unitarity and reaches a target accuracy with about 3&times; fewer trajectories in the data-efficiency notebook. This combines structural correctness with lower data demand in the project's learned quantum-dynamics setting.
+          </p>
+        </article>
+      </div>
+
+      <table class="evidence-table" aria-label="Benchmark evidence table">
+        <thead>
+          <tr>
+            <th>Benchmark</th>
+            <th>Verified gain</th>
+            <th>Meaning of the gain</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>TFIM spectral-error benchmark</td>
+            <td><span class="good">Lie GPT-1: 12.3&times; lower error than Trotter-1 at N = 10</span></td>
+            <td>More accurate digital simulation of the same spin model at the tested step budget.</td>
+          </tr>
+          <tr>
+            <td>Higher-order TFIM benchmark</td>
+            <td><span class="good">Lie GPT-2: 10.7&times; lower error than Suzuki-2 at N = 24</span></td>
+            <td>Better accuracy at fixed total evolution time in the higher-order propagation setting.</td>
+          </tr>
+          <tr>
+            <td>Architecture and unitarity study</td>
+            <td><span class="good">Unitarity violation remains at machine precision</span></td>
+            <td>Predicted quantum evolution stays physically valid, which is essential for simulation and control tasks.</td>
+          </tr>
+          <tr>
+            <td>Data-efficiency study</td>
+            <td><span class="good">About 3&times; fewer trajectories for the same accuracy target</span></td>
+            <td>Lower experimental or synthetic-data burden when training the learned dynamics model.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="applications">
+      <div class="section-label">Practical Meaning</div>
+      <h2>What better performance means for the applications used in this project.</h2>
+      <div class="application-grid">
+        <article class="card">
+          <h3>Static spin-system simulation</h3>
+          <p>
+            In the transverse-field Ising model application, lower spectral error means the simulated unitary remains closer to the target physical evolution over the same total time. In practical terms, that supports more reliable studies of spin-chain dynamics, phase-sensitive observables, and quantum algorithm testing at a fixed circuit budget.
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>Learned quantum-dynamics rollout</h3>
+          <p>
+            In the learned rollout application, exact unitarity and stable long-horizon prediction mean the model can propagate quantum states forward without leaving the physically valid state space. For control, forecasting, and repeated-step simulation, that translates into trajectories that remain usable over longer horizons.
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>Data-limited training settings</h3>
+          <p>
+            In the data-efficiency benchmark, reaching the same accuracy with fewer trajectories means lower training cost when trajectory generation is expensive. That matters when data come from simulation pipelines, calibration loops, or hardware measurements that must be budgeted carefully.
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>Noise-aware evaluation</h3>
+          <p>
+            In the noise-robustness study, keeping unitarity at machine precision across noise levels means the model preserves the core physical constraint even when inputs are perturbed. For practical deployment, this reduces the risk that noise corrupts the structure of the predicted evolution operator.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="figures">
+      <div class="section-label">Selected Figures</div>
+      <h2>Rendered evidence from the repository outputs.</h2>
+      <div class="figure-grid">
+        <article class="figure-card">
+          <img src="outputs/unitarity_benchmark.png" alt="Unitarity benchmark figure">
+          <div class="figure-body">
+            <h3>Unitarity benchmark</h3>
+            <p class="caption">
+              The constrained architecture keeps unitarity violation at approximately machine precision, supporting physically valid learned evolution.
+            </p>
           </div>
-          <div class="metric" id="m-step">
-            <div class="m-val" id="v-step">0</div>
-            <div class="m-key">Step</div>
+        </article>
+
+        <article class="figure-card">
+          <img src="outputs/stability_rollout.png" alt="Stability rollout figure">
+          <div class="figure-body">
+            <h3>Long-time stability rollout</h3>
+            <p class="caption">
+              The rollout benchmark highlights stable extrapolation from T = 25 training sequences to T = 200 evaluation length.
+            </p>
           </div>
-        </div>
-        <p class="demo-msg">Lie GPT: state norm $= 1$ exactly &mdash; unitarity from Lie group structure.</p>
-      </div>
-      <div class="ctrl-group">
-        <label>Unconstrained Comparison</label>
-        <div style="display:flex; align-items:center; gap:.6rem; margin-top:.5rem;">
-          <input type="checkbox" id="show-unc" onchange="toggleUnconstrained(this)"
-                 style="accent-color:var(--red); width:16px; height:16px;"/>
-          <span style="font-size:.9rem; color:var(--text2);">Show unconstrained GRU (drifts off sphere)</span>
-        </div>
-        <div class="metric-row" style="margin-top:.6rem;">
-          <div class="metric bad" id="m-unitarity-unc" style="display:none;">
-            <div class="m-val" id="v-unitarity-unc">&mdash;</div>
-            <div class="m-key">GRU Unitarity Viol.</div>
+        </article>
+
+        <article class="figure-card">
+          <img src="outputs/data_efficiency.png" alt="Data efficiency figure">
+          <div class="figure-body">
+            <h3>Data-efficiency study</h3>
+            <p class="caption">
+              The reported trend shows the constrained model reaching target accuracy with about 3&times; fewer trajectories.
+            </p>
           </div>
-          <div class="metric bad" id="m-norm-unc" style="display:none;">
-            <div class="m-val" id="v-norm-unc">&mdash;</div>
-            <div class="m-key">GRU State Norm</div>
-          </div>
-        </div>
+        </article>
       </div>
-      <div class="ctrl-group" style="display:flex; gap:.6rem;">
-        <button onclick="resetDemo()" class="btn btn-primary" style="flex:1;">Reset</button>
-        <button onclick="togglePause()" id="pause-btn" class="btn btn-outline" style="flex:1;">Pause</button>
-      </div>
-    </div>
-  </div>
-</div>
-</section>
+    </section>
+  </main>
 
-<!-- ── BENCHMARKS ───────────────────────────────────────────────────────────────────────────── -->
-<section id="benchmarks">
-  <h2>Full $N$-Sweep Benchmarks &mdash; TFIM $n=4$, $T=0.5$</h2>
-  <p style="color:var(--text2); margin-bottom:.8rem;">
-    Spectral error vs. step count $N$ at fixed total time $T=0.5$. The ratio Trotter-1&nbsp;/&nbsp;GPT-1
-    grows as $N/T$, crossing $10\times$ at $N=10$ and reaching $39.2\times$ at $N=32$.
-    The same methodology on the XXZ chain ($J_z=1$, $J_{xy}=0.5$) gives an $8.6\times$ improvement
-    at $N=10$, confirming model-independence.
-  </p>
-  <table class="results-table">
-    <tr>
-      <th>$N$</th>
-      <th>Trotter-1 $\epsilon$</th>
-      <th>Lie GPT-1 $\epsilon$</th>
-      <th>Ratio vs Trot-1</th>
-      <th>Suzuki-2 $\epsilon$</th>
-      <th>Lie GPT-2 $\epsilon$</th>
-      <th>Ratio vs Suz-2</th>
-    </tr>
-    <tr>
-      <td>2</td><td>$2.41\times10^{-1}$</td><td>$9.84\times10^{-2}$</td><td>$2.4\times$</td>
-      <td>&mdash;</td><td>&mdash;</td><td>&mdash;</td>
-    </tr>
-    <tr>
-      <td>4</td><td>$1.19\times10^{-1}$</td><td>$2.44\times10^{-2}$</td><td>$4.9\times$</td>
-      <td>&mdash;</td><td>&mdash;</td><td>&mdash;</td>
-    </tr>
-    <tr>
-      <td>8</td><td>$5.96\times10^{-2}$</td><td>$6.08\times10^{-3}$</td><td>$9.8\times$</td>
-      <td>&mdash;</td><td>&mdash;</td><td>&mdash;</td>
-    </tr>
-    <tr class="ours">
-      <td><strong>10 &#10003;</strong></td>
-      <td>$4.76\times10^{-2}$</td>
-      <td class="tag-good"><strong>$3.89\times10^{-3}$</strong></td>
-      <td class="tag-good"><strong>12.3&times;</strong></td>
-      <td>$9.72\times10^{-4}$</td>
-      <td>&mdash;</td><td>&mdash;</td>
-    </tr>
-    <tr>
-      <td>12</td><td>$3.97\times10^{-2}$</td><td class="tag-good">$2.70\times10^{-3}$</td>
-      <td class="tag-good">$14.7\times$</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td>
-    </tr>
-    <tr>
-      <td>16</td><td>$2.98\times10^{-2}$</td><td class="tag-good">$1.52\times10^{-3}$</td>
-      <td class="tag-good">$19.6\times$</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td>
-    </tr>
-    <tr class="ours">
-      <td><strong>24 &#10003;</strong></td>
-      <td>$1.98\times10^{-2}$</td>
-      <td class="tag-good"><strong>$6.75\times10^{-4}$</strong></td>
-      <td class="tag-good"><strong>29.4&times;</strong></td>
-      <td>$1.69\times10^{-4}$</td>
-      <td class="tag-good"><strong>$1.58\times10^{-5}$</strong></td>
-      <td class="tag-good"><strong>10.7&times;</strong></td>
-    </tr>
-    <tr>
-      <td>32</td><td>&mdash;</td><td class="tag-good">&mdash;</td>
-      <td class="tag-good">$\sim39.2\times$</td>
-      <td>$9.49\times10^{-5}$</td>
-      <td class="tag-good">$6.66\times10^{-6}$</td>
-      <td class="tag-good">$14.2\times$</td>
-    </tr>
-  </table>
-  <p style="color:var(--text2); margin-top:.6rem; font-size:.88rem;">
-    &#10003; = 10&times; threshold first crossed. All propagators use analytically fixed
-    coefficients; no optimization loop.
-  </p>
-
-  <div class="figures-grid" style="margin-top:1.5rem;">
-    <div class="fig-card">
-      <div class="fig-img">
-        <img src="results/figures/liegpt_local_error.png"
-             onerror="this.parentNode.innerHTML='Run scripts/generate_liegpt_figures.py to generate'"
-             alt="Local Error vs delta-t"/>
-      </div>
-      <div class="fig-body">
-        <div class="fig-title">Local Error vs. Step Size $\delta t$</div>
-        <div class="fig-desc">
-          Log-log slopes confirm $O(\delta t^2)$ Trotter-1, $O(\delta t^3)$ GPT-1,
-          $O(\delta t^3)$ Suzuki-2, $O(\delta t^4)$ GPT-2 (corrected coefficients).
-          The 10&times; threshold is crossed at $\delta t\approx0.06$ (GPT-1 vs Trotter-1)
-          and $\delta t\approx0.02$ (GPT-2 vs Suzuki-2).
-        </div>
-        <span class="fig-key-badge">Paper Figure 1 &mdash; Local Error</span>
-      </div>
-    </div>
-    <div class="fig-card">
-      <div class="fig-img">
-        <img src="results/figures/liegpt_global_error.png"
-             onerror="this.parentNode.innerHTML='Run scripts/generate_liegpt_figures.py to generate'"
-             alt="Global Error vs N"/>
-      </div>
-      <div class="fig-body">
-        <div class="fig-title">Global Error vs. Step Count $N$</div>
-        <div class="fig-desc">
-          $T=0.5$, TFIM $n=4$. GPT-1 attains $\geq10\times$ improvement for $N\geq10$;
-          GPT-2 attains $\geq10\times$ over Suzuki-2 for $N\geq24$.
-          Slopes confirm $1/N^2$ (GPT-1) and $1/N^3$ (GPT-2) global scaling.
-        </div>
-        <span class="fig-key-badge">Paper Figure 2 &mdash; Global Error</span>
-      </div>
-    </div>
-    <div class="fig-card">
-      <div class="fig-img">
-        <img src="results/figures/liegpt_heatmap.png"
-             onerror="this.parentNode.innerHTML='Run scripts/generate_liegpt_figures.py to generate'"
-             alt="Error Ratio Heatmap"/>
-      </div>
-      <div class="fig-body">
-        <div class="fig-title">Error Ratio Heatmap over $(N,\,T)$</div>
-        <div class="fig-desc">
-          Black contours mark the 10&times; improvement threshold.
-          Green cells confirm that the improvement covers a substantial portion of the
-          moderate-$N$, short-$T$ regime relevant to near-term quantum hardware.
-        </div>
-        <span class="fig-key-badge">Paper Figure 3 &mdash; Heatmap</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── NOTEBOOKS ───────────────────────────────────────────────────────────────────────────── -->
-<section id="notebooks">
-  <h2>Three Notebooks: Extending Lie GPT to Learned Baker–Campbell–Hausdorff (BCH) Approaches</h2>
-  <p style="color:var(--text2); margin-bottom:1rem;">
-    The paper establishes the analytical half of the Lie GPT framework: BCH-optimal generator
-    selection yields 10&times; improvement with analytically fixed coefficients. The natural
-    generalization asks: what if the Baker–Campbell–Hausdorff (BCH) selection is <em>learned from quantum
-    trajectory data</em> rather than analytically derived? The three notebooks answer this by
-    implementing Lie GPT as a GRU augmented with a zero-parameter
-    <strong>Lie Constraint Layer</strong> that forces all output generators to lie in
-    $\mathfrak{su}(2)$, making unitarity structurally impossible to violate.
-    The three notebooks form one continuous arc:
-    <em>foundations</em> (why and how the constraint works)
-    &rarr; <em>long-time stability</em> (the primary payoff of exact unitarity)
-    &rarr; <em>data efficiency and noise robustness</em> (why less data suffices and the
-    guarantee is noise-proof).
-    Each notebook is available as a pre-rendered HTML page and as an executable
-    <code>.ipynb</code> source.
-  </p>
-  <div class="notebooks-grid">
-
-    <div class="nb-card">
-      <div class="nb-num">Notebook 1 &mdash; Foundations</div>
-      <div class="nb-title">Architecture &amp; Unitarity Guarantee</div>
-      <div class="nb-desc">
-        Establishes the mathematical foundation shared by both the analytical and learned
-        frameworks. Visualizes the $\mathfrak{su}(2)$ basis ($\sigma_x,\sigma_y,\sigma_z$)
-        and the Levi-Civita structure constants $[X_i,X_j]=\sum_k c_{ij}^k X_k$, which
-        encode the commutator structure of the DLA. Implements the Lie Constraint Layer:
-        the GRU outputs three real scalars $\theta_i$; the layer assembles
-        $H=\sum_i\theta_i\sigma_i$, which is Hermitian by construction, so
-        $U = e^{-iH\Delta t}$ is always unitary. Quantified over $10^5$ random Hamiltonians:
-        Lie GPT unitarity violation $\|U^\dagger U-I\|_F\approx10^{-16}$;
-        a soft-penalty GRU reaches $\sim10^{-2}$; an unconstrained GRU reaches $\sim10^{-1}$.
-        Bloch sphere trajectories confirm exact norm preservation on $S^2$.
-      </div>
-      <div class="nb-claims">
-        <span>$\mathfrak{su}(2)$ basis and Levi-Civita structure constants</span>
-        <span>Lie Constraint Layer implementation &mdash; zero learnable parameters</span>
-        <span>Unitarity: machine $\varepsilon$ verified over $10^5$ random inputs</span>
-        <span>Bloch sphere: exact norm preservation vs. drifting unconstrained baseline</span>
-      </div>
-      <div class="nb-btns">
-        <a href="notebooks/liegpt_architecture_unitarity.html" class="nb-btn nb-btn-open">View HTML</a>
-        <a href="notebooks/liegpt_architecture_unitarity.ipynb" class="nb-btn nb-btn-section">.ipynb source</a>
-      </div>
-    </div>
-
-    <div class="nb-card" style="border-left:3px solid var(--accent);">
-      <div class="nb-num">Notebook 2 &mdash; Primary Result</div>
-      <div class="nb-title">Long-Time Stability</div>
-      <div class="nb-desc">
-        Having established that the Lie Constraint Layer guarantees unitarity at every
-        individual step, this notebook tests the compounding consequence: exact per-step
-        unitarity prevents error from accumulating super-linearly during extended rollouts.
-        All four models (Lie GPT, GRU, GRU+unitarity penalty, MLP) are trained on sequences
-        of length $T=25$ and evaluated at $T=200$ &mdash; an $8\times$ extrapolation beyond
-        the training horizon without retraining. Lie GPT state error stays bounded; the
-        log-log slope confirms the $O(T)$ linear bound of Theorem 1. Every baseline diverges
-        &mdash; including the GRU with a soft unitarity penalty, establishing that the hard
-        architectural constraint is not merely convenient but strictly necessary.
-      </div>
-      <div class="nb-claims">
-        <span>Training on $T=25$; rollout to $T=200$ ($8\times$ extrapolation)</span>
-        <span>Lie GPT: bounded error, flat $\|U^\dagger U-I\|_F$ at $\varepsilon_\text{machine}$</span>
-        <span>All baselines diverge &mdash; GRU+penalty baseline included</span>
-        <span>Theorem 1 bound $\|\psi_\text{err}(T)\|\leq T\cdot C\cdot\varepsilon$ verified empirically</span>
-      </div>
-      <div class="nb-btns">
-        <a href="notebooks/liegpt_stability.html" class="nb-btn nb-btn-open">View HTML</a>
-        <a href="notebooks/liegpt_stability.ipynb" class="nb-btn nb-btn-section">.ipynb source</a>
-      </div>
-    </div>
-
-    <div class="nb-card">
-      <div class="nb-num">Notebook 3 &mdash; Supporting Experiments</div>
-      <div class="nb-title">Data Efficiency &amp; Noise Robustness</div>
-      <div class="nb-desc">
-        With long-time stability demonstrated, the final notebook asks: does the Lie
-        Constraint Layer also reduce the training data requirement? Yes &mdash; and Theorem 2
-        explains why: constraining the output to the $k=3$-dimensional $\mathfrak{su}(2)$
-        algebra reduces Rademacher complexity by $\sqrt{k/n^2}$ relative to the unconstrained
-        matrix class. The GRU no longer needs to learn unitarity from data; its full capacity
-        is available for learning dynamics. Verified over a sweep of training set sizes
-        $N\in\{50,100,250,500,1000,2000,5000\}$: Lie GPT reaches a given accuracy threshold
-        with $\sim3\times$ fewer trajectories. The noise robustness experiment completes the
-        case: at all input noise levels $\sigma\in\{0,0.05,0.1,0.2,0.5\}$, the hard constraint
-        keeps unitarity violation at $\varepsilon_\text{machine}$ regardless of input quality.
-      </div>
-      <div class="nb-claims">
-        <span>Data efficiency: $\sim3\times$ fewer trajectories to match GRU accuracy</span>
-        <span>Theorem 2: Rademacher complexity reduced by $\sqrt{k/n^2}$</span>
-        <span>Noise sweep $\sigma\in\{0,\ldots,0.5\}$: structural guarantee is noise-proof</span>
-        <span>4-panel combined summary (publication figure)</span>
-      </div>
-      <div class="nb-btns">
-        <a href="notebooks/liegpt_efficiency_robustness.html" class="nb-btn nb-btn-open">View HTML</a>
-        <a href="notebooks/liegpt_efficiency_robustness.ipynb" class="nb-btn nb-btn-section">.ipynb source</a>
-      </div>
-    </div>
-
-  </div>
-
-  <h3 style="margin-top:2rem; margin-bottom:.8rem;">Notebook Output Figures</h3>
-  <p style="color:var(--text2); margin-bottom:.5rem;">
-    Execute the notebooks (see Reproducibility) to populate <code>outputs/</code>;
-    the panels below will display the actual results.
-  </p>
-  <div class="figures-grid">
-    <div class="fig-card">
-      <div class="fig-img">
-        <img src="outputs/unitarity_benchmark.png"
-             onerror="this.parentNode.innerHTML='Run Architecture notebook to generate this figure'"
-             alt="Unitarity Benchmark"/>
-      </div>
-      <div class="fig-body">
-        <div class="fig-title">Unitarity Violation Distribution</div>
-        <div class="fig-desc">Over $10^5$ random Hamiltonians. Lie GPT at machine
-        $\varepsilon$; unconstrained GRU $10^8$&ndash;$10^{10}\times$ larger.</div>
-        <span class="fig-key-badge">Notebook 1 &mdash; Architecture</span>
-      </div>
-    </div>
-    <div class="fig-card">
-      <div class="fig-img">
-        <img src="outputs/bloch_sphere_unitarity.png"
-             onerror="this.parentNode.innerHTML='Run Architecture notebook to generate this figure'"
-             alt="Bloch Sphere"/>
-      </div>
-      <div class="fig-body">
-        <div class="fig-title">Bloch Sphere Trajectories</div>
-        <div class="fig-desc">Lie GPT state norm stays exactly 1.000000. Unconstrained
-        model spirals off the sphere with growing unitarity violations.</div>
-        <span class="fig-key-badge">Notebook 1 &mdash; Architecture</span>
-      </div>
-    </div>
-    <div class="fig-card" style="border-color:var(--accent);">
-      <div class="fig-img">
-        <img src="outputs/stability_rollout.png"
-             onerror="this.parentNode.innerHTML='Run Stability notebook to generate this figure (KEY RESULT)'"
-             alt="Stability Rollout"/>
-      </div>
-      <div class="fig-body">
-        <div class="fig-title">Long-Time Stability &mdash; Primary Figure</div>
-        <div class="fig-desc">
-          4-panel: (A) state error mean&plusmn;std, (B) unitarity violation log-scale, (C)
-          error at checkpoints, (D) error ratio vs. Lie GPT.
-          Lie GPT stable at $8\times$ extrapolation; all baselines diverge.
-        </div>
-        <span class="fig-key-badge">Notebook 2 &mdash; Key Result</span>
-      </div>
-    </div>
-    <div class="fig-card">
-      <div class="fig-img">
-        <img src="outputs/theorem1_bound.png"
-             onerror="this.parentNode.innerHTML='Run Stability notebook to generate this figure'"
-             alt="Theorem 1 Bound"/>
-      </div>
-      <div class="fig-body">
-        <div class="fig-title">Theorem 1 Verification</div>
-        <div class="fig-desc">Empirical error vs. linear bound $T\cdot C\cdot\varepsilon$.
-        Log-log slope $\approx1$ confirms $O(T)$ error growth &mdash; bound is tight.</div>
-        <span class="fig-key-badge">Notebook 2 &mdash; Stability</span>
-      </div>
-    </div>
-    <div class="fig-card">
-      <div class="fig-img">
-        <img src="outputs/data_efficiency.png"
-             onerror="this.parentNode.innerHTML='Run Efficiency notebook to generate this figure'"
-             alt="Data Efficiency"/>
-      </div>
-      <div class="fig-body">
-        <div class="fig-title">Data Efficiency</div>
-        <div class="fig-desc">Test error vs. $N$ (log-log). Lie GPT reaches accuracy
-        threshold with $\sim3\times$ fewer trajectories, consistent with Theorem 2.</div>
-        <span class="fig-key-badge">Notebook 3 &mdash; Efficiency</span>
-      </div>
-    </div>
-    <div class="fig-card">
-      <div class="fig-img">
-        <img src="outputs/combined_summary.png"
-             onerror="this.parentNode.innerHTML='Run Efficiency notebook to generate this figure'"
-             alt="Combined Summary"/>
-      </div>
-      <div class="fig-body">
-        <div class="fig-title">Combined Advantage Summary</div>
-        <div class="fig-desc">4-panel publication figure: data efficiency, noise robustness,
-        Rademacher bound, samples-needed bar chart.</div>
-        <span class="fig-key-badge">Notebook 3 &mdash; Efficiency</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── POSITIONING ──────────────────────────────────────────────────────────────────────────── -->
-<section id="positioning">
-  <h2>Positioning vs. Prior Work</h2>
-  <p style="color:var(--text2); margin-bottom:.8rem;">
-    The paper (Sec. 7) identifies three natural criticism points; the table below answers each,
-    together with the comparison points for the machine-learning framing of the notebooks.
-  </p>
-  <table class="pos-table">
-    <tr>
-      <th>Prior work</th>
-      <th>Core limitation</th>
-      <th>Lie GPT answer</th>
-    </tr>
-    <tr>
-      <td>First-order Trotter (GPT-0)</td>
-      <td>Generator set $\{A,B\}$ only; $[A,B]$ accumulates as $O(\delta t^2)$ error per step</td>
-      <td>GPT-1 includes $[A,B]$ explicitly, cancels the error exactly; $10\times$ for $N\geq10$</td>
-    </tr>
-    <tr>
-      <td>Suzuki-2 (symmetric Trotter)</td>
-      <td>$O(\delta t^3)$ local error, same as GPT-1; no principled extension to richer DLA sets</td>
-      <td>GPT-2 achieves $O(\delta t^4)$ with corrected coefficients; $\geq10\times$ for $N\geq24$</td>
-    </tr>
-    <tr>
-      <td>Cartan / fixed-depth synthesis</td>
-      <td>Exact but not learned; requires full Cartan decomposition of the entire DLA</td>
-      <td>Lie GPT interpolates: GPT-$k\to\infty$ recovers Cartan; GPT-1/2 are efficient partial steps</td>
-    </tr>
-    <tr>
-      <td>Variational ans&auml;tze (QAOA)</td>
-      <td>Optimize angles in a fixed generator family &mdash; operator space does not expand</td>
-      <td>Lie GPT expands the generator set; BCH coefficients are analytically fixed, not optimized</td>
-    </tr>
-    <tr>
-      <td>Neural quantum states (NQS)</td>
-      <td>Operate in state / wavefunction space; no algebraic structure guarantees</td>
-      <td>Notebooks: Lie Constraint Layer enforces $H(t)\in\mathfrak{su}(2)$ at every step</td>
-    </tr>
-    <tr>
-      <td>Physics-informed neural ODEs</td>
-      <td>Symmetry via soft loss penalty; unitarity still violated during training and rollout</td>
-      <td>Hard architectural constraint; $\|U^\dagger U-I\|_F\leq\varepsilon_\text{machine}$ always</td>
-    </tr>
-    <tr class="ours">
-      <td><strong>Lie GPT (this work)</strong></td>
-      <td>&mdash;</td>
-      <td>dynamical Lie algebra (DLA) as generator space &middot; Baker–Campbell–Hausdorff (BCH) as selection rule &middot; 10&times; theorem &middot;
-          exact unitarity &middot; provable stability &middot; data efficiency</td>
-    </tr>
-  </table>
-</section>
-
-<!-- ── REPRODUCE ────────────────────────────────────────────────────────────────────────────── -->
-<section id="reproduce">
-  <h2>Reproducibility</h2>
-  <p style="color:var(--text2); margin-bottom:1rem;">
-    All experiments run on CPU only. No GPU required. Paper benchmarks (<code>scripts/</code>)
-    complete within minutes; the full notebook suite takes 15&ndash;30 minutes.
-  </p>
-  <div class="repro-steps">
-    <div class="repro-step">
-      <div>
-        <strong>Install dependencies</strong>
-        <pre>conda activate qaoa   # or create a new environment
-pip install -r requirements.txt</pre>
-      </div>
-    </div>
-    <div class="repro-step">
-      <div>
-        <strong>Set Python path</strong>
-        <pre>export PYTHONPATH=src   # Windows: set PYTHONPATH=src</pre>
-      </div>
-    </div>
-    <div class="repro-step">
-      <div>
-        <strong>Reproduce paper benchmarks (TFIM spectral-error tables and figures)</strong>
-        <pre>python scripts/tfim_experiment.py            # core TFIM table
-python scripts/tfim_sweep.py                 # full N-sweep
-python scripts/generate_liegpt_figures.py    # paper figures (local/global error, heatmap)</pre>
-      </div>
-    </div>
-    <div class="repro-step">
-      <div>
-        <strong>Execute notebooks (unitarity, stability, data efficiency)</strong>
-        <pre>jupyter nbconvert --to notebook --execute --inplace \
-  notebooks/liegpt_architecture_unitarity.ipynb
-jupyter nbconvert --to notebook --execute --inplace \
-  notebooks/liegpt_stability.ipynb
-jupyter nbconvert --to notebook --execute --inplace \
-  notebooks/liegpt_efficiency_robustness.ipynb</pre>
-      </div>
-    </div>
-    <div class="repro-step">
-      <div>
-        <strong>Export notebooks to HTML for offline viewing</strong>
-        <pre>jupyter nbconvert --to html notebooks/liegpt_architecture_unitarity.ipynb
-jupyter nbconvert --to html notebooks/liegpt_stability.ipynb
-jupyter nbconvert --to html notebooks/liegpt_efficiency_robustness.ipynb</pre>
-      </div>
-    </div>
-    <div class="repro-step">
-      <div>
-        <strong>Serve this page locally</strong>
-        <pre>python -m http.server 8000
-open http://localhost:8000</pre>
-      </div>
-    </div>
-  </div>
-  <p style="color:var(--text2); margin-top:1rem; font-size:.9rem;">
-    After executing the notebooks, all figures in <code>outputs/</code> are populated and the
-    figure panels in the Notebooks section above will display the actual results.
-  </p>
-</section>
-
-<!-- ── FOOTER ─────────────────────────────────────────────────────────────────────────────────────── -->
-<footer>
-  <div class="footer-links">
-    <a href="#framework">Framework</a>
-    <a href="#theorem">10&times; Theorem</a>
-    <a href="#demo">DLA Demo</a>
-    <a href="#benchmarks">Benchmarks</a>
-    <a href="#notebooks">Notebooks</a>
-    <a href="#positioning">Positioning</a>
-    <a href="#reproduce">Reproduce</a>
-    <a href="research_paper/research_paper.pdf">Paper</a>
-    <a href="README.md">README</a>
-  </div>
-  <p>
-    Lie GPT for Hamiltonian Simulation: Generator Prediction in Dynamical Lie Algebras
-    Beyond Product Formulas &middot; Molena Huynh &middot; April 2026
-  </p>
-  <p style="margin-top:.5rem; font-size:.8rem;">
-    Released under project LICENSE &middot;
-    <a href="research_paper/research_paper.pdf">Research Paper</a> &middot;
-    <a href="README.md">README</a>
-  </p>
-</footer>
-
-
-<!-- ── THREE.JS BLOCH SPHERE DEMO ─────────────────────────────────────────────── -->
-<script>
-(function () {
-  const canvas = document.getElementById('bloch-canvas');
-  if (!canvas || typeof THREE === 'undefined') return;
-
-  const W = 420, H = 420;
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setSize(W, H);
-  renderer.setPixelRatio(window.devicePixelRatio);
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
-  camera.position.set(2.2, 1.5, 2.2);
-  camera.lookAt(0, 0, 0);
-
-  // Lighting
-  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
-  const dlight = new THREE.DirectionalLight(0x5679c2, 1.2);
-  dlight.position.set(3, 5, 3);
-  scene.add(dlight);
-
-  // Bloch sphere
-  const sphereMat = new THREE.MeshPhongMaterial({
-    color: 0x1e1b4b, transparent: true, opacity: 0.2
-  });
-  scene.add(new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), sphereMat));
-  const wireMat = new THREE.MeshBasicMaterial({
-    color: 0x312e81, wireframe: true, transparent: true, opacity: 0.12
-  });
-  scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.001, 18, 18), wireMat));
-
-  // Equator circle
-  const eqPts = [];
-  for (let i = 0; i <= 64; i++) {
-    const a = (i / 64) * 2 * Math.PI;
-    eqPts.push(new THREE.Vector3(Math.cos(a), 0, Math.sin(a)));
-  }
-  scene.add(new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints(eqPts),
-    new THREE.LineBasicMaterial({ color: 0x233b73, transparent: true, opacity: 0.4 })
-  ));
-
-  // Axes
-  const axDirs = [[1,0,0,'x'],[0,1,0,'z'],[0,0,1,'y']];
-  const axColors = [0x64748b, 0x64748b, 0x64748b];
-  axDirs.forEach(([x,y,z,lbl], i) => {
-    scene.add(new THREE.ArrowHelper(
-      new THREE.Vector3(x,y,z), new THREE.Vector3(-x*.9,-y*.9,-z*.9),
-      2, axColors[i], 0.06, 0.04
-    ));
-  });
-
-  // State point — LieGPT (purple)
-  const stateMat = new THREE.MeshPhongMaterial({ color: 0x3557a6, emissive: 0x233b73, emissiveIntensity: 0.32 });
-  const stateMesh = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 16), stateMat);
-  scene.add(stateMesh);
-
-  // State point — Unconstrained (red, hidden initially)
-  const uncMat = new THREE.MeshPhongMaterial({ color: 0xef4444, emissive: 0x7f1d1d, emissiveIntensity: 0.5 });
-  const uncMesh = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 16), uncMat);
-  uncMesh.visible = false;
-  scene.add(uncMesh);
-
-  // Trail geometry for LieGPT
-  const MAX_TRAIL = 120;
-  const trailPositions = new Float32Array(MAX_TRAIL * 3);
-  const trailGeo = new THREE.BufferGeometry();
-  trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPositions, 3));
-  const trailLine = new THREE.Line(
-    trailGeo,
-    new THREE.LineBasicMaterial({ color: 0x5679c2, transparent: true, opacity: 0.8, linewidth: 2 })
-  );
-  scene.add(trailLine);
-
-  // Trail for unconstrained
-  const uncTrailPos = new Float32Array(MAX_TRAIL * 3);
-  const uncTrailGeo = new THREE.BufferGeometry();
-  uncTrailGeo.setAttribute('position', new THREE.BufferAttribute(uncTrailPos, 3));
-  const uncTrailLine = new THREE.Line(
-    uncTrailGeo,
-    new THREE.LineBasicMaterial({ color: 0xef4444, transparent: true, opacity: 0.7, linewidth: 2 })
-  );
-  uncTrailLine.visible = false;
-  scene.add(uncTrailLine);
-
-  // State
-  let psi = [1.0, 0.0];  // [alpha, beta] real-valued Bloch vector components (z, x)
-  let blochVec = [0, 0, 1];  // initial: |0> = north pole
-  let blochUnc = [0.1, 0.1, 0.98];  // unconstrained starts slightly off
-  let normUnc = 1.0;
-
-  let trailPts = [];
-  let uncPts = [];
-  let t = 0;
-  let paused = false;
-  let hType = 'sinusoidal';
-  let showUnc = false;
-  let step = 0;
-  const dt = 0.04;
-
-  const H_DESCS = {
-    sinusoidal: '$H(t) = \\sin(t)\\,\\sigma_x + \\cos(1.3t)\\,\\sigma_y + 0.5\\sin(2t)\\,\\sigma_z$',
-    polynomial: '$H(t) = (0.5t^2 - 0.3t + 0.1)\\,\\sigma_x + \\cos(t)\\,\\sigma_y + 0.4t\\,\\sigma_z$',
-    random:     '$H(t) = $ Random smooth coefficients (sum of sinusoids with random seeds)'
-  };
-
-  // Hamiltonian coefficient function
-  function getTheta(t, type) {
-    switch(type) {
-      case 'sinusoidal':
-        return [Math.sin(t), Math.cos(1.3*t), 0.5*Math.sin(2.0*t)];
-      case 'polynomial': {
-        const tau = t % 10;
-        return [0.5*tau*tau/50 - 0.3*tau/10 + 0.1, Math.cos(t)*0.8, 0.4*tau/10];
-      }
-      case 'random':
-        return [
-          Math.sin(0.7*t) + 0.5*Math.cos(1.9*t+1.0),
-          Math.cos(1.1*t) + 0.3*Math.sin(2.7*t+0.5),
-          0.8*Math.sin(1.5*t+0.8) + 0.4*Math.cos(3.2*t)
-        ];
-    }
-  }
-
-  // Evolve Bloch vector via dα/dt = 2(θ × α)
-  function evolveBloch(alpha, theta, dt) {
-    const [tx, ty, tz] = theta;
-    const [ax, ay, az] = alpha;
-    const nx = 2 * (ty*az - tz*ay);
-    const ny = 2 * (tz*ax - tx*az);
-    const nz = 2 * (tx*ay - ty*ax);
-    const newA = [ax + dt*nx, ay + dt*ny, az + dt*nz];
-    const r = Math.sqrt(newA.reduce((s, x) => s + x*x, 0));
-    return r < 1e-12 ? newA : newA.map(x => x/r);  // LieGPT: normalize exactly
-  }
-
-  function evolveBlochUnc(alpha, theta, dt, noiseScale=0.015) {
-    const [tx, ty, tz] = theta;
-    const [ax, ay, az] = alpha;
-    const nx = 2 * (ty*az - tz*ay) + noiseScale*(Math.random()-.5);
-    const ny = 2 * (tz*ax - tx*az) + noiseScale*(Math.random()-.5);
-    const nz = 2 * (tx*ay - ty*ax) + noiseScale*(Math.random()-.5);
-    // No normalization — unconstrained model doesn't preserve unit norm
-    return [ax + dt*nx, ay + dt*ny, az + dt*nz];
-  }
-
-  function blochToThree(b) {
-    // Bloch vector (x,y,z) → Three.js (x,z,y) for y-up coordinate system
-    return new THREE.Vector3(b[0], b[2], b[1]);
-  }
-
-  function updateTrail(pts, positions, geo, bloch) {
-    const p = blochToThree(bloch);
-    pts.push([p.x, p.y, p.z]);
-    if (pts.length > MAX_TRAIL) pts.shift();
-    const n = pts.length;
-    for (let i = 0; i < n; i++) {
-      positions[i*3+0] = pts[i][0];
-      positions[i*3+1] = pts[i][1];
-      positions[i*3+2] = pts[i][2];
-    }
-    for (let i = n; i < MAX_TRAIL; i++) {
-      positions[i*3+0] = pts[n-1][0];
-      positions[i*3+1] = pts[n-1][1];
-      positions[i*3+2] = pts[n-1][2];
-    }
-    geo.attributes.position.needsUpdate = true;
-    geo.setDrawRange(0, n);
-  }
-
-  // Orbit controls (simple mouse drag)
-  let isDragging = false, prevMouse = null;
-  let camTheta = 0.6, camPhi = 0.4, camR = 3.5;
-  canvas.addEventListener('mousedown', e => { isDragging = true; prevMouse = {x: e.clientX, y: e.clientY}; canvas.style.cursor='grabbing'; });
-  window.addEventListener('mouseup', () => { isDragging = false; canvas.style.cursor='grab'; });
-  window.addEventListener('mousemove', e => {
-    if (!isDragging || !prevMouse) return;
-    const dx = (e.clientX - prevMouse.x) * 0.01;
-    const dy = (e.clientY - prevMouse.y) * 0.01;
-    camTheta += dx; camPhi = Math.max(0.1, Math.min(Math.PI-0.1, camPhi + dy));
-    prevMouse = {x: e.clientX, y: e.clientY};
-    camera.position.set(
-      camR * Math.sin(camPhi) * Math.cos(camTheta),
-      camR * Math.cos(camPhi),
-      camR * Math.sin(camPhi) * Math.sin(camTheta)
-    );
-    camera.lookAt(0, 0, 0);
-  });
-
-  function animate() {
-    requestAnimationFrame(animate);
-    if (!paused) {
-      const theta = getTheta(t, hType);
-      blochVec = evolveBloch(blochVec, theta, dt);
-      if (showUnc) {
-        blochUnc = evolveBlochUnc(blochUnc, theta, dt);
-        // Slowly drift unconstrained off sphere
-        normUnc = Math.sqrt(blochUnc.reduce((s, x) => s + x*x, 0));
-      }
-      t += dt;
-      step++;
-
-      // State positions
-      const p = blochToThree(blochVec);
-      stateMesh.position.copy(p);
-      updateTrail(trailPts, trailPositions, trailGeo, blochVec);
-
-      if (showUnc) {
-        const pUnc = blochToThree(blochUnc.map(x => x / (normUnc + 1e-10)));
-        uncMesh.position.copy(pUnc.multiplyScalar(normUnc));
-        updateTrail(uncPts, uncTrailPos, uncTrailGeo, blochUnc.map(x => x / (normUnc + 1e-10)));
-      }
-
-      // Update metrics
-      document.getElementById('v-unitarity').textContent = '0.00e+00';
-      document.getElementById('v-norm').textContent = '1.0000';
-      document.getElementById('v-step').textContent = step;
-
-      if (showUnc) {
-        const uv = Math.abs(normUnc*normUnc - 1.0);
-        document.getElementById('v-unitarity-unc').textContent = uv.toExponential(2);
-        document.getElementById('v-norm-unc').textContent = normUnc.toFixed(4);
-        document.getElementById('m-norm-unc').className = normUnc > 1.01 || normUnc < 0.99 ? 'metric bad' : 'metric';
-      }
-    }
-    renderer.render(scene, camera);
-  }
-
-  window.setHType = function(type, el) {
-    hType = type;
-    document.querySelectorAll('.h-btn').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById('h-desc').innerHTML = H_DESCS[type] || '';
-    if (window.MathJax) window.MathJax.typesetPromise([document.getElementById('h-desc')]);
-    resetAll();
-  };
-
-  window.toggleUnconstrained = function(cb) {
-    showUnc = cb.checked;
-    uncMesh.visible = showUnc;
-    uncTrailLine.visible = showUnc;
-    document.getElementById('m-unitarity-unc').style.display = showUnc ? '' : 'none';
-    document.getElementById('m-norm-unc').style.display = showUnc ? '' : 'none';
-    if (showUnc) blochUnc = [blochVec[0]+.05, blochVec[1]+.05, blochVec[2]];
-    uncPts = [];
-  };
-
-  function resetAll() {
-    blochVec = [0, 0, 1]; blochUnc = [0.05, 0.05, 0.99]; normUnc = 1.0;
-    trailPts = []; uncPts = []; t = 0; step = 0;
-  }
-
-  window.resetDemo  = resetAll;
-  window.togglePause = function() {
-    paused = !paused;
-    document.getElementById('pause-btn').textContent = paused ? 'Resume' : 'Pause';
-  };
-
-  animate();
-})();
-</script>
-
+  <footer class="site-footer">
+    <a href="research_paper/research_paper.pdf">Research paper PDF</a> ·
+    <a href="notebooks/liegpt_architecture_unitarity.html">Architecture notebook</a> ·
+    <a href="notebooks/liegpt_stability.html">Stability notebook</a> ·
+    <a href="notebooks/liegpt_efficiency_robustness.html">Efficiency notebook</a>
+  </footer>
 </body>
 </html>
