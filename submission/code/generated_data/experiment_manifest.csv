@@ -1,0 +1,9 @@
+script,figure,label,hamiltonian,n_qubits,dimension,random_seed,notes
+fig1_local_error.py,fig1_local_error.pdf,fig:fixed4,TFIM open chain,4,16,,Fixed-time four-qubit benchmark; Lie-GPT uses a dense same-order residual correction.
+fig2_n6.py,fig2_n6.pdf,fig:n6,TFIM open chain,6,64,,Fixed-time six-qubit benchmark; Lie-GPT uses a dense same-order residual correction.
+fig3_global.py,fig3_global.pdf,fig:global,TFIM open chain,4,16,,Time-resolved four-qubit benchmark; Lie-GPT uses a dense same-order residual correction.
+fig4_random.py,fig4_random.pdf,fig:random,"TFIM open chain with sampled J,h",4,16,7,Deterministic pseudorandom parameter ensemble; reports median spectral error.
+fig5_longtime_gpt1.py,fig5_longtime_gpt1.pdf,fig:gpt1,TFIM open chain,5,32,,Longer-time five-qubit dense residual-correction benchmark.
+fig6_longtime_gpt2.py,fig6_longtime_gpt2.pdf,fig:gpt2,TFIM open chain,4,16,,Higher-order dense residual-correction diagnostic benchmark.
+fig7_time_ratio.py,fig7_time_ratio.pdf,fig:ratio,TFIM open chain,4,16,,Inverse-error visualization; generated from the same spectral errors as a time-resolved benchmark.
+liegpt_heatmap.py,liegpt_heatmap.pdf,fig:heatmap,TFIM open chain,4,16,,Heat map of same-order baseline-error/Lie-GPT-error ratios for orders 2 and 4.

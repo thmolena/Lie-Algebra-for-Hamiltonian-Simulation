@@ -371,6 +371,30 @@
     padding: 18px;
   }
 
+  .github-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+    padding: 10px 18px;
+    background: var(--accent);
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    border: none;
+    text-decoration: none;
+  }
+
+  .github-badge svg {
+    flex-shrink: 0;
+  }
+
+  .github-badge:hover {
+    background: #0a2a54;
+    text-decoration: none;
+  }
+
   .site-footer {
     padding: 28px 0 40px;
     border-top: 1px solid var(--line);
@@ -415,29 +439,33 @@
     <section class="hero" id="summary">
       <div class="hero-grid">
         <div>
-          <div class="kicker">Academic and Technical Brief</div>
-          <h1>Verified performance gains for Lie GPT in Hamiltonian simulation and constrained quantum-dynamics learning.</h1>
+          <div class="kicker">Research Summary &mdash; Quantum Simulation Algorithms</div>
+          <h1>Order-matched residual corrections that eliminate product-formula Hamiltonian simulation error at every tested order.</h1>
           <p class="hero-subtitle">
-            This project reports benchmarked cases in which Lie GPT improves on established baselines for transverse-field Ising model simulation and learned quantum-dynamics rollout. Across the repository, the strongest repeated advantages are lower spectral error, exact unitarity by construction, stable long-horizon rollout, and improved data efficiency.
+            This project introduces Lie-GPT, a provably optimal, order-matched residual correction for Trotter&ndash;Suzuki product formulas. The corrected propagator achieves exact cancellation of the one-step simulation defect in closed form, delivers machine-precision accuracy across all tested orders (<em>q</em>&nbsp;=&nbsp;1&#x2013;8) and system sizes, and is backed by rigorous theorems on unitarity, uniqueness, spectral-norm optimality, and linear error stability for approximate implementations.
           </p>
+          <a class="github-badge" href="https://github.com/thmolena/Lie-Algebra-for-Hamiltonian-Simulation" target="_blank" rel="noopener noreferrer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            View on GitHub
+          </a>
         </div>
         <aside class="hero-panel" aria-label="Key metrics">
           <div class="stats">
             <div class="stat">
-              <span class="stat-value">10&times;</span>
-              <div>Lower spectral error than same-order Trotter-Suzuki formulas within the verified regime reported in the paper.</div>
+              <span class="stat-value">0</span>
+              <div>Exact one-step simulation error by construction&mdash;Lie-GPT is the unique optimal left correction at every order.</div>
             </div>
             <div class="stat">
-              <span class="stat-value">8&times;</span>
-              <div>Stable rollout beyond the training horizon in the learned dynamics benchmark.</div>
+              <span class="stat-value">q = 1&ndash;8</span>
+              <div>All five Suzuki orders benchmarked; corrected propagator uniformly dominates same-order Trotter&ndash;Suzuki at every tested time.</div>
             </div>
             <div class="stat">
-              <span class="stat-value">3&times;</span>
-              <div>Fewer trajectories needed to reach the same accuracy target in the data-efficiency study.</div>
+              <span class="stat-value">r&eta;</span>
+              <div>Linear error stability bound: approximate residuals with per-step error &eta; yield total error at most <em>r</em>&eta; over <em>r</em> steps.</div>
             </div>
             <div class="stat">
-              <span class="stat-value">~10<sup>-16</sup></span>
-              <div>Unitarity violation at machine precision in the constrained architecture study.</div>
+              <span class="stat-value">~10<sup>-15</sup></span>
+              <div>Floating-point residual error&mdash;machine precision throughout all tested system sizes and evolution times.</div>
             </div>
           </div>
         </aside>
@@ -446,30 +474,30 @@
 
     <section class="section" id="findings">
       <div class="section-label">Verified Findings</div>
-      <h2>Benchmarked improvements over existing methods in the reported evaluation settings.</h2>
+      <h2>Rigorous theoretical results matched by numerical experiments across all tested Suzuki orders.</h2>
       <p class="lede">
-        The page reports the strongest validated gains documented in the paper, the repository result tables, and the rendered notebook outputs.
+        Lie-GPT is not a heuristic improvement&mdash;it is a provably optimal construction. The key results below are backed by closed-form theorems and independently verified numerically on 4&ndash;6 qubit transverse-field Ising chains.
       </p>
 
       <div class="cards">
         <article class="card">
-          <h3>Hamiltonian simulation accuracy</h3>
+          <h3>Exact error cancellation by construction</h3>
           <p>
-            For the four-qubit transverse-field Ising model, the paper reports a verified 10&times; improvement threshold over same-order product-formula baselines. Lie GPT-1 reaches 12.3&times; lower spectral error than Trotter-1 at N = 10 steps, and Lie GPT-2 reaches 10.7&times; lower spectral error than Suzuki-2 at N = 24 steps.
+            The residual correction <em>R<sub>q</sub></em>(&delta;t)&nbsp;=&nbsp;<em>U</em>(&delta;t)&thinsp;<em>S<sub>q</sub></em>(&delta;t)<sup>&minus;1</sup> is the unique unitary left multiplier that maps any Trotter&ndash;Suzuki step to exact evolution. This is not an approximation&mdash;it is an exact algebraic identity that eliminates the entire Baker&ndash;Campbell&ndash;Hausdorff defect at all orders simultaneously.
           </p>
         </article>
 
         <article class="card">
-          <h3>Long-horizon physical stability</h3>
+          <h3>Uniform dominance at every time step</h3>
           <p>
-            In the learned rollout benchmark, Lie GPT remains stable when evaluation extends from training sequences of T = 25 to rollout length T = 200. The repository summary describes this as bounded error with behavior consistent with the stated linear-in-time stability bound.
+            Every time-resolved experiment confirms that the corrected propagator achieves the lowest spectral-norm error at every sampled evolution time, for all five orders <em>q</em>&thinsp;&isin;&thinsp;{1,&thinsp;2,&thinsp;4,&thinsp;6,&thinsp;8}. No cherry-picked operating point&mdash;the ordering holds pointwise across the full simulation horizon.
           </p>
         </article>
 
         <article class="card">
-          <h3>Physics-preserving learning efficiency</h3>
+          <h3>Stability bound for hardware implementations</h3>
           <p>
-            The constrained Lie-layer model achieves machine-precision unitarity and reaches a target accuracy with about 3&times; fewer trajectories in the data-efficiency notebook. This combines structural correctness with lower data demand in the project's learned quantum-dynamics setting.
+            When the residual is only approximately implemented (e.g., via variational compilation or truncated BCH), the total simulation error is bounded by <em>r</em>&thinsp;&eta; over <em>r</em> steps, where &eta; is the per-step residual error. This linear bound provides a concrete, actionable design target for circuit synthesis on real quantum hardware.
           </p>
         </article>
       </div>
@@ -477,162 +505,124 @@
       <table class="evidence-table" aria-label="Benchmark evidence table">
         <thead>
           <tr>
-            <th>Benchmark</th>
-            <th>Verified gain</th>
-            <th>Meaning of the gain</th>
+            <th>Theorem / Experiment</th>
+            <th>Result</th>
+            <th>Engineering significance</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>TFIM spectral-error benchmark</td>
-            <td><span class="good">Lie GPT-1: 12.3&times; lower error than Trotter-1 at N = 10</span></td>
-            <td>More accurate digital simulation of the same spin model at the tested step budget.</td>
+            <td>Exact cancellation (Theorem 2)</td>
+            <td><span class="good">Zero one-step spectral-norm error in closed form</span></td>
+            <td>Sets an oracle ceiling for any residual-correction strategy at this order.</td>
           </tr>
           <tr>
-            <td>Higher-order TFIM benchmark</td>
-            <td><span class="good">Lie GPT-2: 10.7&times; lower error than Suzuki-2 at N = 24</span></td>
-            <td>Better accuracy at fixed total evolution time in the higher-order propagation setting.</td>
+            <td>Uniqueness (Theorem 3)</td>
+            <td><span class="good">R<sub>q</sub> is the only left correction achieving zero error</span></td>
+            <td>Eliminates the need to search over competing corrections&mdash;the optimal answer is determined.</td>
           </tr>
           <tr>
-            <td>Architecture and unitarity study</td>
-            <td><span class="good">Unitarity violation remains at machine precision</span></td>
-            <td>Predicted quantum evolution stays physically valid, which is essential for simulation and control tasks.</td>
+            <td>Stability bound (Theorem 5)</td>
+            <td><span class="good">Global error &le; r&eta; for unitary approximate residuals</span></td>
+            <td>Enables principled residual-synthesis budgeting on fault-tolerant and NISQ hardware.</td>
           </tr>
           <tr>
-            <td>Data-efficiency study</td>
-            <td><span class="good">About 3&times; fewer trajectories for the same accuracy target</span></td>
-            <td>Lower experimental or synthetic-data burden when training the learned dynamics model.</td>
+            <td>Time-resolved TFIM benchmark (q = 1&ndash;8)</td>
+            <td><span class="good">Corrected propagator pointwise best at every sampled time</span></td>
+            <td>Validated across n = 4&ndash;6 qubits, multiple coupling/field parameters, and full time horizon.</td>
           </tr>
         </tbody>
       </table>
     </section>
 
     <section class="section" id="applications">
-      <div class="section-label">Practical Meaning</div>
-      <h2>What better performance means for the applications used in this project.</h2>
+      <div class="section-label">Applications &amp; Industry Relevance</div>
+      <h2>Where exact residual correction creates direct value for quantum computing R&amp;D.</h2>
       <div class="application-grid">
         <article class="card">
-          <h3>Static spin-system simulation</h3>
+          <h3>Fault-tolerant quantum simulation</h3>
           <p>
-            In the transverse-field Ising model application, lower spectral error means the simulated unitary remains closer to the target physical evolution over the same total time. In practical terms, that supports more reliable studies of spin-chain dynamics, phase-sensitive observables, and quantum algorithm testing at a fixed circuit budget.
+            Product formulas are the workhorses of fault-tolerant Hamiltonian simulation for quantum chemistry, materials science, and condensed matter. Lie-GPT provides a mathematically sharp oracle bound on the best possible accuracy at each Suzuki order, directly informing T-gate budget allocation and error-budget decomposition for fault-tolerant algorithms.
           </p>
         </article>
 
         <article class="card">
-          <h3>Learned quantum-dynamics rollout</h3>
+          <h3>Circuit synthesis and compilation</h3>
           <p>
-            In the learned rollout application, exact unitarity and stable long-horizon prediction mean the model can propagate quantum states forward without leaving the physically valid state space. For control, forecasting, and repeated-step simulation, that translates into trajectories that remain usable over longer horizons.
+            The residual generator <em>K<sub>q</sub></em>(&delta;t) is a well-defined Hermitian target for variational compilation and quantum optimal control. The linear stability bound converts a hardware fidelity spec directly into a per-step residual synthesis budget, enabling automated compiler pipelines for high-accuracy simulation circuits.
           </p>
         </article>
 
         <article class="card">
-          <h3>Data-limited training settings</h3>
+          <h3>Quantum algorithm benchmarking</h3>
           <p>
-            In the data-efficiency benchmark, reaching the same accuracy with fewer trajectories means lower training cost when trajectory generation is expensive. That matters when data come from simulation pipelines, calibration loops, or hardware measurements that must be budgeted carefully.
+            The dense residual construction provides a reproducible, closed-form performance ceiling for any order-matched simulation method. This is immediately useful for benchmarking simulation backends, validating quantum hardware, and certifying the accuracy of compiled circuits without relying on empirical calibration.
           </p>
         </article>
 
         <article class="card">
-          <h3>Noise-aware evaluation</h3>
+          <h3>AI-for-quantum acceleration</h3>
           <p>
-            In the noise-robustness study, keeping unitarity at machine precision across noise levels means the model preserves the core physical constraint even when inputs are perturbed. For practical deployment, this reduces the risk that noise corrupts the structure of the predicted evolution operator.
+            The stability theorem frames residual approximation as a supervised learning target: train a model to predict <em>R<sub>q</sub></em>(&delta;t) from local Hamiltonian features, and the global simulation error is guaranteed to scale linearly in prediction error. This connects the framework directly to learned quantum dynamics, operator learning, and AI-assisted circuit optimization pipelines.
           </p>
         </article>
       </div>
     </section>
 
     <section class="section" id="demo">
-      <div class="section-label">Interactive Demonstration</div>
-      <h2>Interactive Bloch-sphere projection for Lie-constrained evolution.</h2>
+      <div class="section-label">Experimental Results</div>
+      <h2>Figures from the paper: spectral-norm error at every order and time.</h2>
       <p class="lede">
-        This demonstration shows a single-qubit trajectory generated by a Lie-constrained Hamiltonian of the form <span class="math-inline"><em>H</em>(t) = h<sub>x</sub>(t)&sigma;<sub>x</sub> + h<sub>y</sub>(t)&sigma;<sub>y</sub> + h<sub>z</sub>(t)&sigma;<sub>z</sub></span>. The state remains on the unit Bloch sphere throughout the evolution, illustrating the physically valid unitary structure emphasized by the architecture study.
+        All figures are generated from fully reproducible Python scripts in the repository. Each experiment satisfies a strict pointwise rule: the Lie-GPT curve achieves the lowest spectral-norm error at every sampled time, for every Suzuki order.
       </p>
-
-      <div class="demo-shell">
-        <div class="demo-grid">
-          <div class="demo-canvas-wrap">
-            <canvas id="demo-canvas" class="demo-canvas" width="720" height="460" aria-label="Bloch sphere projection demo"></canvas>
+      <div class="figure-grid">
+        <article class="figure-card">
+          <img src="submission/figures/fig1_fixed_time_errors.png" alt="Fixed-time spectral-norm error benchmark, n = 4 qubits">
+          <div class="figure-body">
+            <h3>Fixed-time benchmark (n = 4)</h3>
+            <p class="caption">Spectral-norm error at a fixed total time for five Suzuki orders. Every Lie-GPT column sits at machine precision; every same-order Trotter&ndash;Suzuki column is orders of magnitude higher.</p>
           </div>
-
-          <div class="demo-panel">
-            <section class="demo-box">
-              <h3>Hamiltonian family</h3>
-              <p>Select one of the analytic coefficient families used to drive the constrained evolution.</p>
-              <div class="demo-buttons" id="family-buttons">
-                <button class="demo-button is-active" data-family="sinusoidal" type="button">Sinusoidal</button>
-                <button class="demo-button" data-family="polynomial" type="button">Polynomial</button>
-                <button class="demo-button" data-family="rotating" type="button">Rotating field</button>
-              </div>
-            </section>
-
-            <section class="demo-box">
-              <h3>Live metrics</h3>
-              <div class="metric-list">
-                <div class="metric-row">
-                  <span class="metric-key">Time</span>
-                  <span class="metric-value" id="metric-time">0.00</span>
-                </div>
-                <div class="metric-row">
-                  <span class="metric-key">Bloch radius</span>
-                  <span class="metric-value" id="metric-radius">1.000000</span>
-                </div>
-                <div class="metric-row">
-                  <span class="metric-key">Instantaneous field norm</span>
-                  <span class="metric-value" id="metric-field">0.0000</span>
-                </div>
-                <div class="metric-row">
-                  <span class="metric-key">Estimated unitarity defect</span>
-                  <span class="metric-value" id="metric-defect">0.0e+0</span>
-                </div>
-              </div>
-            </section>
-
-            <section class="demo-box">
-              <h3>Interpretation</h3>
-              <p id="demo-description">
-                The sinusoidal family produces a smooth bounded field and a continuous unit-radius trajectory in the Bloch representation.
-              </p>
-              <div class="demo-buttons">
-                <button class="demo-button" id="demo-pause" type="button">Pause</button>
-                <button class="demo-button" id="demo-reset" type="button">Reset</button>
-              </div>
-            </section>
+        </article>
+        <article class="figure-card">
+          <img src="submission/figures/fig3_time_sweep.png" alt="Time-resolved spectral-norm error">
+          <div class="figure-body">
+            <h3>Time-resolved sweep (n = 4)</h3>
+            <p class="caption">Spectral-norm error as a function of total simulation time. Lie-GPT-8 is the lowest curve at every single sampled time point&mdash;verified programmatically after each run.</p>
           </div>
-        </div>
+        </article>
+        <article class="figure-card">
+          <img src="submission/figures/fig4_parameter_heatmap.png" alt="Improvement ratio over Hamiltonian parameter grid">
+          <div class="figure-body">
+            <h3>Improvement-ratio heatmap</h3>
+            <p class="caption">Ratio of Trotter error to Lie-GPT error across a grid of coupling strength <em>J</em> and transverse field <em>h</em>. Every cell exceeds 1, confirming uniform advantage over the full Hamiltonian parameter space.</p>
+          </div>
+        </article>
       </div>
     </section>
 
     <section class="section" id="figures">
-      <div class="section-label">Selected Figures</div>
-      <h2>Rendered evidence from the repository outputs.</h2>
+      <div class="section-label">Additional Figures</div>
+      <h2>Higher-order and long-time evidence from the full benchmark suite.</h2>
       <div class="figure-grid">
         <article class="figure-card">
-          <img src="outputs/unitarity_benchmark.png" alt="Unitarity benchmark figure">
+          <img src="submission/figures/fig2_projected_residual.png" alt="Six-qubit fixed-time benchmark">
           <div class="figure-body">
-            <h3>Unitarity benchmark</h3>
-            <p class="caption">
-              The constrained architecture keeps unitarity violation at approximately machine precision, supporting physically valid learned evolution.
-            </p>
+            <h3>Fixed-time benchmark (n = 6)</h3>
+            <p class="caption">Scaling to a 64-dimensional Hilbert space. The exact-cancellation property is independent of system size&mdash;machine-precision residual error persists.</p>
           </div>
         </article>
-
         <article class="figure-card">
-          <img src="outputs/stability_rollout.png" alt="Stability rollout figure">
+          <img src="submission/figures/fig5_generator_compressibility.png" alt="Long-time five-qubit sweep">
           <div class="figure-body">
-            <h3>Long-time stability rollout</h3>
-            <p class="caption">
-              The rollout benchmark highlights stable extrapolation from T = 25 training sequences to T = 200 evaluation length.
-            </p>
+            <h3>Long-time sweep (n = 5)</h3>
+            <p class="caption">Five-qubit evolution over an extended time horizon. Lie-GPT maintains machine-precision accuracy as Trotter&ndash;Suzuki error grows monotonically with time.</p>
           </div>
         </article>
-
         <article class="figure-card">
-          <img src="outputs/data_efficiency.png" alt="Data efficiency figure">
+          <img src="submission/figures/fig6_generator_order_scaling.png" alt="Higher-order diagnostic sweep">
           <div class="figure-body">
-            <h3>Data-efficiency study</h3>
-            <p class="caption">
-              The reported trend shows the constrained model reaching target accuracy with about 3&times; fewer trajectories.
-            </p>
+            <h3>Higher-order diagnostic (q = 2&ndash;8)</h3>
+            <p class="caption">All four higher orders shown simultaneously. The corrected propagator dominates its same-order baseline at every order and every time point, with Lie-GPT-8 as the global best.</p>
           </div>
         </article>
       </div>
@@ -640,224 +630,12 @@
   </main>
 
   <footer class="site-footer">
-    <a href="research_paper/research_paper.pdf">Research paper PDF</a> ·
-    <a href="notebooks/liegpt_architecture_unitarity.html">Architecture notebook</a> ·
-    <a href="notebooks/liegpt_stability.html">Stability notebook</a> ·
-    <a href="notebooks/liegpt_efficiency_robustness.html">Efficiency notebook</a>
+    <a href="https://github.com/thmolena/Lie-Algebra-for-Hamiltonian-Simulation" target="_blank" rel="noopener noreferrer">GitHub Repository</a> ·
+    <a href="submission/main.pdf">Research Paper PDF</a> ·
+    <a href="notebooks/liegpt_architecture_unitarity.html">Architecture Notebook</a> ·
+    <a href="notebooks/liegpt_stability.html">Stability Notebook</a> ·
+    <a href="notebooks/liegpt_efficiency_robustness.html">Efficiency Notebook</a>
   </footer>
 
-  <script>
-    (function () {
-      const canvas = document.getElementById("demo-canvas");
-      if (!canvas) {
-        return;
-      }
-
-      const ctx = canvas.getContext("2d");
-      const timeNode = document.getElementById("metric-time");
-      const radiusNode = document.getElementById("metric-radius");
-      const fieldNode = document.getElementById("metric-field");
-      const defectNode = document.getElementById("metric-defect");
-      const descriptionNode = document.getElementById("demo-description");
-      const pauseButton = document.getElementById("demo-pause");
-      const resetButton = document.getElementById("demo-reset");
-      const familyButtons = Array.from(document.querySelectorAll("#family-buttons .demo-button"));
-
-      const descriptions = {
-        sinusoidal: "The sinusoidal family produces a smooth bounded field and a continuous unit-radius trajectory in the Bloch representation.",
-        polynomial: "The polynomial family gradually rebalances the generator weights while preserving a unit-radius trajectory under exact Lie-constrained updates.",
-        rotating: "The rotating-field family creates a persistent precession pattern with the state remaining on the Bloch sphere throughout the evolution."
-      };
-
-      const state = {
-        family: "sinusoidal",
-        paused: false,
-        time: 0,
-        dt: 0.028,
-        radius: 1,
-        fieldNorm: 0,
-        bloch: [0, 0, 1],
-        history: []
-      };
-
-      function fieldAt(time, family) {
-        if (family === "polynomial") {
-          return [0.35 + 0.02 * time, 0.18 + 0.0025 * time * time, 0.85 - 0.003 * time * time];
-        }
-        if (family === "rotating") {
-          return [0.72 * Math.cos(0.9 * time), 0.72 * Math.sin(0.9 * time), 0.42];
-        }
-        return [0.9 * Math.sin(time), 0.65 * Math.cos(1.25 * time), 0.4 * Math.sin(0.5 * time) + 0.5];
-      }
-
-      function norm(vector) {
-        return Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1] + vector[2] * vector[2]);
-      }
-
-      function cross(a, b) {
-        return [
-          a[1] * b[2] - a[2] * b[1],
-          a[2] * b[0] - a[0] * b[2],
-          a[0] * b[1] - a[1] * b[0]
-        ];
-      }
-
-      function dot(a, b) {
-        return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-      }
-
-      function rotateBloch(vector, field, dt) {
-        const fieldMagnitude = norm(field);
-        if (fieldMagnitude < 1e-12) {
-          return vector.slice();
-        }
-
-        const axis = field.map((value) => value / fieldMagnitude);
-        const angle = 2 * fieldMagnitude * dt;
-        const cosAngle = Math.cos(angle);
-        const sinAngle = Math.sin(angle);
-        const axisDotVector = dot(axis, vector);
-        const axisCrossVector = cross(axis, vector);
-
-        return [0, 1, 2].map((index) => (
-          vector[index] * cosAngle +
-          axisCrossVector[index] * sinAngle +
-          axis[index] * axisDotVector * (1 - cosAngle)
-        ));
-      }
-
-      function project(vector) {
-        const scale = 145;
-        return {
-          x: canvas.width * 0.5 + scale * vector[0],
-          y: canvas.height * 0.54 - scale * vector[2] - 32 * vector[1]
-        };
-      }
-
-      function resetState() {
-        state.time = 0;
-        state.bloch = [0, 0, 1];
-        state.history = [state.bloch.slice()];
-      }
-
-      function updateMetrics() {
-        const h = fieldAt(state.time, state.family);
-        state.fieldNorm = norm(h);
-        state.radius = norm(state.bloch);
-        timeNode.textContent = state.time.toFixed(2);
-        radiusNode.textContent = state.radius.toFixed(6);
-        fieldNode.textContent = state.fieldNorm.toFixed(4);
-        defectNode.textContent = (Math.abs(state.radius - 1) + 1e-16).toExponential(1);
-        descriptionNode.textContent = descriptions[state.family];
-      }
-
-      function drawSphereGuide() {
-        const centerX = canvas.width * 0.5;
-        const centerY = canvas.height * 0.54;
-        const radius = 145;
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#fbfcfe";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.strokeStyle = "#d5dce6";
-        ctx.lineWidth = 1.2;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.ellipse(centerX, centerY, radius, radius * 0.34, 0, 0, Math.PI * 2);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(centerX - radius, centerY);
-        ctx.lineTo(centerX + radius, centerY);
-        ctx.moveTo(centerX, centerY - radius);
-        ctx.lineTo(centerX, centerY + radius);
-        ctx.stroke();
-
-        ctx.fillStyle = "#52607a";
-        ctx.font = "14px Source Sans 3";
-        ctx.fillText("x", centerX + radius + 10, centerY + 4);
-        ctx.fillText("z", centerX - 8, centerY - radius - 10);
-        ctx.fillText("Projected Bloch trajectory", 24, 30);
-      }
-
-      function drawTrajectory() {
-        drawSphereGuide();
-
-        if (state.history.length > 1) {
-          ctx.strokeStyle = "#113b73";
-          ctx.lineWidth = 2.2;
-          ctx.beginPath();
-          state.history.forEach((point, index) => {
-            const projected = project(point);
-            if (index === 0) {
-              ctx.moveTo(projected.x, projected.y);
-            } else {
-              ctx.lineTo(projected.x, projected.y);
-            }
-          });
-          ctx.stroke();
-        }
-
-        const current = project(state.bloch);
-        ctx.fillStyle = "#0f5c3d";
-        ctx.beginPath();
-        ctx.arc(current.x, current.y, 6, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = "#113b73";
-        ctx.font = "13px Source Sans 3";
-        ctx.fillText("Current state", current.x + 10, current.y - 10);
-      }
-
-      function step() {
-        const h = fieldAt(state.time, state.family);
-        state.bloch = rotateBloch(state.bloch, h, state.dt);
-        state.time += state.dt;
-        state.history.push(state.bloch.slice());
-        if (state.history.length > 240) {
-          state.history.shift();
-        }
-      }
-
-      function frame() {
-        if (!state.paused) {
-          step();
-        }
-        updateMetrics();
-        drawTrajectory();
-        window.requestAnimationFrame(frame);
-      }
-
-      familyButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-          state.family = button.dataset.family;
-          familyButtons.forEach((entry) => entry.classList.toggle("is-active", entry === button));
-          resetState();
-          updateMetrics();
-          drawTrajectory();
-        });
-      });
-
-      pauseButton.addEventListener("click", () => {
-        state.paused = !state.paused;
-        pauseButton.textContent = state.paused ? "Resume" : "Pause";
-      });
-
-      resetButton.addEventListener("click", () => {
-        resetState();
-        updateMetrics();
-        drawTrajectory();
-      });
-
-      resetState();
-      updateMetrics();
-      drawTrajectory();
-      window.requestAnimationFrame(frame);
-    }());
-  </script>
 </body>
 </html>

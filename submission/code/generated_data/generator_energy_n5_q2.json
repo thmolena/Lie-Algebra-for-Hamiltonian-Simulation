@@ -1,0 +1,38 @@
+[
+  {
+    "max_weight": 0.0,
+    "weight_energy": 3.598018495870122e-33,
+    "cumulative_energy": 3.598018495870122e-33,
+    "cumulative_mass": 9.657324772972328e-28
+  },
+  {
+    "max_weight": 1.0,
+    "weight_energy": 1.4664619815489687e-06,
+    "cumulative_energy": 1.4664619815489687e-06,
+    "cumulative_mass": 0.3936083052182885
+  },
+  {
+    "max_weight": 2.0,
+    "weight_energy": 9.973048184208202e-07,
+    "cumulative_energy": 2.4637667999697887e-06,
+    "cumulative_mass": 0.6612916576022478
+  },
+  {
+    "max_weight": 3.0,
+    "weight_energy": 1.2617983593366209e-06,
+    "cumulative_energy": 3.72556515930641e-06,
+    "cumulative_mass": 0.9999668636386888
+  },
+  {
+    "max_weight": 4.0,
+    "weight_energy": 1.23455422821408e-10,
+    "cumulative_energy": 3.725688614729231e-06,
+    "cumulative_mass": 0.9999999999084034
+  },
+  {
+    "max_weight": 5.0,
+    "weight_energy": 3.4126088126427083e-16,
+    "cumulative_energy": 3.725688615070492e-06,
+    "cumulative_mass": 1.0
+  }
+]
