@@ -23,7 +23,7 @@ def write_resource_table() -> None:
         r"$q$ & Suzuki factors & dense $U(\delta t)$ expm & dense residual multiply\\",
     ]
     for order in ORDERS:
-        lines.append(f"{order} & {factor_counts[order]} & 1 & 1\\")
+        lines.append(f"{order} & {factor_counts[order]} & 1 & 1\\\\")
     lines.extend([r"\end{tabular}", r"\end{ruledtabular}", r"\end{table}"])
     write_latex_table(TABLE_DIR / "resource_proxy.tex", lines)
 

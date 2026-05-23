@@ -351,6 +351,8 @@ def parse_graphics_references(tex: str) -> set[str]:
     names = set(re.findall(r"\\(?:includegraphics|paperfigure)(?:\[[^\]]*\])?\{([^}]+)\}", tex))
     normalized: set[str] = set()
     for name in names:
+        if "#" in name:
+            continue
         normalized.add(name if "." in Path(name).name else f"{name}.pdf")
     return normalized
 

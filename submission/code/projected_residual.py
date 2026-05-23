@@ -48,7 +48,7 @@ def write_table(df: pd.DataFrame) -> None:
     ]
     for row in df.itertuples(index=False):
         lines.append(
-            f"{row.w} & ${scientific(row.generator_residual_norm)}$ & ${scientific(row.projected_error)}$ & ${row.improvement:.2f}\times$\\"
+            f"{row.w} & ${scientific(row.generator_residual_norm)}$ & ${scientific(row.projected_error)}$ & ${row.improvement:.2f}\\times$\\\\"
         )
     lines.extend([r"\end{tabular}", r"\end{ruledtabular}", r"\end{table}"])
     write_latex_table(TABLE_DIR / "projected_summary.tex", lines)

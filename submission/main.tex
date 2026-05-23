@@ -427,7 +427,7 @@ Write $A=\sum_e A_e$ with $A_e=JZ_jZ_{j+1}$ for edges $e=(j,j+1)$ and $B=\sum_v 
 \end{proof}
 
 \begin{remark}
-Theorem~\ref{thm:tfim-support} does not say the full residual generator lies in $\cB_3$.  Higher-order BCH terms can produce larger support.  It predicts that $w\leq3$ projection should remove the dominant Strang defect at small step size, while $w\leq4$ and higher should capture additional subleading structure.  This is exactly what the numerical results show.
+Theorem~\ref{thm:tfim-support} does not say the full residual generator lies in $\cB_3$.  Higher-order BCH terms can produce larger support.  It predicts that $w\leq3$ projection should remove the dominant Strang defect at small step size, while $w\leq4$ and higher should capture additional subleading structure.  This is consistent with the numerical results reported below.
 \end{remark}
 
 \begin{theorem}[A posteriori step certificate]
@@ -514,7 +514,7 @@ Figure~\ref{fig:time-sweep} varies the total time for $n=4$, $q=2$, and $r=10$. 
 
 \subsection{Parameter-grid robustness}
 
-Figure~\ref{fig:parameter-heatmap} sweeps $J,h\in\{0.25,0.50,\ldots,2.00\}$ for $n=4$, $q=2$, $t=1$, $r=10$, and $w\leq3$.  The result is not a universal theorem over all Hamiltonians or all step sizes, but it tests whether the projected residual improvement in the reported dense TFIM benchmark is restricted to a single hand-picked parameter point.
+Figure~\ref{fig:parameter-heatmap} sweeps $J,h\in\{0.25,0.50,\ldots,2.00\}$ for $n=4$, $q=2$, $t=1$, $r=10$, and $w\leq3$.  The result is not a universal theorem over all Hamiltonians or all step sizes, but it tests whether the projected residual improvement in the reported dense TFIM benchmark is restricted to a single hand-picked parameter point.  Across all $64$ deterministic grid points, the improvement ratio $\epsilon_{T,2}/\epsilon_{w\leq3}$ stays above $32.5$ and reaches approximately $5.07\times10^3$.
 
 \begin{figure}[t]
 \paperfigure[width=\linewidth]{fig4_parameter_heatmap.pdf}
