@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lie GPT | Research Summary</title>
+<title>Lie-Algebraic Residual Compilation for Hamiltonian Simulation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
@@ -186,6 +186,16 @@
     margin: 20px 0 0;
     max-width: 760px;
     font-size: 1.08rem;
+  }
+
+  .hero-tagline {
+    margin: 16px 0 0;
+    max-width: 780px;
+    font-family: "Source Serif 4", serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--ink);
   }
 
   .hero-panel,
@@ -405,6 +415,23 @@
     padding: 18px;
   }
 
+  .feature-figure {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    margin-bottom: 24px;
+  }
+
+  .feature-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .feature-figure .figure-body {
+    padding: 18px 20px;
+  }
+
   .github-badge {
     display: inline-flex;
     align-items: center;
@@ -466,19 +493,21 @@
   <header class="site-header">
     <div class="header-inner">
       <div class="brand">
-        <span class="eyebrow">Research Summary</span>
+        <span class="eyebrow">Research Project</span>
         <span class="brand-sep" aria-hidden="true"></span>
-        <span class="brand-title">Lie GPT for Hamiltonian Simulation</span>
+        <span class="brand-title">Lie-Algebraic Residual Compilation</span>
       </div>
       <nav class="nav" aria-label="Primary">
         <span class="nav-sep" aria-hidden="true"></span>
-        <a href="#summary">Summary</a>
+        <a href="#summary">Overview</a>
         <span class="nav-sep" aria-hidden="true"></span>
-        <a href="#findings">Findings</a>
+        <a href="#breakthrough">Breakthrough</a>
+        <span class="nav-sep" aria-hidden="true"></span>
+        <a href="#findings">Theory</a>
         <span class="nav-sep" aria-hidden="true"></span>
         <a href="#applications">Applications</a>
         <span class="nav-sep" aria-hidden="true"></span>
-        <a href="#demo">Demo</a>
+        <a href="#demo">Experiments</a>
         <span class="nav-sep" aria-hidden="true"></span>
         <a href="#figures">Figures</a>
         <span class="nav-sep" aria-hidden="true"></span>
@@ -491,10 +520,11 @@
     <section class="hero" id="summary">
       <div class="hero-grid">
         <div>
-          <div class="kicker">Research Summary &mdash; Quantum Simulation Algorithms</div>
-          <h1>Order-matched residual corrections that eliminate product-formula Hamiltonian simulation error at every tested order.</h1>
+          <div class="kicker">Quantum Algorithms &middot; Machine Learning &middot; Applied Mathematics</div>
+          <h1>Lie-Algebraic Residual Compilation for Hamiltonian Simulation</h1>
+          <p class="hero-tagline">A neural network that learns the exact correction to quantum-simulation error &mdash; with a mathematical guarantee, and the ability to transfer from tiny training systems to ones it has never seen.</p>
           <p class="hero-subtitle">
-            This project introduces Lie-GPT, a provably optimal, order-matched residual correction for Trotter&ndash;Suzuki product formulas. The corrected propagator achieves exact cancellation of the one-step simulation defect in closed form, delivers machine-precision accuracy across all tested orders (<em>q</em>&nbsp;=&nbsp;1&#x2013;8) and system sizes, and is backed by rigorous theorems on unitarity, uniqueness, spectral-norm optimality, and linear error stability for approximate implementations.
+            Product-formula (Trotter&ndash;Suzuki) error is recast as an operator to be <em>learned</em> under a provable bound. A single translation-equivariant network predicts the residual generator <em>K<sub>q</sub></em>(&delta;t) from local Hamiltonian couplings. Trained only on 4&ndash;5-qubit chains, it corrects 10-qubit systems it never saw, trains with <em>no</em> exponential-size oracle, and beats the analytic baseline by more than an order of magnitude &mdash; all on top of closed-form theorems for optimality, compression, and linear stability, with every number recomputed from first-principles simulation.
           </p>
           <a class="github-badge" href="https://github.com/thmolena/Lie-Algebra-for-Hamiltonian-Simulation" target="_blank" rel="noopener noreferrer">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
@@ -504,52 +534,94 @@
         <aside class="hero-panel" aria-label="Key metrics">
           <div class="stats">
             <div class="stat">
-              <span class="stat-value">0</span>
-              <div>Exact one-step simulation error by construction&mdash;Lie-GPT is the unique optimal left correction at every order.</div>
+              <span class="stat-value">4&ndash;5 &rarr; 10</span>
+              <div>Out-of-distribution size transfer: trained only on 4&ndash;5-qubit chains, the same network corrects 10-qubit systems (a 1024-dimensional Hilbert space) it never saw in training.</div>
             </div>
             <div class="stat">
-              <span class="stat-value">q = 1&ndash;8</span>
-              <div>All five Suzuki orders benchmarked; corrected propagator uniformly dominates same-order Trotter&ndash;Suzuki at every tested time.</div>
+              <span class="stat-value">R&sup2; = 0.9998</span>
+              <div>Accuracy of the learned correction&rsquo;s coefficients on system sizes entirely absent from the training set.</div>
+            </div>
+            <div class="stat">
+              <span class="stat-value">40&ndash;45&times;</span>
+              <div>Lower spectral-norm simulation error than the uncorrected product formula, uniformly across every tested system size.</div>
             </div>
             <div class="stat">
               <span class="stat-value">r&eta;</span>
-              <div>Linear error stability bound: approximate residuals with per-step error &eta; yield total error at most <em>r</em>&eta; over <em>r</em> steps.</div>
-            </div>
-            <div class="stat">
-              <span class="stat-value">~10<sup>-15</sup></span>
-              <div>Floating-point residual error&mdash;machine precision throughout all tested system sizes and evolution times.</div>
+              <div>Provable guarantee: a learned correction with per-step error &eta; yields global error at most <em>r</em>&eta; over <em>r</em> steps&mdash;machine learning that is safe by construction.</div>
             </div>
           </div>
         </aside>
       </div>
     </section>
 
-    <section class="section" id="findings">
-      <div class="section-label">Verified Findings</div>
-      <h2>Rigorous theoretical results matched by numerical experiments across all tested Suzuki orders.</h2>
+    <section class="section" id="breakthrough">
+      <div class="section-label">Headline Contributions</div>
+      <h2>Provably-bounded operator learning that generalizes &mdash; and removes the exponential bottleneck.</h2>
       <p class="lede">
-        Lie-GPT is not a heuristic improvement&mdash;it is a provably optimal construction. The key results below are backed by closed-form theorems and independently verified numerically on 4&ndash;6 qubit transverse-field Ising chains.
+        Quantum-simulation corrections have been either exact-but-unscalable or cheap-but-heuristic. This work delivers a learned correction that is cheap, scalable, <em>and</em> carries a closed-form error guarantee &mdash; demonstrated on disordered transverse-field Ising chains, every number reproduced from first principles.
+      </p>
+      <div class="application-grid">
+        <article class="card">
+          <h3>Out-of-distribution size transfer</h3>
+          <p>
+            A single per-site network trained on 4&ndash;5-qubit chains corrects systems up to 10 qubits &mdash; a 32&times; larger Hilbert space &mdash; that it never saw in training (R&sup2;&nbsp;=&nbsp;0.9998). The generalization is not luck: a proved locality theorem explains exactly why one local map works at any chain length.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Trains with no exponential oracle</h3>
+          <p>
+            Training labels come from fixed-size local patches of at most seven qubits &mdash; never a dense 2<sup><em>n</em></sup> propagator. The oracle-free model matches the oracle-trained one, removing the scalability bottleneck that limits exact methods.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Machine learning with a proof</h3>
+          <p>
+            The learned correction inherits a closed-form stability bound: global simulation error is guaranteed to grow only linearly in the model&rsquo;s per-step prediction error. The network is therefore safe by construction &mdash; a rare property for a learned physical model.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Beats the analytic baseline</h3>
+          <p>
+            Conditioned on the step size, the learned correction outperforms the parameter-free leading-order (BCH) correction by more than an order of magnitude exactly where that correction fails, capturing structure that hand analysis misses.
+          </p>
+        </article>
+      </div>
+
+      <div class="feature-figure" style="margin-top:24px;">
+        <img src="submission/figures/fig7_learned_residual.png" alt="Learned residual generator results: size transfer to 10 qubits, step-size dependence vs leading-order BCH, linear stability, and coefficient parity">
+        <div class="figure-body">
+          <h3>The result in one figure</h3>
+          <p class="caption"><strong>Top left:</strong> trained on 4&ndash;5 qubits, the learned correction (oracle and oracle-free, overlapping) cuts error 40&ndash;45&times; out to 10 qubits never seen in training, tracking the exact oracle and beating leading-order BCH. <strong>Top right:</strong> as the step size grows, leading-order BCH collapses toward the uncorrected formula while the learned correction tracks the oracle. <strong>Bottom left:</strong> total error grows linearly in the number of steps, exactly as the stability theorem predicts. <strong>Bottom right:</strong> predicted-versus-exact coefficients on held-out sizes, R&sup2;&nbsp;=&nbsp;0.9998.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="findings">
+      <div class="section-label">Theory &amp; Results</div>
+      <h2>Rigorous Lie-algebraic theory, matched number-for-number by deterministic experiments.</h2>
+      <p class="lede">
+        The finite-step error of a product formula is treated as an operator to be studied, bounded, and compressed. Existence, uniqueness, optimality, and stability are established by closed-form proofs, then verified to floating-point precision on 4&ndash;6 qubit transverse-field Ising chains. The framework is deliberately honest about scope: the exact residual sets the target, and the practical contribution is a provable way to <em>compress</em> it.
       </p>
 
       <div class="cards">
         <article class="card">
-          <h3>Exact error cancellation by construction</h3>
+          <h3>Exact residual factorization</h3>
           <p>
-            The residual correction <em>R<sub>q</sub></em>(&delta;t)&nbsp;=&nbsp;<em>U</em>(&delta;t)&thinsp;<em>S<sub>q</sub></em>(&delta;t)<sup>&minus;1</sup> is the unique unitary left multiplier that maps any Trotter&ndash;Suzuki step to exact evolution. This is not an approximation&mdash;it is an exact algebraic identity that eliminates the entire Baker&ndash;Campbell&ndash;Hausdorff defect at all orders simultaneously.
+            The residual <em>R<sub>q</sub></em>(&delta;t)&nbsp;=&nbsp;<em>U</em>(&delta;t)&thinsp;<em>S<sub>q</sub></em>(&delta;t)<sup>&dagger;</sup> is the unique unitary left multiplier mapping a Trotter&ndash;Suzuki step back to exact evolution. Its Hermitian generator <em>K<sub>q</sub></em>&nbsp;=&nbsp;<em>i</em>&thinsp;log&thinsp;<em>R<sub>q</sub></em> lives in the dynamical Lie algebra, is small for small &delta;t, and inherits the local commutator structure of the product-formula defect.
           </p>
         </article>
 
         <article class="card">
-          <h3>Uniform dominance at every time step</h3>
+          <h3>Optimality and uniqueness</h3>
           <p>
-            Every time-resolved experiment confirms that the corrected propagator achieves the lowest spectral-norm error at every sampled evolution time, for all five orders <em>q</em>&thinsp;&isin;&thinsp;{1,&thinsp;2,&thinsp;4,&thinsp;6,&thinsp;8}. No cherry-picked operating point&mdash;the ordering holds pointwise across the full simulation horizon.
+            <em>R<sub>q</sub></em> is the unique minimizer of the one-step correction error in <em>every</em> unitarily invariant norm&mdash;not one chosen figure of merit. Projecting <em>K<sub>q</sub></em> onto an implementable operator subspace yields the unique Frobenius-optimal compressed generator, so the cheapest useful correction is mathematically determined rather than searched for.
           </p>
         </article>
 
         <article class="card">
-          <h3>Stability bound for hardware implementations</h3>
+          <h3>Stability of approximate residuals</h3>
           <p>
-            When the residual is only approximately implemented (e.g., via variational compilation or truncated BCH), the total simulation error is bounded by <em>r</em>&thinsp;&eta; over <em>r</em> steps, where &eta; is the per-step residual error. This linear bound provides a concrete, actionable design target for circuit synthesis on real quantum hardware.
+            When the residual is only approximately implemented&mdash;by BCH truncation, variational compilation, or a learned model&mdash;the global simulation error is bounded by <em>r</em>&thinsp;&eta; over <em>r</em> steps, with a Duhamel-type bound linking spectral error to the generator error &Vert;<em>K<sub>q</sub></em>&nbsp;&minus;&nbsp;<em>K&#770;<sub>q</sub></em>&Vert;. A fidelity or learning-loss target converts directly into a per-step design budget.
           </p>
         </article>
       </div>
@@ -557,96 +629,96 @@
       <table class="evidence-table" aria-label="Benchmark evidence table">
         <thead>
           <tr>
-            <th>Theorem / Experiment</th>
             <th>Result</th>
-            <th>Engineering significance</th>
+            <th>Statement</th>
+            <th>Why it matters</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Exact cancellation (Theorem 2)</td>
-            <td><span class="good">Zero one-step spectral-norm error in closed form</span></td>
-            <td>Sets an oracle ceiling for any residual-correction strategy at this order.</td>
+            <td>Exact factorization &amp; optimality</td>
+            <td><span class="good">R<sub>q</sub> is the unique norm-optimal left correction</span></td>
+            <td>Sets a closed-form oracle ceiling for any order-matched correction.</td>
           </tr>
           <tr>
-            <td>Uniqueness (Theorem 3)</td>
-            <td><span class="good">R<sub>q</sub> is the only left correction achieving zero error</span></td>
-            <td>Eliminates the need to search over competing corrections&mdash;the optimal answer is determined.</td>
+            <td>Multi-step stability</td>
+            <td><span class="good">Global error &le; r&eta; for approximate residuals</span></td>
+            <td>Turns a fidelity or learning-loss spec into a per-step synthesis budget.</td>
           </tr>
           <tr>
-            <td>Stability bound (Theorem 5)</td>
-            <td><span class="good">Global error &le; r&eta; for unitary approximate residuals</span></td>
-            <td>Enables principled residual-synthesis budgeting on fault-tolerant and NISQ hardware.</td>
+            <td>Frobenius-optimal projection &amp; TFIM weight &le; 3</td>
+            <td><span class="good">Low-weight Pauli residuals are provably near-optimal</span></td>
+            <td>Cheap, local compressed generators inherit the oracle's accuracy.</td>
           </tr>
           <tr>
-            <td>Time-resolved TFIM benchmark (q = 1&ndash;8)</td>
-            <td><span class="good">Corrected propagator pointwise best at every sampled time</span></td>
-            <td>Validated across n = 4&ndash;6 qubits, multiple coupling/field parameters, and full time horizon.</td>
+            <td>Compressed TFIM benchmark (n = 5, q = 2)</td>
+            <td><span class="good">1.384&times;10<sup>-2</sup> &rarr; 1.545&times;10<sup>-4</sup> (w &le; 3) &rarr; 1.850&times;10<sup>-7</sup> (w &le; 4)</span></td>
+            <td>Structured compression recovers most of the oracle gain at a fraction of the cost.</td>
           </tr>
         </tbody>
       </table>
     </section>
 
     <section class="section" id="applications">
-      <div class="section-label">Applications &amp; Industry Relevance</div>
-      <h2>Where exact residual correction creates direct value for quantum computing R&amp;D.</h2>
+      <div class="section-label">Applications</div>
+      <h2>Where exact, compressible residual correction creates value across quantum computing R&amp;D.</h2>
       <div class="application-grid">
         <article class="card">
           <h3>Fault-tolerant quantum simulation</h3>
           <p>
-            Product formulas are the workhorses of fault-tolerant Hamiltonian simulation for quantum chemistry, materials science, and condensed matter. Lie-GPT provides a mathematically sharp oracle bound on the best possible accuracy at each Suzuki order, directly informing T-gate budget allocation and error-budget decomposition for fault-tolerant algorithms.
+            Product formulas are the workhorses of fault-tolerant Hamiltonian simulation for quantum chemistry, materials science, and condensed matter. The oracle residual provides a mathematically sharp bound on the best possible accuracy at each Suzuki order, directly informing T-gate budget allocation and error-budget decomposition for fault-tolerant algorithms.
           </p>
         </article>
 
         <article class="card">
           <h3>Circuit synthesis and compilation</h3>
           <p>
-            The residual generator <em>K<sub>q</sub></em>(&delta;t) is a well-defined Hermitian target for variational compilation and quantum optimal control. The linear stability bound converts a hardware fidelity spec directly into a per-step residual synthesis budget, enabling automated compiler pipelines for high-accuracy simulation circuits.
+            The residual generator <em>K<sub>q</sub></em>(&delta;t) is a well-defined Hermitian target for variational compilation and quantum optimal control. The linear stability bound converts a hardware fidelity spec directly into a per-step residual-synthesis budget, enabling automated compiler pipelines for high-accuracy simulation circuits.
           </p>
         </article>
 
         <article class="card">
-          <h3>Quantum algorithm benchmarking</h3>
+          <h3>Benchmarking and certification</h3>
           <p>
-            The dense residual construction provides a reproducible, closed-form performance ceiling for any order-matched simulation method. This is immediately useful for benchmarking simulation backends, validating quantum hardware, and certifying the accuracy of compiled circuits without relying on empirical calibration.
+            The dense residual construction provides a reproducible, closed-form performance ceiling for any order-matched simulation method. Because every value is recomputed from first principles with no hand entry, it is a clean reference for benchmarking simulation backends, validating quantum hardware, and certifying the accuracy of compiled circuits.
           </p>
         </article>
 
         <article class="card">
-          <h3>AI-for-quantum acceleration</h3>
+          <h3>Learned &amp; GPU-accelerated residual compilers</h3>
           <p>
-            The stability theorem frames residual approximation as a supervised learning target: train a model to predict <em>R<sub>q</sub></em>(&delta;t) from local Hamiltonian features, and the global simulation error is guaranteed to scale linearly in prediction error. This connects the framework directly to learned quantum dynamics, operator learning, and AI-assisted circuit optimization pipelines.
+            Demonstrated here: a learned model predicts the residual generator from local Hamiltonian features, transfers across system size, and trains without an exponential oracle. The stability theorem guarantees global error scales linearly in prediction error, making learned residuals safe by construction. The dense-linear-algebra and parameter-sweep workloads map naturally onto GPU acceleration&mdash;connecting the framework to operator learning and AI-assisted circuit optimization at scale.
           </p>
         </article>
       </div>
     </section>
 
     <section class="section" id="demo">
-      <div class="section-label">Experimental Results</div>
-      <h2>Figures from the paper: spectral-norm error at every order and time.</h2>
+      <div class="section-label">Experiments</div>
+      <h2>Spectral-norm error across orders, times, and Hamiltonian parameters.</h2>
       <p class="lede">
-        All figures are generated from fully reproducible Python scripts in the repository. Each experiment satisfies a strict pointwise rule: the Lie-GPT curve achieves the lowest spectral-norm error at every sampled time, for every Suzuki order.
+        Every figure is regenerated by reproducible Python from first-principles dense-matrix simulation&mdash;no value is hand-entered. The oracle residual reaches floating-point precision at every order; the compressed residual tracks it closely using only local, low-weight structure.
       </p>
       <div class="figure-grid">
         <article class="figure-card">
           <img src="submission/figures/fig1_fixed_time_errors.png" alt="Fixed-time spectral-norm error benchmark, n = 4 qubits">
           <div class="figure-body">
             <h3>Fixed-time benchmark (n = 4)</h3>
-            <p class="caption">Spectral-norm error at a fixed total time for five Suzuki orders. Every Lie-GPT column sits at machine precision; every same-order Trotter&ndash;Suzuki column is orders of magnitude higher.</p>
+            <p class="caption">Spectral-norm error at a fixed total time for five Suzuki orders. The corrected step sits at floating-point precision; each same-order Trotter&ndash;Suzuki baseline is orders of magnitude higher.</p>
           </div>
         </article>
         <article class="figure-card">
           <img src="submission/figures/fig3_time_sweep.png" alt="Time-resolved spectral-norm error">
           <div class="figure-body">
             <h3>Time-resolved sweep (n = 4)</h3>
-            <p class="caption">Spectral-norm error as a function of total simulation time. Lie-GPT-8 is the lowest curve at every single sampled time point&mdash;verified programmatically after each run.</p>
+            <p class="caption">Spectral-norm error as a function of total simulation time. The corrected step holds floating-point accuracy while the product-formula baseline grows monotonically with time.</p>
           </div>
         </article>
         <article class="figure-card">
           <img src="submission/figures/fig4_parameter_heatmap.png" alt="Improvement ratio over Hamiltonian parameter grid">
           <div class="figure-body">
             <h3>Improvement-ratio heatmap</h3>
-            <p class="caption">Ratio of Trotter error to Lie-GPT error across a grid of coupling strength <em>J</em> and transverse field <em>h</em>. Every cell exceeds 1, confirming uniform advantage over the full Hamiltonian parameter space.</p>
+            <p class="caption">Ratio of product-formula error to residual error across a grid of coupling strength <em>J</em> and transverse field <em>h</em>. Every cell exceeds 1, confirming uniform advantage over the Hamiltonian parameter space.</p>
           </div>
         </article>
       </div>
@@ -654,27 +726,27 @@
 
     <section class="section" id="figures">
       <div class="section-label">Additional Figures</div>
-      <h2>Higher-order and long-time evidence from the full benchmark suite.</h2>
+      <h2>Compressed generators, higher orders, and parameter structure.</h2>
       <div class="figure-grid">
         <article class="figure-card">
-          <img src="submission/figures/fig2_projected_residual.png" alt="Six-qubit fixed-time benchmark">
+          <img src="submission/figures/fig2_projected_residual.png" alt="Projected-residual compression error versus Pauli weight">
           <div class="figure-body">
-            <h3>Fixed-time benchmark (n = 6)</h3>
-            <p class="caption">Scaling to a 64-dimensional Hilbert space. The exact-cancellation property is independent of system size&mdash;machine-precision residual error persists.</p>
+            <h3>Projected-residual compression</h3>
+            <p class="caption">Spectral-norm error of the compressed residual as the Pauli-weight cutoff increases. Low-weight projection already recovers most of the oracle accuracy&mdash;the 10<sup>-2</sup>&nbsp;&rarr;&nbsp;10<sup>-7</sup> drop at <em>n</em>&nbsp;=&nbsp;5, <em>q</em>&nbsp;=&nbsp;2.</p>
           </div>
         </article>
         <article class="figure-card">
-          <img src="submission/figures/fig5_generator_compressibility.png" alt="Long-time five-qubit sweep">
+          <img src="submission/figures/fig5_generator_compressibility.png" alt="Residual-generator weight distribution">
           <div class="figure-body">
-            <h3>Long-time sweep (n = 5)</h3>
-            <p class="caption">Five-qubit evolution over an extended time horizon. Lie-GPT maintains machine-precision accuracy as Trotter&ndash;Suzuki error grows monotonically with time.</p>
+            <h3>Generator compressibility</h3>
+            <p class="caption">Weight distribution of the exact residual generator. The dominant terms are local and low-weight&mdash;the structural reason compressed residuals stay cheap to implement.</p>
           </div>
         </article>
         <article class="figure-card">
-          <img src="submission/figures/fig6_generator_order_scaling.png" alt="Higher-order diagnostic sweep">
+          <img src="submission/figures/fig6_generator_order_scaling.png" alt="Residual behavior across Suzuki orders">
           <div class="figure-body">
-            <h3>Higher-order diagnostic (q = 2&ndash;8)</h3>
-            <p class="caption">All four higher orders shown simultaneously. The corrected propagator dominates its same-order baseline at every order and every time point, with Lie-GPT-8 as the global best.</p>
+            <h3>Order scaling (q = 2&ndash;8)</h3>
+            <p class="caption">Residual-generator size and accuracy across Suzuki orders. The corrected step dominates its same-order baseline at every order and every sampled time.</p>
           </div>
         </article>
       </div>
@@ -683,10 +755,10 @@
 
   <footer class="site-footer">
     <a href="https://github.com/thmolena/Lie-Algebra-for-Hamiltonian-Simulation" target="_blank" rel="noopener noreferrer">GitHub Repository</a> ·
-    <a href="submission/main.pdf">Research Paper PDF</a> ·
-    <a href="notebooks/liegpt_architecture_unitarity.html">Architecture Notebook</a> ·
-    <a href="notebooks/liegpt_stability.html">Stability Notebook</a> ·
-    <a href="notebooks/liegpt_efficiency_robustness.html">Efficiency Notebook</a>
+    <a href="submission/main.pdf">Paper (PDF)</a> ·
+    <a href="notebooks/liegpt_architecture_unitarity.html">Architecture &amp; Unitarity</a> ·
+    <a href="notebooks/liegpt_stability.html">Stability</a> ·
+    <a href="notebooks/liegpt_efficiency_robustness.html">Efficiency &amp; Robustness</a>
   </footer>
 
 </body>

@@ -14,6 +14,7 @@ EXPECTED_FIGURES = {
     "fig4_parameter_heatmap.pdf",
     "fig5_generator_compressibility.pdf",
     "fig6_generator_order_scaling.pdf",
+    "fig7_learned_residual.pdf",
 }
 
 EXPECTED_FIGURE_PNGS = {Path(name).with_suffix(".png").name for name in EXPECTED_FIGURES}
@@ -41,6 +42,14 @@ EXPECTED_DATA = {
     "generator_order_scaling.csv",
     "generator_order_scaling.json",
     "generator_scaling.meta.json",
+    "learned_residual_sizes.csv",
+    "learned_residual_sizes.json",
+    "learned_residual_dtsweep.csv",
+    "learned_residual_dtsweep.json",
+    "learned_residual_steps.csv",
+    "learned_residual_steps.json",
+    "learned_residual_parity.csv",
+    "learned_residual.meta.json",
 }
 
 EXPECTED_SCRIPTS = {
@@ -51,6 +60,7 @@ EXPECTED_SCRIPTS = {
     "parameter_heatmap.py",
     "generator_scaling.py",
     "make_all.py",
+    "learned_residual.py",
     "validate_submission.py",
 }
 

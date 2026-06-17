@@ -1,0 +1,72 @@
+[
+  {
+    "n_qubits": 4,
+    "trained": true,
+    "baseline_error_mean": 0.012344246872536938,
+    "oracle_local_error_mean": 9.432501110999356e-05,
+    "oracle_allw3_error_mean": 9.432501110998286e-05,
+    "learned_oracle_error_mean": 0.0003286488870769336,
+    "learned_free_error_mean": 0.0002705115808466849,
+    "bch_leading_error_mean": 0.0014380807270882286
+  },
+  {
+    "n_qubits": 5,
+    "trained": true,
+    "baseline_error_mean": 0.014178627389430109,
+    "oracle_local_error_mean": 0.00013054411623047985,
+    "oracle_allw3_error_mean": 0.00013054411623080568,
+    "learned_oracle_error_mean": 0.000378904342532787,
+    "learned_free_error_mean": 0.0003634083339810082,
+    "bch_leading_error_mean": 0.0016522274816153087
+  },
+  {
+    "n_qubits": 6,
+    "trained": false,
+    "baseline_error_mean": 0.019205612694131947,
+    "oracle_local_error_mean": 0.00022687592367588776,
+    "oracle_allw3_error_mean": 0.00022687592367613213,
+    "learned_oracle_error_mean": 0.00047340826161036513,
+    "learned_free_error_mean": 0.0004428155128076581,
+    "bch_leading_error_mean": 0.0022333193500165063
+  },
+  {
+    "n_qubits": 7,
+    "trained": false,
+    "baseline_error_mean": 0.022553879271495807,
+    "oracle_local_error_mean": 0.0002745387619935534,
+    "oracle_allw3_error_mean": 0.00027453876199361535,
+    "learned_oracle_error_mean": 0.000636687264781504,
+    "learned_free_error_mean": 0.0005819963316785531,
+    "bch_leading_error_mean": 0.0027464224390470566
+  },
+  {
+    "n_qubits": 8,
+    "trained": false,
+    "baseline_error_mean": 0.026561990938110975,
+    "oracle_local_error_mean": 0.0003310449919686795,
+    "oracle_allw3_error_mean": 0.00033104499196876994,
+    "learned_oracle_error_mean": 0.0006949886143011846,
+    "learned_free_error_mean": 0.0006932714907873923,
+    "bch_leading_error_mean": 0.0032894263237950977
+  },
+  {
+    "n_qubits": 9,
+    "trained": false,
+    "baseline_error_mean": 0.030065693800820588,
+    "oracle_local_error_mean": 0.0003509344598455195,
+    "oracle_allw3_error_mean": 0.000350934459845562,
+    "learned_oracle_error_mean": 0.0008103637057850028,
+    "learned_free_error_mean": 0.0007400216438384485,
+    "bch_leading_error_mean": 0.003562928988445894
+  },
+  {
+    "n_qubits": 10,
+    "trained": false,
+    "baseline_error_mean": 0.035070423865342405,
+    "oracle_local_error_mean": 0.0004548075862126479,
+    "oracle_allw3_error_mean": 0.00045480758621269237,
+    "learned_oracle_error_mean": 0.0009285832822879475,
+    "learned_free_error_mean": 0.000873875391126543,
+    "bch_leading_error_mean": 0.004352829396672332
+  }
+]

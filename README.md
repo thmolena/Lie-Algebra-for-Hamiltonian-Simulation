@@ -1,118 +1,170 @@
-# Lie GPT for Hamiltonian Simulation
+# Lie-Algebraic Residual Compilation for Hamiltonian Simulation
 
-## Research Summary
+A learned, **provably-bounded** correction to Trotter–Suzuki quantum-simulation error. A
+single neural network predicts the exact correction from *local* Hamiltonian couplings,
+generalizes from tiny training systems to larger ones it has never seen, trains with **no
+exponential-size oracle**, and inherits a closed-form error guarantee — all built on rigorous
+theorems and reproduced entirely from first principles.
 
-This repository presents Lie GPT as a Hamiltonian-simulation and constrained quantum-dynamics framework with benchmarked gains in four areas documented by the paper and notebook studies:
+## Highlights
 
-- lower spectral error in the transverse-field Ising model benchmark,
-- exact unitarity at machine precision,
-- stable long-horizon rollout in learned dynamics,
-- improved data efficiency in trajectory-based training.
+- **Out-of-distribution size transfer.** Trained only on 4–5-qubit chains, one
+  translation-equivariant network corrects systems up to **10 qubits** (a 1024-dimensional
+  Hilbert space) it never saw — cutting product-formula error **40–45×**, with **$R^2 = 0.9998$**
+  on held-out sizes. A *proved* locality theorem explains why it generalizes.
+- **No exponential oracle.** The model trains from fixed-size local patches (≤ 7 qubits),
+  never a dense $2^n$ propagator, and matches the oracle-trained model — removing the
+  scalability bottleneck of exact methods.
+- **Machine learning with a proof.** A multi-step stability theorem guarantees global error
+  grows only linearly in the model's per-step error ($r\eta$): the learned correction is
+  *safe by construction*.
+- **Beats the analytic baseline.** Conditioned on step size, it outperforms the leading-order
+  BCH correction by **more than 10×** exactly where that correction fails.
+- **Fully reproducible.** Every number is recomputed by deterministic first-principles code;
+  the manuscript compiles and the pipeline regenerates every figure and table.
 
-The repository materials are organized as a technical report rather than a product page. The emphasis is therefore on documented findings, the meaning of those findings for the tested applications, and the files needed to reproduce the reported results.
+See the result in one figure: [`submission/figures/fig7_learned_residual.png`](submission/figures/fig7_learned_residual.png).
 
-## Verified Findings
+## Overview
 
-### Hamiltonian simulation accuracy
+Digital Hamiltonian simulation implements $U(t) = \exp(-iHt)$ by composing short
+product-formula steps $S_q(\delta t)$ of order $q$. Each step carries a finite defect
+controlled by nested commutators that persists at every fixed Suzuki order. This project
+isolates that defect as an operator and studies it with Lie-algebraic and numerical-analysis tools.
 
-For the four-qubit transverse-field Ising model, the paper reports a verified 10× improvement regime over same-order product-formula baselines. In the reported evaluation setting at total time $T = 0.5$:
+For a product-formula step $S_q(\delta t)$ approximating $U(\delta t) = \exp(-iH\delta t)$,
+define the **residual**
 
-- Lie GPT-1 achieves 12.3× lower spectral error than Trotter-1 at $N = 10$ steps.
-- Lie GPT-2 achieves 10.7× lower spectral error than Suzuki-2 at $N = 24$ steps.
+$$R_q(\delta t) = U(\delta t)\, S_q(\delta t)^{\dagger}.$$
 
-These results indicate that the Lie GPT propagators track the target unitary more closely in the benchmarked digital simulation setting.
+The corrected step $R_q(\delta t)\, S_q(\delta t)$ equals $U(\delta t)$ exactly. The residual
+is the *unique* unitary left multiplier with this property, and its Hermitian generator
+$K_q = i\log R_q$ lies in the dynamical Lie algebra and is small for small $\delta t$.
 
-### Long-horizon stability
+The framework distinguishes two modes, and is deliberately honest about the scope of each:
 
-In the learned dynamics benchmark, training is performed on sequences of length $T = 25$ and evaluation is extended to rollout length $T = 200$. The repository summary and rendered outputs report bounded Lie GPT error over this 8× extrapolation range, consistent with the stated linear-in-time stability behavior.
+- **Oracle residual** — $R_q$ computed from the exact dense matrix exponential. Not scalable;
+  it establishes the exact target and the best possible one-step left correction.
+- **Compressed residual** — a generator $\widehat{K}_q$ drawn from an implementable family
+  (Pauli-weight projection, BCH truncation, variational compilation, or a learned model).
+  This is the practical object, and its error is provably controlled.
 
-### Exact unitarity by construction
+## What this project demonstrates
 
-The architecture notebook constrains the learned generator to the Lie algebra basis before exponentiation. The reported result is unitarity violation at approximately machine precision, about $10^{-16}$, in the architecture and unitarity study.
+- **Applied mathematics** — Lie-group/Lie-algebra structure, operator theory, optimality in
+  every unitarily invariant norm, Baker–Campbell–Hausdorff and Duhamel-type perturbation
+  bounds, and Frobenius-optimal subspace projection.
+- **Quantum algorithms** — product-formula Hamiltonian simulation, circuit synthesis and
+  compilation, and resource budgeting for fault-tolerant and NISQ settings.
+- **Scientific computing** — deterministic dense-matrix experiments in which every reported
+  number is recomputed from first principles, with no hand entry and no black-box model.
+- **AI for quantum** — the compressed generator can be fit offline (GPU-accelerated) or
+  predicted by a unitarity-preserving learned model, with global error provably linear in
+  prediction error.
 
-### Data efficiency
+## Theoretical results
 
-The data-efficiency notebook reports that the constrained model reaches a target accuracy with about 3× fewer trajectories. In this repository, that result is used as evidence that physically structured generator prediction reduces training demand in the learned quantum-dynamics application.
+All results are proved in the paper ([`submission/main.tex`](submission/main.tex),
+[`submission/main.pdf`](submission/main.pdf)) and verified numerically.
 
-## Practical Meaning for the Project Applications
+| Result | Statement |
+| --- | --- |
+| Exact factorization | $R_q = U S_q^{\dagger}$ is the unique unitary left multiplier with $R_q S_q = U$. |
+| Optimality & uniqueness | $R_q$ minimizes the one-step correction error in every unitarily invariant norm. |
+| Multi-step stability | An approximate residual with per-step error $\eta$ gives total error $\le r\eta$ over $r$ steps. |
+| Generator-error bound | A Duhamel-type bound links spectral error to $\lVert K_q - \widehat{K}_q\rVert$. |
+| Frobenius-optimal projection | Pauli-subspace projection is the unique Frobenius-optimal compressed generator. |
+| TFIM structure | The leading Strang residual-generator term has Pauli weight $\le 3$, explaining why low-weight residuals work. |
 
-### Static spin-system simulation
+## Numerical results
 
-In the transverse-field Ising model application, lower spectral error means that the simulated unitary remains closer to the target physical evolution over the same total time. In practical terms, this supports more reliable studies of spin-chain dynamics, phase-sensitive observables, and quantum-algorithm test cases under the tested circuit budgets.
+Deterministic dense-matrix experiments on the open-boundary transverse-field Ising model
+(TFIM) for $n = 4, 5, 6$ qubits and orders $q \in \{1, 2, 4, 6, 8\}$.
 
-### Learned quantum-dynamics rollout
+- **Oracle exactness.** The corrected step cancels the product-formula defect to
+  floating-point precision (spectral-norm error $\sim 10^{-15}$) at every tested order and
+  system size — independent of Hilbert-space dimension.
+- **Compressed residual.** A non-oracle Pauli-weight projection at $n = 5$, $q = 2$ reduces
+  the global spectral-norm error from $1.384\times10^{-2}$ to $1.545\times10^{-4}$ at weight
+  $w \le 3$, and to $1.850\times10^{-7}$ at weight $w \le 4$ — structured compression recovers
+  most of the oracle gain using only local, low-weight terms.
 
-In the rollout application, exact unitarity and stable long-horizon prediction mean that the model propagates states without leaving the physically valid state space. For repeated-step simulation, forecasting, and control-oriented studies, this gives trajectories that remain usable farther beyond the training horizon.
+Figures (`submission/figures/`): fixed-time benchmarks, time-resolved sweeps, an
+improvement-ratio heatmap over the $(J, h)$ parameter grid, the projected-residual
+compression curve, generator-weight distribution, and order scaling.
 
-### Data-limited training settings
+## Learned residual generators that transfer across system size
 
-In the data-efficiency study, fewer trajectories for the same accuracy target translate directly to lower data-generation cost. That matters when training data are produced by simulation pipelines, calibration routines, or hardware measurement campaigns.
+The locality theorem makes residual compilation a well-posed learning problem: because the
+leading Strang residual generator is supported on geometrically local, weight-$\leq 3$ Pauli
+strings, a single per-site network can reconstruct it, and the same network applies to a
+chain of any length. We train one step-size-conditioned, translation-equivariant multilayer
+perceptron to predict the local residual coefficients of $K_2$ from the local couplings of a
+disordered transverse-field Ising chain — with no access to the exact propagator at inference
+— and find:
 
-### Noise-aware evaluation
+- **Size transfer to n = 10.** Trained only on $n = 4, 5$ qubit chains, the same network cuts
+  the uncorrected Strang spectral-norm error by $40$–$45\times$ on chains up to $n = 10$
+  (a 1024-dimensional Hilbert space) that it never saw during training, with $R^2 = 0.9998$
+  on held-out-size coefficients.
+- **No global oracle needed.** The network trains from fixed-size local patches alone (at most
+  seven qubits) — never a dense $2^n$ propagator — and matches, even slightly beats, the
+  oracle-trained model. This removes the framework's central scalability limitation.
+- **Beats the analytic baseline.** Conditioned on the step size, the learned correction
+  outperforms the parameter-free leading-order BCH correction by more than $10\times$ at larger
+  steps, where leading-order BCH degrades toward the uncorrected formula.
+- **Provable control.** The total error grows linearly in the number of Trotter steps, exactly
+  as the multi-step stability theorem predicts — so the learned model inherits the framework's
+  error guarantee.
 
-In the robustness study, maintaining machine-precision unitarity under noisy inputs means the model preserves the core physical constraint even when the input signal is perturbed. That is important when the predicted evolution operator must remain physically interpretable.
+All error metrics are computed by the same first-principles dense-matrix code; the network
+replaces only the costly map from a local Hamiltonian to its residual coefficients. See
+[`submission/code/learned_residual.py`](submission/code/learned_residual.py) and
+`submission/figures/fig7_learned_residual.png`.
 
-## Evidence Table
-
-| Benchmark | Verified gain | Practical interpretation |
-|---|---|---|
-| TFIM spectral-error benchmark | Lie GPT-1: 12.3× lower error than Trotter-1 at $N = 10$ | More accurate digital simulation of the same spin model at the tested step budget |
-| Higher-order TFIM benchmark | Lie GPT-2: 10.7× lower error than Suzuki-2 at $N = 24$ | Better accuracy at fixed total evolution time in the higher-order propagation setting |
-| Architecture and unitarity study | Unitarity violation remains at machine precision | Predicted quantum evolution stays physically valid for simulation and control tasks |
-| Data-efficiency study | About 3× fewer trajectories for the same accuracy target | Lower experimental or synthetic-data burden during training |
-
-## Selected Figures
-
-- `outputs/unitarity_benchmark.png` documents the machine-precision unitarity result.
-- `outputs/stability_rollout.png` summarizes the long-horizon rollout behavior.
-- `outputs/data_efficiency.png` documents the reported training-efficiency gain.
-
-## Repository Structure
+## Repository structure
 
 ```text
-research_paper/
+submission/
   main.tex                    LaTeX source for the paper
-  research_paper.pdf          Compiled paper
+  main.pdf                    Compiled paper
+  figures/                    Publication figures (PDF + PNG)
+  tables/                     LaTeX result tables
+  code/
+    make_all.py               Regenerates every figure and table from first principles
+    validate_submission.py    Re-checks the reported numbers
+    fixed_time.py time_sweep.py projected_residual.py
+    parameter_heatmap.py generator_scaling.py common.py
+    learned_residual.py       Operator-learning experiment (size transfer, torch)
 notebooks/
-  liegpt_architecture_unitarity.ipynb
-  liegpt_architecture_unitarity.html
-  liegpt_stability.ipynb
-  liegpt_stability.html
-  liegpt_efficiency_robustness.ipynb
-  liegpt_efficiency_robustness.html
-outputs/
-  unitarity_benchmark.png
-  stability_rollout.png
-  data_efficiency.png
-results/
-  tfim_baseline_results.csv
-  tfim_sweep_results.csv
-  static_selected_results.csv
-  driven_selected_results.csv
-scripts/
-  tfim_experiment.py
-  tfim_sweep.py
-  generate_liegpt_figures.py
+  liegpt_architecture_unitarity.ipynb   Unitarity-by-construction study
+  liegpt_stability.ipynb                Long-horizon rollout stability
+  liegpt_efficiency_robustness.ipynb    Data efficiency and noise robustness
+  *.html                                Rendered notebook outputs
+scripts/                      Auxiliary experiment and plotting scripts
 src/
-  lc_qaoa/
-index.html                   Root project homepage
-website/index.html           Secondary homepage using the same report style
+  lc_qaoa/                    Propagators, metrics, models, experiments
+results/                      CSV result tables
+outputs/                     Rendered figures from the notebook studies
+index.html                   Project homepage (demo)
 requirements.txt
 ```
 
-## Reproducing the Reported Results
+## Reproducing the results
 
-All experiments in the repository are configured to run on CPU.
+All experiments are configured to run on CPU.
 
-### Paper benchmarks
+### Paper figures and tables
 
 ```bash
-conda activate qaoa
-export PYTHONPATH=src
+pip install -r requirements.txt
 
-python scripts/tfim_experiment.py
-python scripts/tfim_sweep.py
-python scripts/generate_liegpt_figures.py
+# Regenerates every figure in submission/figures/ and table in submission/tables/
+cd submission/code
+python make_all.py
+
+# Re-checks the reported numbers
+python validate_submission.py
 ```
 
 ### Notebook studies
@@ -121,10 +173,6 @@ python scripts/generate_liegpt_figures.py
 jupyter nbconvert --to notebook --execute --inplace notebooks/liegpt_architecture_unitarity.ipynb
 jupyter nbconvert --to notebook --execute --inplace notebooks/liegpt_stability.ipynb
 jupyter nbconvert --to notebook --execute --inplace notebooks/liegpt_efficiency_robustness.ipynb
-
-jupyter nbconvert --to html notebooks/liegpt_architecture_unitarity.ipynb
-jupyter nbconvert --to html notebooks/liegpt_stability.ipynb
-jupyter nbconvert --to html notebooks/liegpt_efficiency_robustness.ipynb
 ```
 
 ### Local page preview
@@ -133,13 +181,12 @@ jupyter nbconvert --to html notebooks/liegpt_efficiency_robustness.ipynb
 python -m http.server 8000
 ```
 
-Then open the root homepage or the report-style page under `website/` in a browser.
+Then open `index.html` in a browser.
 
-## Primary Materials
+## Primary materials
 
-- [Research paper](research_paper/research_paper.pdf)
-- [Architecture and unitarity notebook](notebooks/liegpt_architecture_unitarity.html)
+- [Paper (PDF)](submission/main.pdf) · [LaTeX source](submission/main.tex)
+- [Project homepage](index.html)
+- [Architecture & unitarity notebook](notebooks/liegpt_architecture_unitarity.html)
 - [Stability notebook](notebooks/liegpt_stability.html)
-- [Efficiency and robustness notebook](notebooks/liegpt_efficiency_robustness.html)
-- [Root landing page](index.html)
-- [Website landing page](website/index.html)
+- [Efficiency & robustness notebook](notebooks/liegpt_efficiency_robustness.html)

@@ -36,6 +36,14 @@ def main(force: bool = False) -> None:
     parameter_heatmap.main(force=force)
     generator_scaling.main(force=force)
     write_resource_table()
+    # Learned-residual operator-learning experiment (requires torch).  Kept
+    # optional so the dense-matrix figures still build in a torch-free setup.
+    try:
+        import learned_residual
+
+        learned_residual.main(force=force)
+    except Exception as exc:  # pragma: no cover - environment dependent
+        print(f"skipping learned_residual experiment: {exc}")
 
 
 if __name__ == "__main__":
