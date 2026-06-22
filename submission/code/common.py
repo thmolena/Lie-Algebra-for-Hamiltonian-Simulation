@@ -77,8 +77,22 @@ from scipy.linalg import expm, logm, svdvals
 Array = np.ndarray
 ORDERS = [1, 2, 4, 6, 8]
 
-# Colour-blind-safe qualitative palette (Okabe--Ito) used across every figure.
-PALETTE = [
+# --- Nature Machine Intelligence (NMI) display conventions -------------------
+# Design rules (Nature Portfolio artwork & formatting guidance):
+#   * Vector PDF output with embedded, editable text (``pdf.fonttype = 42``).
+#   * Sans-serif typeface, with in-figure math kept sans-serif
+#     (``mathtext.fontset = dejavusans``).
+#   * No in-panel titles -- every description lives in the LaTeX caption.
+#   * Bold lower-case panel labels (a, b, ...) for multi-panel figures.
+#   * Colour-blind-safe qualitative palette (Okabe & Ito / Wong, Nat. Methods
+#     2011) for categories; the perceptually uniform ``viridis`` map for
+#     sequential quantities.
+#   * Uncertainty shown wherever a mean/estimate is plotted; the caption states
+#     n and what the interval represents (or that values are exact/deterministic).
+#   * Top/right spines removed for an uncluttered Nature-style frame.
+
+# Colour-blind-safe qualitative palette (Okabe--Ito) used for categorical series.
+NMI_PALETTE = [
     "#0072B2",  # blue
     "#D55E00",  # vermillion
     "#009E73",  # bluish green
@@ -88,36 +102,58 @@ PALETTE = [
     "#000000",  # black
     "#F0E442",  # yellow
 ]
+# Backwards-compatible alias: existing scripts index ``PALETTE``.
+PALETTE = NMI_PALETTE
 
-# Publication-quality defaults applied to every generated figure so the whole
-# figure set shares one consistent, journal-grade visual style.  Fonts are
-# embedded as editable Type-42 (TrueType) as required for production figures.
-plt.rcParams.update(
-    {
-        "savefig.dpi": 300,
-        "savefig.bbox": "tight",
-        "figure.dpi": 120,
-        "font.family": "sans-serif",
-        "font.size": 11,
-        "axes.titlesize": 12,
-        "axes.titleweight": "bold",
-        "axes.labelsize": 11,
-        "axes.linewidth": 0.8,
-        "xtick.labelsize": 9.5,
-        "ytick.labelsize": 9.5,
-        "xtick.direction": "out",
-        "ytick.direction": "out",
-        "legend.fontsize": 9,
-        "legend.frameon": False,
-        "lines.linewidth": 1.8,
-        "lines.markersize": 5,
-        "grid.alpha": 0.25,
-        "grid.linewidth": 0.6,
-        "pdf.fonttype": 42,
-        "ps.fonttype": 42,
-        "axes.prop_cycle": plt.cycler(color=PALETTE),
-    }
-)
+# Column widths in inches (Nature: single column 89 mm, double column 183 mm).
+COL_SINGLE = 3.50
+COL_ONEHALF = 4.75
+COL_DOUBLE = 7.20
+
+
+def apply_nmi_style() -> None:
+    """Install NMI-conforming matplotlib defaults (idempotent).
+
+    Called once at import time and again at the top of every plotting routine so
+    that the whole figure set shares one consistent, journal-grade visual style
+    regardless of import order.  Fonts are embedded as editable Type-42
+    (TrueType) and in-figure math is rendered sans-serif.
+    """
+    plt.rcParams.update(
+        {
+            "figure.dpi": 300,
+            "savefig.dpi": 300,
+            "savefig.bbox": "tight",
+            "savefig.pad_inches": 0.02,
+            "pdf.fonttype": 42,  # embed TrueType so text stays selectable/editable
+            "ps.fonttype": 42,
+            "font.family": "sans-serif",
+            "font.sans-serif": ["Arial", "Helvetica", "DejaVu Sans"],
+            "mathtext.fontset": "dejavusans",  # keep in-figure math sans-serif
+            "font.size": 8,
+            "axes.titlesize": 8,
+            "axes.labelsize": 8,
+            "xtick.labelsize": 7,
+            "ytick.labelsize": 7,
+            "legend.fontsize": 7,
+            "axes.linewidth": 0.8,
+            "axes.spines.top": False,
+            "axes.spines.right": False,
+            "lines.linewidth": 1.3,
+            "lines.markersize": 3.0,
+            "legend.frameon": False,
+            "axes.prop_cycle": plt.cycler(color=NMI_PALETTE),
+            "xtick.direction": "out",
+            "ytick.direction": "out",
+            "grid.linewidth": 0.5,
+            "grid.alpha": 0.3,
+        }
+    )
+
+
+# Install the NMI defaults at import time so any script that merely imports
+# ``common`` already inherits the house style.
+apply_nmi_style()
 
 
 @dataclass(frozen=True)
@@ -420,16 +456,16 @@ def shaded_band(ax: plt.Axes, x, mean, std, color: str, alpha: float = 0.18) -> 
     ax.fill_between(np.asarray(x, dtype=float), lower, upper, color=color, alpha=alpha, linewidth=0.0)
 
 
-def panel_label(ax: plt.Axes, text: str, dx: float = -0.12, dy: float = 1.08) -> None:
-    """Place a bold panel label (a, b, ...) just outside the top-left corner."""
+def panel_label(ax: plt.Axes, text: str, dx: float = -0.16, dy: float = 1.04) -> None:
+    """Bold lower-case panel label in the upper-left, Nature convention."""
     ax.text(
         dx,
         dy,
         text,
         transform=ax.transAxes,
-        fontsize=14,
+        fontsize=10,
         fontweight="bold",
-        va="top",
+        va="bottom",
         ha="right",
     )
 
@@ -444,6 +480,100 @@ def save_figure(fig: plt.Figure, pdf_name: str) -> None:
     fig.savefig(pdf_path, bbox_inches="tight", metadata={"CreationDate": None})
     fig.savefig(png_path, dpi=300, bbox_inches="tight", metadata={"Software": None})
     plt.close(fig)
+
+
+def _schematic_box(ax, xy, w, h, text, fc, ec="#222222"):
+    """Draw a rounded method-schematic box with centred wrapped text."""
+    from matplotlib.patches import FancyBboxPatch
+
+    box = FancyBboxPatch(
+        (xy[0], xy[1]),
+        w,
+        h,
+        boxstyle="round,pad=0.012,rounding_size=0.02",
+        linewidth=1.0,
+        edgecolor=ec,
+        facecolor=fc,
+    )
+    ax.add_patch(box)
+    ax.text(
+        xy[0] + w / 2,
+        xy[1] + h / 2,
+        text,
+        ha="center",
+        va="center",
+        fontsize=7.0,
+        zorder=5,
+    )
+    return (xy[0] + w, xy[1] + h / 2), (xy[0], xy[1] + h / 2)
+
+
+def _schematic_arrow(ax, p0, p1):
+    ax.annotate(
+        "",
+        xy=p1,
+        xytext=p0,
+        arrowprops=dict(arrowstyle="-|>", lw=1.1, color="#444444", shrinkA=2, shrinkB=2),
+    )
+
+
+def fig_schematic(out: Path) -> Path:
+    """Method-overview schematic (the NMI 'Figure 1' convention).
+
+    A left-to-right pipeline for residual-generator Trotter compilation (RGTC):
+    a local Hamiltonian H = A + B is split into a Trotter--Suzuki product-formula
+    step S_q; the exact residual factor R_q = U S_q^dagger defines a Hermitian
+    residual generator K_q = i log R_q; the Lie-algebraic commutator structure of
+    the leading defect makes K_q geometrically local, supported on low Pauli
+    weight; K_q is compressed by Pauli weight or learned per site by a
+    translation-equivariant network from local couplings (no dense propagator);
+    the corrected step exp(-i K-hat) S_q is scored by spectral-norm error against
+    the exact propagator U(t), with a proven r*eta stability certificate.
+    """
+    apply_nmi_style()
+    fig, ax = plt.subplots(figsize=(COL_DOUBLE, 2.35))
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
+
+    blue, green, orange, purple, grey = (
+        "#D6E6F2",
+        "#D6EFE3",
+        "#FBE6D4",
+        "#ECDCE9",
+        "#ECECEC",
+    )
+    y = 0.40
+    h = 0.36
+    boxes = [
+        (0.000, 0.158, "local Hamiltonian\n$H=A+B$\n(TFIM chain)", blue),
+        (0.198, 0.176, "product-formula\nstep $S_q(\\delta t)$;\nresidual $R_q=US_q^{\\dagger}$", green),
+        (0.412, 0.176, "Lie-algebra defect:\ngenerator $K_q=i\\log R_q$\nlocal, weight $\\leq 3$", orange),
+        (0.626, 0.176, "compress / learn:\n$\\Pi_w K_q$ or per-site\nnetwork $\\widehat K_q$", purple),
+        (0.840, 0.160, "error vs exact\n$U(t)$; $r\\eta$\nstability bound", grey),
+    ]
+    rights, lefts = [], []
+    for x0, w, text, fc in boxes:
+        r, l = _schematic_box(ax, (x0, y), w, h, text, fc)
+        rights.append(r)
+        lefts.append(l)
+    for i in range(len(boxes) - 1):
+        _schematic_arrow(ax, rights[i], lefts[i + 1])
+
+    # The two structural guarantees that underpin the framework.
+    ax.text(
+        0.5, 0.075,
+        "exact one-step cancellation $R_qS_q=U(\\delta t)$"
+        "   $\\bullet$   leading Strang generator $K_2^{(3)}\\in\\mathcal{B}_3$ (weight $\\leq 3$)",
+        ha="center", va="center", fontsize=6.4, color="#555555",
+    )
+    ax.text(
+        0.5, 0.95,
+        "trained on $n=4,5$ from local patches; transfers to $n=10$ under the proven bound",
+        ha="center", va="center", fontsize=6.6, color="#333333",
+    )
+    save_figure(fig, out.name)
+    return out
 
 
 def write_latex_table(path: Path, lines: Iterable[str]) -> None:

@@ -18,6 +18,7 @@ import argparse
 from common import ORDERS, TABLE_DIR, ensure_directories, write_latex_table
 import fixed_time
 import generator_scaling
+import overview
 import projected_residual
 import time_sweep
 
@@ -28,7 +29,7 @@ def write_resource_table() -> None:
         factor_counts[order] = 5 * factor_counts[order - 2]
     lines = [
         r"\begin{table}[t]",
-        r"\caption{Per-step resource proxy. The baseline factor count is the number of elementary $e^{-iA\tau}$ or $e^{-iB\tau}$ exponentials in $S_q$. The oracle residual construction uses one additional dense exponential for $U(\delta t)$ and one dense multiplication by $S_q^\dagger$; it is not a scalable gate-level implementation.}",
+        r"\caption{Per-step resource proxy. The baseline factor count is the number of elementary $e^{-iA\tau}$ or $e^{-iB\tau}$ exponentials in $S_q$. The oracle residual construction uses one additional dense exponential for $U(\delta t)$ and one dense multiplication by $S_q^\dagger$; it is not a scalable gate-level implementation. All entries are exact integer counts, not measured quantities.}",
         r"\label{tab:resources}",
         r"\centering",
         r"\begin{tabular}{cccc}",
@@ -44,6 +45,7 @@ def write_resource_table() -> None:
 
 def main(force: bool = False) -> None:
     ensure_directories()
+    overview.main(force=force)
     fixed_time.main(force=force)
     projected_residual.main(force=force)
     time_sweep.main(force=force)

@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from common import DATA_DIR, PALETTE, line_plot_style, panel_label, pauli_weight_energy, residual_factor, residual_generator, cumulative_weight_mass, save_dataframe, save_figure, save_metadata, tfim_terms, write_json
+from common import COL_DOUBLE, DATA_DIR, PALETTE, apply_nmi_style, line_plot_style, panel_label, pauli_weight_energy, residual_factor, residual_generator, cumulative_weight_mass, save_dataframe, save_figure, save_metadata, tfim_terms, write_json
 
 OUT_FIGURE = "fig4_generator_structure.pdf"
 
@@ -42,20 +42,22 @@ def build_scaling_dataset() -> pd.DataFrame:
 
 
 def make_structure_plot(rows: list[dict[str, float]], df: pd.DataFrame) -> None:
+    apply_nmi_style()
     energy = pd.DataFrame(rows)
-    fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(9.6, 4.3))
+    fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(COL_DOUBLE, 3.2))
 
     # (a) Compressibility: cumulative squared Pauli-coefficient mass vs weight.
+    # No in-plot title -- the description (n=5, q=2) lives in the LaTeX caption.
     ax_a.step(energy["max_weight"], energy["cumulative_mass"], where="post", color=PALETTE[0])
     ax_a.scatter(energy["max_weight"], energy["cumulative_mass"], color=PALETTE[0], zorder=3)
     ax_a.set_xlabel("maximum retained Pauli weight $w$")
     ax_a.set_ylabel("cumulative squared coefficient mass")
     ax_a.set_ylim(0.0, 1.05)
-    ax_a.set_title(r"Generator compressibility ($n=5$, $q=2$)")
     line_plot_style(ax_a)
     panel_label(ax_a, "a")
 
     # (b) Order scaling: spectral norm of the residual generator vs step size.
+    # No in-plot title -- the description lives in the LaTeX caption.
     colors = {1: PALETTE[1], 2: PALETTE[0], 4: PALETTE[2], 6: PALETTE[3]}
     for order, subset in df.groupby("order"):
         subset = subset.sort_values("dt")
@@ -64,7 +66,6 @@ def make_structure_plot(rows: list[dict[str, float]], df: pd.DataFrame) -> None:
     ax_b.set_yscale("log")
     ax_b.set_xlabel(r"step size $\delta t$")
     ax_b.set_ylabel(r"$\|K_q(\delta t)\|_2$")
-    ax_b.set_title("Residual-generator norm scaling")
     ax_b.legend()
     line_plot_style(ax_b)
     panel_label(ax_b, "b")

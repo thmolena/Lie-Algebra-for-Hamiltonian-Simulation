@@ -20,7 +20,7 @@ import argparse
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from common import ORDERS, TABLE_DIR, global_errors, line_plot_style, save_dataframe, save_figure, save_metadata, scientific, write_latex_table
+from common import COL_DOUBLE, NMI_PALETTE, ORDERS, TABLE_DIR, apply_nmi_style, global_errors, line_plot_style, save_dataframe, save_figure, save_metadata, scientific, write_latex_table
 
 OUT_FIGURE = "fig1_exact_residual.pdf"
 
@@ -47,9 +47,11 @@ def build_dataset() -> pd.DataFrame:
 
 
 def make_plot(df: pd.DataFrame) -> None:
-    fig, ax = plt.subplots(figsize=(8.6, 5.1))
+    apply_nmi_style()
+    fig, ax = plt.subplots(figsize=(COL_DOUBLE, 4.0))
     markers = {4: "o", 5: "s", 6: "^"}
-    colors = {4: "#2a6f97", 5: "#c8553d", 6: "#6a994e"}
+    # Okabe-Ito (NMI palette) for the three system sizes.
+    colors = {4: NMI_PALETTE[0], 5: NMI_PALETTE[1], 6: NMI_PALETTE[2]}
     for n_qubits in (4, 5, 6):
         subset = df[df["n"] == n_qubits].sort_values("order")
         ax.plot(
@@ -58,7 +60,7 @@ def make_plot(df: pd.DataFrame) -> None:
             marker=markers[n_qubits],
             color=colors[n_qubits],
             linestyle="--",
-            label=f"baseline n={n_qubits}",
+            label=f"baseline $n={n_qubits}$",
         )
         ax.plot(
             subset["order"],
@@ -66,13 +68,13 @@ def make_plot(df: pd.DataFrame) -> None:
             marker=markers[n_qubits],
             color=colors[n_qubits],
             linestyle="-",
-            label=f"oracle n={n_qubits}",
+            label=f"oracle $n={n_qubits}$",
         )
     ax.set_yscale("log")
     ax.set_xlabel("Suzuki order $q$")
     ax.set_ylabel("spectral-norm error")
-    ax.set_title("Exact-residual cancellation vs uncorrected Strang--Suzuki")
-    ax.legend(ncol=2, fontsize=8)
+    ax.legend(ncol=2, handlelength=1.6)
+    ax.grid(True, axis="both")
     line_plot_style(ax)
     save_figure(fig, OUT_FIGURE)
 
@@ -80,7 +82,7 @@ def make_plot(df: pd.DataFrame) -> None:
 def write_table(df: pd.DataFrame) -> None:
     lines = [
         r"\begin{table*}[t]",
-        r"\caption{Authentic dense-matrix fixed-time benchmark for the open-boundary \tfim{} with $J=h=1$, $t=1$, and $r=10$ steps. Baseline is $\epsilon_{T,q}=\norm{U(t)-S_q(t/r)^r}_2$; oracle residual is $\epsilon_{R,q}=\norm{U(t)-[R_q(t/r)S_q(t/r)]^r}_2$.}",
+        r"\caption{Authentic dense-matrix fixed-time benchmark for the open-boundary \tfim{} with $J=h=1$, $t=1$, and $r=10$ steps. Baseline is $\epsilon_{T,q}=\norm{U(t)-S_q(t/r)^r}_2$; oracle residual is $\epsilon_{R,q}=\norm{U(t)-[R_q(t/r)S_q(t/r)]^r}_2$. Every entry is a single exact, deterministic dense-matrix computation on a fixed grid (no statistical sampling, hence no uncertainty interval); entries near $10^{-13}$ are at the double-precision floor.}",
         r"\label{tab:error-summary}",
         r"\centering",
         r"\begin{tabular}{ccccc}",

@@ -2,121 +2,121 @@
   {
     "order": 1,
     "dt": 0.025,
-    "generator_norm": 0.002793765738907436
+    "generator_norm": 0.0027937657389076566
   },
   {
     "order": 1,
     "dt": 0.05,
-    "generator_norm": 0.011159264126524366
+    "generator_norm": 0.011159264126524118
   },
   {
     "order": 1,
     "dt": 0.075,
-    "generator_norm": 0.02504933657713664
+    "generator_norm": 0.025049336577137087
   },
   {
     "order": 1,
     "dt": 0.1,
-    "generator_norm": 0.044386167139303545
+    "generator_norm": 0.04438616713930269
   },
   {
     "order": 1,
     "dt": 0.15,
-    "generator_norm": 0.09894273523910332
+    "generator_norm": 0.09894273523910355
   },
   {
     "order": 1,
     "dt": 0.2,
-    "generator_norm": 0.17364533623520934
+    "generator_norm": 0.17364533623521017
   },
   {
     "order": 2,
     "dt": 0.025,
-    "generator_norm": 4.280451275670399e-05
+    "generator_norm": 4.280451275559375e-05
   },
   {
     "order": 2,
     "dt": 0.05,
-    "generator_norm": 0.00034203550387699826
+    "generator_norm": 0.00034203550387696346
   },
   {
     "order": 2,
     "dt": 0.075,
-    "generator_norm": 0.0011521199004283173
+    "generator_norm": 0.0011521199004286523
   },
   {
     "order": 2,
     "dt": 0.1,
-    "generator_norm": 0.0027235016914715377
+    "generator_norm": 0.0027235016914708334
   },
   {
     "order": 2,
     "dt": 0.15,
-    "generator_norm": 0.009120365679007645
+    "generator_norm": 0.00912036567900663
   },
   {
     "order": 2,
     "dt": 0.2,
-    "generator_norm": 0.021383808593866134
+    "generator_norm": 0.021383808593866536
   },
   {
     "order": 4,
     "dt": 0.025,
-    "generator_norm": 4.7135024648030045e-09
+    "generator_norm": 4.713502937787569e-09
   },
   {
     "order": 4,
     "dt": 0.05,
-    "generator_norm": 1.5067902298369827e-07
+    "generator_norm": 1.506790229255378e-07
   },
   {
     "order": 4,
     "dt": 0.075,
-    "generator_norm": 1.1422857553554946e-06
+    "generator_norm": 1.1422857556928316e-06
   },
   {
     "order": 4,
     "dt": 0.1,
-    "generator_norm": 4.802214633754122e-06
+    "generator_norm": 4.802214633558134e-06
   },
   {
     "order": 4,
     "dt": 0.15,
-    "generator_norm": 3.622191536340672e-05
+    "generator_norm": 3.622191536320302e-05
   },
   {
     "order": 4,
     "dt": 0.2,
-    "generator_norm": 0.00015121197171515363
+    "generator_norm": 0.00015121197171498926
   },
   {
     "order": 6,
     "dt": 0.025,
-    "generator_norm": 8.784318414305689e-14
+    "generator_norm": 8.77738467100063e-14
   },
   {
     "order": 6,
     "dt": 0.05,
-    "generator_norm": 1.1223138395900868e-11
+    "generator_norm": 1.1222959501696779e-11
   },
   {
     "order": 6,
     "dt": 0.075,
-    "generator_norm": 1.9148996288808036e-10
+    "generator_norm": 1.9149021582436166e-10
   },
   {
     "order": 6,
     "dt": 0.1,
-    "generator_norm": 1.4317791398715375e-09
+    "generator_norm": 1.4317792508947358e-09
   },
   {
     "order": 6,
     "dt": 0.15,
-    "generator_norm": 2.4328376646565764e-08
+    "generator_norm": 2.4328376424539278e-08
   },
   {
     "order": 6,
     "dt": 0.2,
-    "generator_norm": 1.808503171663051e-07
+    "generator_norm": 1.8085031694426467e-07
   }
 ]

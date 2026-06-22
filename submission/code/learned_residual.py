@@ -34,7 +34,7 @@ Outputs (generated_data/ and figures/):
   learned_residual_steps.csv/json    error vs number of Trotter steps (n = 6)
   learned_residual_parity.csv        predicted vs exact coefficients (transfer)
   learned_residual.meta.json         configuration + environment
-  fig7_learned_residual.{pdf,png}    four-panel summary figure
+  fig5_learned_transfer.{pdf,png}    four-panel summary figure
 """
 from __future__ import annotations
 
@@ -54,8 +54,10 @@ from matplotlib.patches import Patch
 from scipy.linalg import expm
 
 from common import (
+    COL_DOUBLE,
     PALETTE,
     TABLE_DIR,
+    apply_nmi_style,
     exact_step,
     line_plot_style,
     panel_label,
@@ -498,9 +500,12 @@ _C = {
 
 
 def make_figure(sizes_df, dt_df, steps_df, parity):
-    fig, axes = plt.subplots(2, 2, figsize=(11.5, 8.4))
+    apply_nmi_style()
+    fig, axes = plt.subplots(2, 2, figsize=(COL_DOUBLE, 5.6))
 
     # (a) Size transfer ---------------------------------------------------
+    # No in-plot title -- the panel description (t=1, dt=0.1, held-out shading)
+    # lives in the LaTeX caption.
     ax = axes[0, 0]
     x = sizes_df["n_qubits"]
     series_a = [
@@ -517,10 +522,9 @@ def make_figure(sizes_df, dt_df, steps_df, parity):
     ax.axvspan(max(TRAIN_SIZES) + 0.5, max(TRANSFER_SIZES) + 0.3, color="0.93", zorder=0)
     ax.set_xlabel("chain length $n$")
     ax.set_ylabel("global spectral-norm error")
-    ax.set_title(r"Size transfer ($t=1$, $\delta t=0.1$)")
     handles, _ = ax.get_legend_handles_labels()
     handles.append(Patch(facecolor="0.93", label=r"held out ($n>5$)"))
-    ax.legend(handles=handles, fontsize=8, loc="best")
+    ax.legend(handles=handles, fontsize=5.6, loc="best")
     line_plot_style(ax)
     panel_label(ax, "a")
 
@@ -538,8 +542,7 @@ def make_figure(sizes_df, dt_df, steps_df, parity):
         shaded_band(ax, x, dt_df[f"{key}_mean"], dt_df[f"{key}_std"], color)
     ax.set_xlabel(r"step size $\delta t$")
     ax.set_ylabel("per-step spectral-norm error")
-    ax.set_title(r"Step-size dependence ($n=6$, one step)")
-    ax.legend(fontsize=8, loc="best")
+    ax.legend(fontsize=5.6, loc="best")
     line_plot_style(ax)
     panel_label(ax, "b")
 
@@ -553,54 +556,55 @@ def make_figure(sizes_df, dt_df, steps_df, parity):
               label=r"linear-in-$r$ guide")
     ax.set_xlabel("Trotter steps $r$")
     ax.set_ylabel("total spectral-norm error")
-    ax.set_title(r"Stability vs steps ($n=6$, $\delta t=0.1$)")
-    ax.legend(fontsize=8, loc="best")
+    ax.legend(fontsize=5.6, loc="best")
     line_plot_style(ax)
     panel_label(ax, "c")
 
-    # (d) Error-reduction factor over the uncorrected baseline, by chain length
-    #     (bar): the learned oracle-free correction vs the exact weight-<=3 oracle.
+    # (d) Predicted vs exact coefficients on held-out transfer sizes (parity).
+    #     R^2 is reported in the caption; the y=x line is the perfect-fit guide.
     ax = axes[1, 1]
-    n_vals = sizes_df["n_qubits"].to_numpy()
-    red_learned = (sizes_df["baseline_error_mean"] / sizes_df["learned_free_error_mean"]).to_numpy()
-    red_oracle = (sizes_df["baseline_error_mean"] / sizes_df["oracle_local_error_mean"]).to_numpy()
-    width = 0.4
-    ax.bar(n_vals - width / 2, red_learned, width=width, color=_C["learn_free"], label="learned (oracle-free)")
-    ax.bar(n_vals + width / 2, red_oracle, width=width, color=_C["oracle"], label=r"exact weight-$\leq$3 oracle")
-    ax.axhline(1.0, linestyle="--", color=_C["baseline"], linewidth=1.0)
-    ax.set_yscale("log")
-    ax.set_xlabel("chain length $n$")
-    ax.set_ylabel(r"reduction factor $\epsilon_{\mathrm{Strang}}/\epsilon$")
-    ax.set_title(r"Improvement over baseline (transfer)")
-    ax.set_xticks(n_vals)
-    ax.legend(fontsize=8, loc="best")
+    pred, true = parity
+    if pred.size:
+        lo = float(min(true.min(), pred.min()))
+        hi = float(max(true.max(), pred.max()))
+        ax.plot([lo, hi], [lo, hi], "--", color="0.5", lw=1.0, zorder=1, label=r"$y=x$")
+        ax.scatter(true, pred, s=4, color=_C["learn_free"], alpha=0.45, linewidths=0,
+                   zorder=2, label="oracle-free, $n=6\\ldots10$")
+        ax.set_xlabel("exact coefficient")
+        ax.set_ylabel("predicted coefficient")
+        ax.legend(fontsize=5.6, loc="best")
     line_plot_style(ax)
     panel_label(ax, "d")
 
-    fig.tight_layout(pad=1.4)
+    fig.tight_layout(pad=1.0)
     save_figure(fig, "fig5_learned_transfer.pdf")
 
 
 def write_summary_table(sizes_df) -> None:
+    def pm(mean: float, std: float) -> str:
+        """mean +/- std in scientific notation for a LaTeX table cell."""
+        return f"${scientific(mean)} \\pm {scientific(std)}$"
+
     lines = [
         r"\begin{table}[t]",
         (
             r"\caption{Learned residual generator transferred across system size on the "
             r"disordered open-boundary \tfim{} ($J_i,h_i\sim\mathcal{U}[0.5,1.5]$, $t=1$, "
-            r"$\delta t=0.1$). Errors are global spectral-norm errors averaged over disordered "
-            r"chains (count in the last column; run-to-run dispersion is shown as bands in "
-            r"Fig.~\ref{fig:learned}); the reduction factor is "
+            r"$\delta t=0.1$). Errors are global spectral-norm errors reported as the mean "
+            r"$\pm$ one standard deviation over the disordered chains (count $n_{\mathrm c}$ "
+            r"in the last column); the same dispersion is shown as bands in "
+            r"Fig.~\ref{fig:learned}. The reduction factor is "
             r"$\epsilon_{\mathrm{Strang}}/\epsilon_{\mathrm{learned}}$. The oracle-free network is "
             r"trained only on $n=4,5$; sizes $n\geq6$ are absent from training. All values are "
             r"recomputed from dense matrices.}"
         ),
         r"\label{tab:learned-summary}",
         r"\centering",
-        r"\begin{tabular}{ccccccc}",
+        r"\begin{tabular}{cccccc}",
         r"\toprule",
         (
             r"$n$ & regime & $\epsilon_{\mathrm{Strang}}$ & $\epsilon_{\mathrm{learned}}$ & "
-            r"reduction & $\epsilon_{w\leq3}$ & chains\\"
+            r"reduction & $n_{\mathrm c}$\\"
         ),
         r"\midrule",
     ]
@@ -609,10 +613,9 @@ def write_summary_table(sizes_df) -> None:
         reduction = row.baseline_error_mean / row.learned_free_error_mean
         lines.append(
             f"{int(row.n_qubits)} & {regime} & "
-            f"${scientific(row.baseline_error_mean)}$ & "
-            f"${scientific(row.learned_free_error_mean)}$ & "
+            f"{pm(row.baseline_error_mean, row.baseline_error_std)} & "
+            f"{pm(row.learned_free_error_mean, row.learned_free_error_std)} & "
             f"${reduction:.1f}\\times$ & "
-            f"${scientific(row.oracle_local_error_mean)}$ & "
             f"{int(row.n_realizations)}\\\\"
         )
     lines.extend([r"\bottomrule", r"\end{tabular}", r"\end{table}"])

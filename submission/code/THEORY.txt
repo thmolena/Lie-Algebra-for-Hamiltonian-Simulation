@@ -247,7 +247,7 @@ A companion (Duhamel) bound translates *generator* error into residual error:
 ||exp(-iK) - exp(-iK_hat)||_2 <= ||K - K_hat||_2.  So approximating K well in
 operator norm is enough.
 
-  CODE: the linear-in-r growth is exactly the bottom-left panel of fig7 (the
+  CODE: the linear-in-r growth is exactly the bottom-left panel (c) of fig5 (the
         step-count sweep in learned_residual.step_sweep), which is checked
         against an r-linear guide line.
 
@@ -272,7 +272,7 @@ projected correction obeys || G_{q,w}^r - U(t) ||_2 <= r ||K_q - Pi_w K_q||_2.
 
   CODE: project_pauli_weight(K, n, w) computes Pi_w K;
         pauli_weight_energy(K, n) returns sum |c_P|^2 by weight (used for the
-        compressibility curve, fig5).
+        compressibility curve, fig4 panel a).
 
 Experiment 2 (projected_residual.py) measures how the global error falls as w
 grows.  The dramatic jump at w = 3 is not a coincidence -- it is predicted by
@@ -308,7 +308,7 @@ reason the projected residual jumps at w = 3 (Experiment 2) and stays useful ove
 the parameter grid (Experiment 4): the dominant part of the correction genuinely
 lives in a tiny, geometrically local operator family.  Higher-order BCH terms add
 larger support, which is why w = 4 and 5 capture additional subleading mass
-(fig5).
+(fig4 panel a).
 
 This locality is also what makes the correction LEARNABLE: a weight-<=3,
 geometrically local coefficient depends only on the couplings in a small
@@ -378,11 +378,11 @@ work on much larger ones.
         and take the spectral-norm distance to the true U(t).
         CODE: downstream_error(), evaluate_realization().
       * Statistics: every transfer error is a mean over many disordered chains;
-        we also record the standard deviation (the shaded bands in fig7 and the
-        dispersion behind the reduction factors in Table III).
+        we also record the standard deviation (the shaded bands in fig5 and the
+        mean +/- std reported in Table III).
       * The stability guarantee of section 7 is what certifies the learned
         correction: its per-step generator error is the eta that bounds the
-        r-step simulation error -- so the linear-in-r growth in fig7 panel (c) is
+        r-step simulation error -- so the linear-in-r growth in fig5 panel (c) is
         the theorem made visible.
 
 The headline result: trained only on n = 4,5, one per-site network cuts the
@@ -395,15 +395,21 @@ leading-order BCH by >10x once the step is not tiny.
 11.  HOW THE THEORY MAPS ONTO THE EXPERIMENTS
 -------------------------------------------------------------------------------
 
+  Conceptual summary                  -> overview.py          -> fig0 (overview/Fig.1)
   Section 6  (exact residual)         -> fixed_time.py        -> Table I,  fig1
   Section 8  (weight projection)      -> projected_residual.py-> Table II, fig2
   Sections 7+8 (time-resolved)        -> time_sweep.py        -> fig3
-  Section 8  (robustness over J,h)    -> parameter_heatmap.py -> fig4
-  Section 8  (Pauli mass by weight)   -> generator_scaling.py -> fig5
-  Section 6  (||K_q|| vs dt, order)   -> generator_scaling.py -> fig6
-  Sections 9+10 (learning + transfer) -> learned_residual.py  -> Table III, fig7
+  Section 8  (Pauli mass by weight)   -> generator_scaling.py -> fig4 panel a
+  Section 6  (||K_q|| vs dt, order)   -> generator_scaling.py -> fig4 panel b
+  Sections 9+10 (learning + transfer) -> learned_residual.py  -> Table III, fig5
+  Headline comparison                 -> headline.py          -> fig6
   Resource accounting                 -> make_all.py          -> Table IV
-  Conceptual summary                  -> overview.py          -> fig (overview)
+
+Note on numbering: the manuscript's first figure (Fig. 1) is the schematic
+overview (fig0_overview.pdf); the dense-matrix figures fig1..fig4 then appear
+as Extended Data / later main-text floats, fig5 is the learned-transfer figure,
+and fig6 is the headline.  All cross-references in main.tex use LaTeX \ref so the
+displayed numbers update automatically.
 
 
 -------------------------------------------------------------------------------

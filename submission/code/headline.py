@@ -20,7 +20,7 @@ import argparse
 import numpy as np
 import pandas as pd
 
-from common import DATA_DIR, PALETTE, line_plot_style, panel_label, plt, save_figure
+from common import COL_DOUBLE, DATA_DIR, PALETTE, apply_nmi_style, line_plot_style, panel_label, plt, save_figure
 
 OUT_FIGURE = "fig6_headline_improvement.pdf"
 
@@ -34,38 +34,39 @@ METHODS = [
 
 
 def make_plot(df: pd.DataFrame) -> None:
+    apply_nmi_style()
     df = df.sort_values("n_qubits")
     largest = df.iloc[-1]
     n_max = int(largest["n_qubits"])
 
-    fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(10.2, 4.4))
+    fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(COL_DOUBLE, 3.4))
 
     # (a) Final error of every method at the largest transfer size (bar, log y).
+    #     Error bars are one standard deviation over disordered realizations.
+    #     No in-plot title -- the held-out size (n=n_max) is given in the caption.
     labels = [m[1] for m in METHODS]
     values = np.array([float(largest[f"{m[0]}_mean"]) for m in METHODS])
     errors = np.array([float(largest.get(f"{m[0]}_std", 0.0)) for m in METHODS])
     colors = [m[2] for m in METHODS]
     xs = np.arange(len(METHODS))
-    ax_a.bar(xs, values, yerr=errors, color=colors, width=0.66, capsize=3, error_kw={"elinewidth": 1.0})
+    ax_a.bar(xs, values, yerr=errors, color=colors, width=0.66, capsize=3, error_kw={"elinewidth": 0.8})
     ax_a.set_yscale("log")
     ax_a.set_xticks(xs)
-    ax_a.set_xticklabels(labels, rotation=20, ha="right", fontsize=8.5)
+    ax_a.set_xticklabels(labels, rotation=20, ha="right", fontsize=6.5)
     ax_a.set_ylabel("global spectral-norm error")
-    ax_a.set_title(f"Final error at held-out $n={n_max}$")
-    ax_a.grid(alpha=0.25, axis="y")
+    ax_a.grid(True, axis="y")
     panel_label(ax_a, "a")
 
     # (b) Error-reduction factor of the proposed correction over the baseline,
-    #     across all transfer sizes (bar).
+    #     across all transfer sizes (bar). No in-plot title.
     n_vals = df["n_qubits"].to_numpy()
     reduction = (df["baseline_error_mean"] / df["learned_free_error_mean"]).to_numpy()
     ax_b.bar(n_vals, reduction, color=PALETTE[2], width=0.62)
     ax_b.axhline(1.0, linestyle="--", color=PALETTE[0], linewidth=1.0)
     ax_b.set_xlabel("chain length $n$")
     ax_b.set_ylabel(r"reduction factor $\epsilon_{\mathrm{Strang}}/\epsilon_{\mathrm{learned}}$")
-    ax_b.set_title("Improvement of proposed correction")
     ax_b.set_xticks(n_vals)
-    ax_b.grid(alpha=0.25, axis="y")
+    ax_b.grid(True, axis="y")
     panel_label(ax_b, "b")
 
     fig.tight_layout(pad=1.2)

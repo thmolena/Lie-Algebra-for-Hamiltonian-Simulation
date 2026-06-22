@@ -16,6 +16,7 @@ MAIN_TEX = SUBMISSION_DIR / "main.tex"
 REFS_BIB = SUBMISSION_DIR / "refs.bib"
 
 EXPECTED_FIGURES = {
+    "fig0_overview.pdf",
     "fig1_exact_residual.pdf",
     "fig2_compressed_residual.pdf",
     "fig3_time_sweep.pdf",
@@ -23,8 +24,6 @@ EXPECTED_FIGURES = {
     "fig5_learned_transfer.pdf",
     "fig6_headline_improvement.pdf",
 }
-
-EXPECTED_FIGURE_PNGS = {Path(name).with_suffix(".png").name for name in EXPECTED_FIGURES}
 
 EXPECTED_TABLES = {
     "error_summary.tex",
@@ -59,6 +58,7 @@ EXPECTED_DATA = {
 
 EXPECTED_SCRIPTS = {
     "common.py",
+    "overview.py",
     "fixed_time.py",
     "projected_residual.py",
     "time_sweep.py",
@@ -91,11 +91,10 @@ def main() -> None:
         raise SystemExit(f"main.tex figure references do not match expected artifact: {sorted(referenced_figures)}")
 
     figure_files = exact_directory_contents(FIGURE_DIR)
-    expected_figure_files = EXPECTED_FIGURES | EXPECTED_FIGURE_PNGS
-    if figure_files != expected_figure_files:
+    if figure_files != EXPECTED_FIGURES:
         raise SystemExit(
             "figure directory contents are out of sync: "
-            f"expected {sorted(expected_figure_files)}, found {sorted(figure_files)}"
+            f"expected {sorted(EXPECTED_FIGURES)}, found {sorted(figure_files)}"
         )
 
     table_files = exact_directory_contents(TABLE_DIR)

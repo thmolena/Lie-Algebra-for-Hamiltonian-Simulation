@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 import scipy.linalg
 
-from common import PALETTE, exact_step, line_plot_style, project_pauli_weight, residual_factor, residual_generator, repeated_step, save_dataframe, save_figure, save_metadata, spectral_error, tfim_terms
+from common import COL_ONEHALF, PALETTE, apply_nmi_style, exact_step, line_plot_style, project_pauli_weight, residual_factor, residual_generator, repeated_step, save_dataframe, save_figure, save_metadata, spectral_error, tfim_terms
 
 OUT_FIGURE = "fig3_time_sweep.pdf"
 
@@ -55,7 +55,8 @@ def build_dataset() -> pd.DataFrame:
 
 
 def make_plot(df: pd.DataFrame) -> None:
-    fig, ax = plt.subplots(figsize=(7.6, 4.8))
+    apply_nmi_style()
+    fig, ax = plt.subplots(figsize=(COL_ONEHALF, 3.2))
     styles = {
         "baseline": {"label": "uncorrected Strang", "color": PALETTE[0], "linestyle": "--"},
         "projected_w2": {"label": r"compressed $w\leq2$", "color": PALETTE[1], "linestyle": "-."},
@@ -68,8 +69,8 @@ def make_plot(df: pd.DataFrame) -> None:
     ax.set_yscale("log")
     ax.set_xlabel("total evolution time $t$")
     ax.set_ylabel("global spectral-norm error")
-    ax.set_title(r"Time-resolved correction hierarchy ($n=4$, $q=2$)")
     ax.legend()
+    ax.grid(True, axis="both")
     line_plot_style(ax)
     save_figure(fig, OUT_FIGURE)
 

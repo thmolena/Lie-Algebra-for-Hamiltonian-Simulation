@@ -20,7 +20,7 @@ import argparse
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from common import PALETTE, TABLE_DIR, panel_label, projected_residual_error, save_dataframe, save_figure, save_metadata, scientific, write_latex_table
+from common import COL_DOUBLE, PALETTE, TABLE_DIR, apply_nmi_style, panel_label, projected_residual_error, save_dataframe, save_figure, save_metadata, scientific, write_latex_table
 
 OUT_FIGURE = "fig2_compressed_residual.pdf"
 
@@ -40,8 +40,9 @@ def build_dataset() -> pd.DataFrame:
 
 
 def make_plot(df: pd.DataFrame) -> None:
+    apply_nmi_style()
     baseline = float(df["baseline_error"].iloc[0])
-    fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(9.4, 4.3))
+    fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(COL_DOUBLE, 3.2))
 
     # (a) Compressed-residual error versus retained Pauli weight (ours vs baseline).
     ax_a.plot(df["w"], df["projected_error"], marker="o", color=PALETTE[2],
@@ -50,8 +51,7 @@ def make_plot(df: pd.DataFrame) -> None:
     ax_a.set_yscale("log")
     ax_a.set_xlabel("maximum retained Pauli weight $w$")
     ax_a.set_ylabel("global spectral-norm error")
-    ax_a.set_title("Compressed residual vs baseline")
-    ax_a.grid(alpha=0.25)
+    ax_a.grid(True)
     ax_a.legend()
     panel_label(ax_a, "a")
 
@@ -62,8 +62,7 @@ def make_plot(df: pd.DataFrame) -> None:
     ax_b.set_yscale("log")
     ax_b.set_xlabel("maximum retained Pauli weight $w$")
     ax_b.set_ylabel(r"error-reduction factor $\epsilon_{\mathrm{Strang}}/\epsilon_w$")
-    ax_b.set_title("Improvement over baseline")
-    ax_b.grid(alpha=0.25, axis="y")
+    ax_b.grid(True, axis="y")
     panel_label(ax_b, "b")
 
     fig.tight_layout(pad=1.2)
@@ -73,7 +72,7 @@ def make_plot(df: pd.DataFrame) -> None:
 def write_table(df: pd.DataFrame) -> None:
     lines = [
         r"\begin{table}[t]",
-        r"\caption{Weight-truncated residual compilation for $n=5$, $q=2$, $J=h=1$, $t=1$, and $r=10$. The column $w$ keeps Pauli strings of weight at most $w$ in the exact residual generator. All values are recomputed from dense matrices.}",
+        r"\caption{Weight-truncated residual compilation for $n=5$, $q=2$, $J=h=1$, $t=1$, and $r=10$. The column $w$ keeps Pauli strings of weight at most $w$ in the exact residual generator. Every entry is a single exact, deterministic dense-matrix computation (no statistical sampling, hence no uncertainty interval); the $w=5$ row is at the double-precision floor.}",
         r"\label{tab:projected-summary}",
         r"\centering",
         r"\begin{tabular}{cccc}",

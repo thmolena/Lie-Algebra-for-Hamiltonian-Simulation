@@ -24,7 +24,8 @@ folder that implements it.
     python validate_submission.py                  # check the artifact set
 
 `make_all.py` writes:
-    ../figures/*.pdf and *.png      (6 figures)
+    ../figures/*.pdf                (7 manuscript figures: the schematic overview
+                                     fig0_overview plus fig1..fig6)
     ../tables/*.tex                 (4 tables)
     generated_data/*.csv, *.json    (raw data + run metadata)
 
@@ -64,7 +65,13 @@ common.py              Shared toolkit imported by everything else: Pauli
                        operators, the TFIM Hamiltonian, Trotter--Suzuki steps,
                        exact propagator, residual factor/generator, Pauli
                        projection, spectral-norm error, deterministic I/O, and
-                       publication figure styling.  Produces no artifact itself.
+                       the shared NMI figure style (apply_nmi_style(),
+                       NMI_PALETTE [Okabe-Ito], panel_label(), fig_schematic()).
+                       Produces no artifact itself.
+
+overview.py            Method-overview schematic (the manuscript's Fig. 1) ->
+                       fig0_overview: a programmatic boxes+arrows diagram of the
+                       RGTC pipeline.  No numerics.
 
 fixed_time.py          Experiment 1 -> Table I (error_summary.tex) and the
                        fixed-time figure (fig1_exact_residual): exact residual
