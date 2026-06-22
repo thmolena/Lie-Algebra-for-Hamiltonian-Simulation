@@ -24,7 +24,7 @@ folder that implements it.
     python validate_submission.py                  # check the artifact set
 
 `make_all.py` writes:
-    ../figures/*.pdf and *.png      (8 figures)
+    ../figures/*.pdf and *.png      (6 figures)
     ../tables/*.tex                 (4 tables)
     generated_data/*.csv, *.json    (raw data + run metadata)
 
@@ -39,13 +39,13 @@ To rebuild the PDF afterwards (requires a LaTeX engine such as tectonic):
 2.  ENVIRONMENT
 -------------------------------------------------------------------------------
 
-Tested with CPython 3.13.12 and the versions pinned in requirements.txt
-(numpy 2.4.3, scipy 1.17.1, pandas 3.0.2, matplotlib 3.10.8, torch 2.11.0).
+Tested with CPython 3.11.15 and the versions pinned in requirements.txt
+(numpy 2.4.2, scipy 1.17.1, pandas 3.0.1, matplotlib 3.10.8, torch 2.10.0).
 
 Only learned_residual.py needs PyTorch.  make_all.py imports it inside a
-try/except, so in a torch-free environment the six dense-matrix figures and the
-overview schematic still build; only the learned-residual figure/table/data are
-skipped (with a printed notice).
+try/except, so in a torch-free environment the four dense-matrix figures still
+build; only the learned-residual figure/table/data and the headline figure that
+depends on them are skipped (with a printed notice).
 
 macOS note: learned_residual.py sets KMP_DUPLICATE_LIB_OK=TRUE and
 OMP_NUM_THREADS=1 internally to avoid a conda/OpenMP duplicate-runtime crash and
@@ -66,35 +66,44 @@ common.py              Shared toolkit imported by everything else: Pauli
                        projection, spectral-norm error, deterministic I/O, and
                        publication figure styling.  Produces no artifact itself.
 
-overview.py            Figure 1: conceptual schematic of the RGTC framework
-                       (fig0_overview).  Pure diagram, no data.
-
 fixed_time.py          Experiment 1 -> Table I (error_summary.tex) and the
-                       fixed-time figure (fig1): exact residual cancels the
-                       Trotter error to the floating-point floor.
+                       fixed-time figure (fig1_exact_residual): exact residual
+                       cancels the Trotter error to the floating-point floor.
 
 projected_residual.py  Experiment 2 -> Table II (projected_summary.tex) and the
-                       projected figure (fig2): weight-truncated residual; the
-                       sharp gain at Pauli weight 3.
+                       compressed-residual figure (fig2_compressed_residual,
+                       two panels): weight-truncated residual; the sharp gain at
+                       Pauli weight 3.
 
-time_sweep.py          Experiment 3 -> the time-sweep figure (fig3): correction
-                       hierarchy (baseline / w<=2 / w<=3 / oracle) vs total time.
+time_sweep.py          Experiment 3 -> the time-sweep figure (fig3_time_sweep):
+                       correction hierarchy (baseline / w<=2 / w<=3 / oracle) vs
+                       total time.
 
-parameter_heatmap.py   Experiment 4 -> the heatmap figure (fig4): improvement
-                       ratio over a 64-point (J,h) grid.
-
-generator_scaling.py   Experiments 5 & 6 -> the compressibility figure (fig5)
-                       and the order-scaling figure (fig6): Pauli-mass by weight
-                       and ||K_q|| vs step size.
+generator_scaling.py   Experiments 4 & 5 -> the generator-structure figure
+                       (fig4_generator_structure, two panels): Pauli-mass by
+                       weight and ||K_q|| vs step size.
 
 learned_residual.py    The operator-learning experiment -> the learned figure
-                       (fig7, four panels) and Table III
+                       (fig5_learned_transfer, four panels) and Table III
                        (learned_residual_summary.tex): one translation-
                        equivariant network predicts the local weight-<=3
                        coefficients of K_2 and transfers from n=4,5 to n<=10.
 
+headline.py            Reads the learned-residual data table and renders the
+                       headline comparison figure (fig6_headline_improvement,
+                       two panels): proposed learned correction versus every
+                       baseline at the largest held-out size, and the
+                       error-reduction factor across all chain lengths.
+
 make_all.py            Runs all of the above in order and writes the resource
                        table (Table IV, resource_proxy.tex).
+
+determinism.py         seed_everything(): fixes all RNG seeds, thread counts,
+                       and the matplotlib PDF timestamp for byte-identical runs.
+
+cli.py                 Console entry points: `lieideal-reproduce` regenerates
+                       every artifact; `lieideal-verify` runs the pipeline twice
+                       and asserts every data/figure output is byte-identical.
 
 validate_submission.py Checks that the figures, tables, data files, scripts, and
                        citation/figure references are exactly consistent with
@@ -110,7 +119,7 @@ validate_submission.py Checks that the figures, tables, data files, scripts, and
 * The learned-residual experiment is seeded once (SEED = 20240517 in
   learned_residual.py) for the disorder sampler, the train/test split, and the
   network initialisation, and runs single-threaded.  Re-running reproduces the
-  reported means exactly (for example R^2 = 0.9998 and the 40-45x error
+  reported means exactly (for example R^2 = 0.9998 and the 36-43x error
   reduction).
 
 * Honest caveat on "exact": only quantities at the double-precision floor can
@@ -131,7 +140,7 @@ validate_submission.py Checks that the figures, tables, data files, scripts, and
 -------------------------------------------------------------------------------
 
 main.tex (one directory up) consumes only the files this folder generates:
-\input{tables/*.tex} for the four tables and \includegraphics of the eight
+\input{tables/*.tex} for the four tables and \includegraphics of the six
 figures.  The numbers quoted in the manuscript prose are the same numbers in the
 CSV/JSON here.  THEORY.txt connects every theorem and experiment in the paper to
 the function that realises it, so the code can be read as an executable version

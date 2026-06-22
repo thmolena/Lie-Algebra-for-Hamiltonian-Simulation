@@ -20,9 +20,9 @@ import argparse
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from common import TABLE_DIR, projected_residual_error, save_dataframe, save_figure, save_metadata, scientific, write_latex_table
+from common import PALETTE, TABLE_DIR, panel_label, projected_residual_error, save_dataframe, save_figure, save_metadata, scientific, write_latex_table
 
-OUT_FIGURE = "fig2_projected_residual.pdf"
+OUT_FIGURE = "fig2_compressed_residual.pdf"
 
 
 def build_dataset() -> pd.DataFrame:
@@ -40,15 +40,33 @@ def build_dataset() -> pd.DataFrame:
 
 
 def make_plot(df: pd.DataFrame) -> None:
-    fig, ax = plt.subplots(figsize=(7.2, 4.6))
-    ax.plot(df["w"], df["projected_error"], marker="o", color="#0b3c5d", label="projected residual")
-    ax.axhline(df["baseline_error"].iloc[0], linestyle="--", color="#c8553d", label="baseline S2")
-    ax.set_yscale("log")
-    ax.set_xlabel("maximum retained Pauli weight")
-    ax.set_ylabel("global spectral-norm error")
-    ax.set_title("Projected residual compilation, n=5, q=2")
-    ax.grid(alpha=0.25)
-    ax.legend()
+    baseline = float(df["baseline_error"].iloc[0])
+    fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(9.4, 4.3))
+
+    # (a) Compressed-residual error versus retained Pauli weight (ours vs baseline).
+    ax_a.plot(df["w"], df["projected_error"], marker="o", color=PALETTE[2],
+              label="compressed residual (ours)")
+    ax_a.axhline(baseline, linestyle="--", color=PALETTE[0], label="uncorrected Strang")
+    ax_a.set_yscale("log")
+    ax_a.set_xlabel("maximum retained Pauli weight $w$")
+    ax_a.set_ylabel("global spectral-norm error")
+    ax_a.set_title("Compressed residual vs baseline")
+    ax_a.grid(alpha=0.25)
+    ax_a.legend()
+    panel_label(ax_a, "a")
+
+    # (b) Error-reduction factor over the uncorrected baseline, per weight (bar).
+    factors = baseline / df["projected_error"].to_numpy()
+    ax_b.bar(df["w"].to_numpy(), factors, color=PALETTE[2], width=0.62)
+    ax_b.axhline(1.0, linestyle="--", color=PALETTE[0], linewidth=1.0)
+    ax_b.set_yscale("log")
+    ax_b.set_xlabel("maximum retained Pauli weight $w$")
+    ax_b.set_ylabel(r"error-reduction factor $\epsilon_{\mathrm{Strang}}/\epsilon_w$")
+    ax_b.set_title("Improvement over baseline")
+    ax_b.grid(alpha=0.25, axis="y")
+    panel_label(ax_b, "b")
+
+    fig.tight_layout(pad=1.2)
     save_figure(fig, OUT_FIGURE)
 
 
@@ -57,15 +75,17 @@ def write_table(df: pd.DataFrame) -> None:
         r"\begin{table}[t]",
         r"\caption{Weight-truncated residual compilation for $n=5$, $q=2$, $J=h=1$, $t=1$, and $r=10$. The column $w$ keeps Pauli strings of weight at most $w$ in the exact residual generator. All values are recomputed from dense matrices.}",
         r"\label{tab:projected-summary}",
-        r"\begin{ruledtabular}",
+        r"\centering",
         r"\begin{tabular}{cccc}",
+        r"\toprule",
         r"$w$ & $\norm{K_q-\Pi_wK_q}_2$ & projected error & improvement\\",
+        r"\midrule",
     ]
     for row in df.itertuples(index=False):
         lines.append(
             f"{row.w} & ${scientific(row.generator_residual_norm)}$ & ${scientific(row.projected_error)}$ & ${row.improvement:.2f}\\times$\\\\"
         )
-    lines.extend([r"\end{tabular}", r"\end{ruledtabular}", r"\end{table}"])
+    lines.extend([r"\bottomrule", r"\end{tabular}", r"\end{table}"])
     write_latex_table(TABLE_DIR / "projected_summary.tex", lines)
 
 

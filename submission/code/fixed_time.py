@@ -22,7 +22,7 @@ import pandas as pd
 
 from common import ORDERS, TABLE_DIR, global_errors, line_plot_style, save_dataframe, save_figure, save_metadata, scientific, write_latex_table
 
-OUT_FIGURE = "fig1_fixed_time_errors.pdf"
+OUT_FIGURE = "fig1_exact_residual.pdf"
 
 
 def build_dataset() -> pd.DataFrame:
@@ -69,9 +69,9 @@ def make_plot(df: pd.DataFrame) -> None:
             label=f"oracle n={n_qubits}",
         )
     ax.set_yscale("log")
-    ax.set_xlabel("Suzuki order q")
+    ax.set_xlabel("Suzuki order $q$")
     ax.set_ylabel("spectral-norm error")
-    ax.set_title("Fixed-time dense TFIM benchmark")
+    ax.set_title("Exact-residual cancellation vs uncorrected Strang--Suzuki")
     ax.legend(ncol=2, fontsize=8)
     line_plot_style(ax)
     save_figure(fig, OUT_FIGURE)
@@ -82,15 +82,17 @@ def write_table(df: pd.DataFrame) -> None:
         r"\begin{table*}[t]",
         r"\caption{Authentic dense-matrix fixed-time benchmark for the open-boundary \tfim{} with $J=h=1$, $t=1$, and $r=10$ steps. Baseline is $\epsilon_{T,q}=\norm{U(t)-S_q(t/r)^r}_2$; oracle residual is $\epsilon_{R,q}=\norm{U(t)-[R_q(t/r)S_q(t/r)]^r}_2$.}",
         r"\label{tab:error-summary}",
-        r"\begin{ruledtabular}",
+        r"\centering",
         r"\begin{tabular}{ccccc}",
+        r"\toprule",
         r"$n$ & $d$ & $q$ & $\epsilon_{T,q}$ & $\epsilon_{R,q}$\\",
+        r"\midrule",
     ]
     for row in df.sort_values(["n", "order"]).itertuples(index=False):
         lines.append(
             f"{row.n} & {row.d} & {row.order} & ${scientific(row.baseline_error)}$ & ${scientific(row.oracle_error)}$\\\\"
         )
-    lines.extend([r"\end{tabular}", r"\end{ruledtabular}", r"\end{table*}"])
+    lines.extend([r"\bottomrule", r"\end{tabular}", r"\end{table*}"])
     write_latex_table(TABLE_DIR / "error_summary.tex", lines)
 
 

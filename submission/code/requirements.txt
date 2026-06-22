@@ -1,5 +1,5 @@
 # Exact Python environment used to generate every result, table, and figure in
-# this submission.  Tested with CPython 3.13.12.
+# this submission.  Tested with CPython 3.11.15.
 #
 # Pinned for reproduction of the meaningful results to full double precision.
 # Values that sit at the floating-point floor (oracle residuals ~1e-13 and the
@@ -11,11 +11,11 @@
 #
 # Install with:  python -m pip install -r requirements.txt
 
-numpy==2.4.3
+numpy==2.4.2
 scipy==1.17.1
-pandas==3.0.2
+pandas==3.0.1
 matplotlib==3.10.8
 
 # Required only for the learned-residual experiment (learned_residual.py).
 # The dense-matrix experiments and all other figures build without it.
-torch==2.11.0
+torch==2.10.0

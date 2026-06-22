@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lieideal-hs"
+version = "1.0.0"
+description = "Residual-Generator Trotter Compilation (RGTC): deterministic, provable, size-transferable operator learning of Trotter corrections for Hamiltonian simulation."
+readme = "README.txt"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Molena Huynh" }]
+dependencies = [
+  "numpy>=1.24",
+  "scipy>=1.10",
+  "pandas>=2.0",
+  "matplotlib>=3.7",
+  "torch>=2.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+lieideal-reproduce = "cli:main"
+lieideal-verify = "cli:verify"
+
+[tool.setuptools]
+py-modules = [
+  "common",
+  "fixed_time",
+  "generator_scaling",
+  "headline",
+  "learned_residual",
+  "make_all",
+  "projected_residual",
+  "time_sweep",
+  "determinism",
+  "cli",
+  "validate_submission",
+]

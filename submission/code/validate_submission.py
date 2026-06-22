@@ -16,14 +16,12 @@ MAIN_TEX = SUBMISSION_DIR / "main.tex"
 REFS_BIB = SUBMISSION_DIR / "refs.bib"
 
 EXPECTED_FIGURES = {
-    "fig0_overview.pdf",
-    "fig1_fixed_time_errors.pdf",
-    "fig2_projected_residual.pdf",
+    "fig1_exact_residual.pdf",
+    "fig2_compressed_residual.pdf",
     "fig3_time_sweep.pdf",
-    "fig4_parameter_heatmap.pdf",
-    "fig5_generator_compressibility.pdf",
-    "fig6_generator_order_scaling.pdf",
-    "fig7_learned_residual.pdf",
+    "fig4_generator_structure.pdf",
+    "fig5_learned_transfer.pdf",
+    "fig6_headline_improvement.pdf",
 }
 
 EXPECTED_FIGURE_PNGS = {Path(name).with_suffix(".png").name for name in EXPECTED_FIGURES}
@@ -45,9 +43,6 @@ EXPECTED_DATA = {
     "time_sweep_n4_q2.csv",
     "time_sweep_n4_q2.json",
     "time_sweep_n4_q2.meta.json",
-    "parameter_heatmap_n4_q2_w3.csv",
-    "parameter_heatmap_n4_q2_w3.json",
-    "parameter_heatmap_n4_q2_w3.meta.json",
     "generator_energy_n5_q2.json",
     "generator_order_scaling.csv",
     "generator_order_scaling.json",
@@ -64,14 +59,15 @@ EXPECTED_DATA = {
 
 EXPECTED_SCRIPTS = {
     "common.py",
-    "overview.py",
     "fixed_time.py",
     "projected_residual.py",
     "time_sweep.py",
-    "parameter_heatmap.py",
     "generator_scaling.py",
+    "headline.py",
     "make_all.py",
     "learned_residual.py",
+    "determinism.py",
+    "cli.py",
     "validate_submission.py",
 }
 

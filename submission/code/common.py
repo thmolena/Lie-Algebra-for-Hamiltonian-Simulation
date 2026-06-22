@@ -40,14 +40,30 @@ from typing import Any, Iterable, Sequence
 
 sys.dont_write_bytecode = True
 
-ROOT = Path(__file__).resolve().parents[2]
-SUBMISSION_DIR = ROOT / "submission"
-CODE_DIR = SUBMISSION_DIR / "code"
-FIGURE_DIR = SUBMISSION_DIR / "figures"
-TABLE_DIR = SUBMISSION_DIR / "tables"
-DATA_DIR = CODE_DIR / "generated_data"
-os.environ.setdefault("MPLCONFIGDIR", str(SUBMISSION_DIR / ".mplconfig"))
-os.environ.setdefault("XDG_CACHE_HOME", str(SUBMISSION_DIR / ".cache"))
+# ``code/common.py`` -> parents[1] is the submission directory in the source
+# tree.  Every output directory is anchored to a single OUTPUT_ROOT so that the
+# package can regenerate the manuscript artifacts in place (default) or into an
+# isolated directory chosen by the caller.  The determinism harness and any
+# pip-installed user set ``RGTC_OUTPUT_ROOT`` to redirect all outputs without
+# touching the numerics.
+SOURCE_SUBMISSION_DIR = Path(__file__).resolve().parents[1]
+CODE_DIR = SOURCE_SUBMISSION_DIR / "code"
+_OUTPUT_ROOT_ENV = os.environ.get("RGTC_OUTPUT_ROOT")
+if _OUTPUT_ROOT_ENV:
+    OUTPUT_ROOT = Path(_OUTPUT_ROOT_ENV).resolve()
+    DATA_DIR = OUTPUT_ROOT / "generated_data"
+else:
+    OUTPUT_ROOT = SOURCE_SUBMISSION_DIR
+    DATA_DIR = CODE_DIR / "generated_data"
+ROOT = OUTPUT_ROOT.parent
+SUBMISSION_DIR = OUTPUT_ROOT
+FIGURE_DIR = OUTPUT_ROOT / "figures"
+TABLE_DIR = OUTPUT_ROOT / "tables"
+os.environ.setdefault("MPLCONFIGDIR", str(SOURCE_SUBMISSION_DIR / ".mplconfig"))
+os.environ.setdefault("XDG_CACHE_HOME", str(SOURCE_SUBMISSION_DIR / ".cache"))
+# Fixed epoch so the matplotlib PDF backend writes a constant CreationDate; this
+# makes every regenerated PDF byte-for-byte identical across runs and machines.
+os.environ.setdefault("SOURCE_DATE_EPOCH", "1700000000")
 
 import matplotlib
 
@@ -422,8 +438,11 @@ def save_figure(fig: plt.Figure, pdf_name: str) -> None:
     ensure_directories()
     pdf_path = FIGURE_DIR / pdf_name
     png_path = pdf_path.with_suffix(".png")
-    fig.savefig(pdf_path, bbox_inches="tight")
-    fig.savefig(png_path, dpi=300, bbox_inches="tight")
+    # Pinned metadata (no embedded creation timestamp) so the rendered PDF/PNG
+    # bytes are identical on every run -- the figures are part of the
+    # deterministic artifact set verified by ``rgtc-verify``.
+    fig.savefig(pdf_path, bbox_inches="tight", metadata={"CreationDate": None})
+    fig.savefig(png_path, dpi=300, bbox_inches="tight", metadata={"Software": None})
     plt.close(fig)
 
 

@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 import scipy.linalg
 
-from common import exact_step, line_plot_style, project_pauli_weight, residual_factor, residual_generator, repeated_step, save_dataframe, save_figure, save_metadata, spectral_error, tfim_terms
+from common import PALETTE, exact_step, line_plot_style, project_pauli_weight, residual_factor, residual_generator, repeated_step, save_dataframe, save_figure, save_metadata, spectral_error, tfim_terms
 
 OUT_FIGURE = "fig3_time_sweep.pdf"
 
@@ -57,18 +57,18 @@ def build_dataset() -> pd.DataFrame:
 def make_plot(df: pd.DataFrame) -> None:
     fig, ax = plt.subplots(figsize=(7.6, 4.8))
     styles = {
-        "baseline": {"label": "baseline S2", "color": "#c8553d", "linestyle": "--"},
-        "projected_w2": {"label": "projected w≤2", "color": "#6a994e", "linestyle": "-."},
-        "projected_w3": {"label": "projected w≤3", "color": "#2a6f97", "linestyle": "-"},
-        "oracle": {"label": "oracle", "color": "#0b3c5d", "linestyle": ":"},
+        "baseline": {"label": "uncorrected Strang", "color": PALETTE[0], "linestyle": "--"},
+        "projected_w2": {"label": r"compressed $w\leq2$", "color": PALETTE[1], "linestyle": "-."},
+        "projected_w3": {"label": r"compressed $w\leq3$ (ours)", "color": PALETTE[2], "linestyle": "-"},
+        "oracle": {"label": "exact oracle residual", "color": PALETTE[3], "linestyle": ":"},
     }
     for series, subset in df.groupby("series"):
         subset = subset.sort_values("t")
         ax.plot(subset["t"], subset["error"], **styles[series])
     ax.set_yscale("log")
-    ax.set_xlabel("total time")
+    ax.set_xlabel("total evolution time $t$")
     ax.set_ylabel("global spectral-norm error")
-    ax.set_title("Time-resolved correction hierarchy, n=4, q=2")
+    ax.set_title(r"Time-resolved correction hierarchy ($n=4$, $q=2$)")
     ax.legend()
     line_plot_style(ax)
     save_figure(fig, OUT_FIGURE)

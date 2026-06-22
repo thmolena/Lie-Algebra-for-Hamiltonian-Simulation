@@ -558,30 +558,27 @@ def make_figure(sizes_df, dt_df, steps_df, parity):
     line_plot_style(ax)
     panel_label(ax, "c")
 
-    # (d) Coefficient parity ---------------------------------------------
+    # (d) Error-reduction factor over the uncorrected baseline, by chain length
+    #     (bar): the learned oracle-free correction vs the exact weight-<=3 oracle.
     ax = axes[1, 1]
-    pred, true = parity
-    if pred.size:
-        ax.scatter(true, pred, s=6, alpha=0.3, color=_C["learn_free"], edgecolors="none")
-        lim = max(np.abs(true).max(), np.abs(pred).max()) * 1.05
-        ax.plot([-lim, lim], [-lim, lim], "k--", lw=1)
-        ax.set_xlim(-lim, lim)
-        ax.set_ylim(-lim, lim)
-        ax.set_aspect("equal", adjustable="box")
-        ax.xaxis.set_major_locator(plt.MaxNLocator(5))
-        ax.yaxis.set_major_locator(plt.MaxNLocator(5))
-        ax.tick_params(axis="x", rotation=30)
-        r2 = 1.0 - np.sum((pred - true) ** 2) / (np.sum((true - true.mean()) ** 2) + 1e-12)
-        ax.text(0.05, 0.95, f"$R^2 = {r2:.4f}$", transform=ax.transAxes, va="top", ha="left",
-                fontsize=10, fontweight="bold")
-    ax.set_xlabel("exact coefficient")
-    ax.set_ylabel("predicted coefficient")
-    ax.set_title(r"Coefficient parity (transfer $n$)")
+    n_vals = sizes_df["n_qubits"].to_numpy()
+    red_learned = (sizes_df["baseline_error_mean"] / sizes_df["learned_free_error_mean"]).to_numpy()
+    red_oracle = (sizes_df["baseline_error_mean"] / sizes_df["oracle_local_error_mean"]).to_numpy()
+    width = 0.4
+    ax.bar(n_vals - width / 2, red_learned, width=width, color=_C["learn_free"], label="learned (oracle-free)")
+    ax.bar(n_vals + width / 2, red_oracle, width=width, color=_C["oracle"], label=r"exact weight-$\leq$3 oracle")
+    ax.axhline(1.0, linestyle="--", color=_C["baseline"], linewidth=1.0)
+    ax.set_yscale("log")
+    ax.set_xlabel("chain length $n$")
+    ax.set_ylabel(r"reduction factor $\epsilon_{\mathrm{Strang}}/\epsilon$")
+    ax.set_title(r"Improvement over baseline (transfer)")
+    ax.set_xticks(n_vals)
+    ax.legend(fontsize=8, loc="best")
     line_plot_style(ax)
     panel_label(ax, "d")
 
     fig.tight_layout(pad=1.4)
-    save_figure(fig, "fig7_learned_residual.pdf")
+    save_figure(fig, "fig5_learned_transfer.pdf")
 
 
 def write_summary_table(sizes_df) -> None:
@@ -598,12 +595,14 @@ def write_summary_table(sizes_df) -> None:
             r"recomputed from dense matrices.}"
         ),
         r"\label{tab:learned-summary}",
-        r"\begin{ruledtabular}",
+        r"\centering",
         r"\begin{tabular}{ccccccc}",
+        r"\toprule",
         (
             r"$n$ & regime & $\epsilon_{\mathrm{Strang}}$ & $\epsilon_{\mathrm{learned}}$ & "
             r"reduction & $\epsilon_{w\leq3}$ & chains\\"
         ),
+        r"\midrule",
     ]
     for row in sizes_df.itertuples(index=False):
         regime = "train" if row.trained else "transfer"
@@ -616,7 +615,7 @@ def write_summary_table(sizes_df) -> None:
             f"${scientific(row.oracle_local_error_mean)}$ & "
             f"{int(row.n_realizations)}\\\\"
         )
-    lines.extend([r"\end{tabular}", r"\end{ruledtabular}", r"\end{table}"])
+    lines.extend([r"\bottomrule", r"\end{tabular}", r"\end{table}"])
     write_latex_table(TABLE_DIR / "learned_residual_summary.tex", lines)
 
 
