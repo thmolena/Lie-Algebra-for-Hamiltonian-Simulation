@@ -3,489 +3,116 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lie-Algebraic Residual Compilation for Hamiltonian Simulation</title>
+<title>Provable size-transferable Trotter corrections for Hamiltonian simulation</title>
+<meta name="description" content="Residual-generator Trotter compilation (RGTC): the finite-step error of product formulas recast as a geometrically local, size-transferable operator that is learned under a provable stability bound.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- KaTeX for in-page mathematics -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+  onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}], throwOnError:false});"></script>
 <style>
   :root {
     color-scheme: light;
-    --bg: #ffffff;
-    --paper: #ffffff;
-    --ink: #1a2740;
-    --muted: #52607a;
-    --line: #d5dce6;
-    --soft: #f4f7fb;
-    --accent: #113b73;
-    --success: #0f5c3d;
-    --max: 1100px;
-  }
-
-  * {
-    box-sizing: border-box;
-  }
-
-  html {
-    scroll-behavior: smooth;
-  }
-
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: "Source Sans 3", sans-serif;
-    line-height: 1.7;
-  }
-
-  a {
-    color: var(--accent);
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  .site-header {
-    border-bottom: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.97);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    backdrop-filter: blur(10px);
-  }
-
-  .header-inner,
-  .hero,
-  .section,
-  .site-footer {
-    width: min(calc(100% - 32px), var(--max));
-    margin: 0 auto;
-  }
-
-  .header-inner {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 0;
-    padding: 13px 0;
-    flex-wrap: nowrap;
-    overflow: hidden;
-  }
-
-  .brand {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0;
-    flex-shrink: 0;
-    white-space: nowrap;
-  }
-
-  .brand-sep {
-    display: inline-block;
-    width: 1px;
-    height: 1.1em;
-    background: var(--line);
-    margin: 0 12px;
-    vertical-align: middle;
-    flex-shrink: 0;
-  }
-
-  .nav-sep {
-    display: inline-block;
-    width: 1px;
-    height: 1em;
-    background: var(--line);
-    margin: 0 6px;
-    vertical-align: middle;
-    flex-shrink: 0;
-  }
-
-  .eyebrow,
-  .section-label,
-  .kicker {
-    font-size: 0.76rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--accent);
-  }
-
-  .brand-title {
-    font-family: "Source Serif 4", serif;
-    font-size: 1rem;
-    font-weight: 700;
-    white-space: nowrap;
-  }
-
-  .nav {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    gap: 0;
-    font-size: 0.9rem;
-    white-space: nowrap;
-    margin-left: 24px;
-    flex-shrink: 0;
-  }
-
-  .nav a {
-    padding: 0 10px;
-  }
-
-  .hero {
-    padding: 56px 0 36px;
-  }
-
-  .hero-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1.9fr) minmax(280px, 1fr);
-    gap: 28px;
-    align-items: start;
-  }
-
-  h1,
-  h2,
-  h3 {
-    margin: 0;
-    font-family: "Source Serif 4", serif;
-    font-weight: 700;
-    color: var(--ink);
-  }
-
-  h1 {
-    margin-top: 12px;
-    font-size: clamp(2.3rem, 4vw, 4rem);
-    line-height: 1.08;
-    letter-spacing: -0.02em;
-  }
-
-  h2 {
-    font-size: 1.8rem;
-    margin-bottom: 14px;
-  }
-
-  h3 {
-    font-size: 1.15rem;
-    margin-bottom: 10px;
-  }
-
-  .hero-subtitle,
-  .lede,
-  .caption,
-  li,
-  td,
-  th,
-  p {
-    color: var(--muted);
-    font-size: 1rem;
-  }
-
-  .hero-subtitle {
-    margin: 20px 0 0;
-    max-width: 760px;
-    font-size: 1.08rem;
-  }
-
-  .hero-tagline {
-    margin: 16px 0 0;
-    max-width: 780px;
-    font-family: "Source Serif 4", serif;
-    font-size: 1.25rem;
-    font-weight: 600;
-    line-height: 1.4;
-    color: var(--ink);
-  }
-
-  .hero-panel,
-  .card,
-  .figure-card {
-    background: var(--paper);
-    border: 1px solid var(--line);
-  }
-
-  .hero-panel {
-    padding: 22px;
-  }
-
-  .stats {
-    display: grid;
-    gap: 14px;
-  }
-
-  .stat {
-    padding: 16px 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .stat:last-child {
-    border-bottom: 0;
-    padding-bottom: 0;
-  }
-
-  .stat-value {
-    display: block;
-    color: var(--accent);
-    font-family: "Source Serif 4", serif;
-    font-size: 2rem;
-    font-weight: 700;
-    line-height: 1;
-    margin-bottom: 8px;
-  }
-
-  .section {
-    padding: 34px 0;
-    border-top: 1px solid var(--line);
-  }
-
-  .lede {
-    max-width: 820px;
-    margin-bottom: 22px;
-  }
-
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 20px;
-  }
-
-  .card {
-    padding: 22px;
-  }
-
-  .card p:last-child {
-    margin-bottom: 0;
-  }
-
-  .demo-shell {
-    background: var(--soft);
-    border: 1px solid var(--line);
-    padding: 22px;
-  }
-
-  .demo-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
-    gap: 22px;
-    align-items: start;
-  }
-
-  .demo-canvas-wrap {
-    background: var(--paper);
-    border: 1px solid var(--line);
-    padding: 14px;
-  }
-
-  .demo-canvas {
-    width: 100%;
-    height: auto;
-    display: block;
-    background: #fbfcfe;
-  }
-
-  .demo-panel {
-    display: grid;
-    gap: 14px;
-  }
-
-  .demo-box {
-    background: var(--paper);
-    border: 1px solid var(--line);
-    padding: 16px;
-  }
-
-  .demo-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 10px;
-  }
-
-  .demo-button {
-    border: 1px solid var(--line);
-    background: var(--paper);
-    color: var(--accent);
-    font: inherit;
-    padding: 8px 12px;
-    cursor: pointer;
-  }
-
-  .demo-button.is-active,
-  .demo-button:hover {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #ffffff;
-    text-decoration: none;
-  }
-
-  .metric-list {
-    display: grid;
-    gap: 10px;
-    margin-top: 8px;
-  }
-
-  .metric-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 8px;
-  }
-
-  .metric-row:last-child {
-    border-bottom: 0;
-    padding-bottom: 0;
-  }
-
-  .metric-key {
-    color: var(--muted);
-  }
-
-  .metric-value {
-    color: var(--accent);
-    font-weight: 700;
-  }
-
-  .math-inline {
-    font-family: "Source Serif 4", serif;
-    color: var(--ink);
-    white-space: nowrap;
-  }
-
-  .evidence-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 18px;
-    background: var(--paper);
-    border: 1px solid var(--line);
-  }
-
-  .evidence-table th,
-  .evidence-table td {
-    padding: 14px 16px;
-    text-align: left;
-    border-bottom: 1px solid var(--line);
-    vertical-align: top;
-  }
-
-  .evidence-table thead th {
-    background: var(--soft);
-    color: var(--ink);
-    font-weight: 700;
-  }
-
-  .evidence-table tbody tr:last-child td {
-    border-bottom: 0;
-  }
-
-  .good {
-    color: var(--success);
-    font-weight: 700;
-  }
-
-  .application-grid,
-  .figure-grid {
-    display: grid;
-    gap: 20px;
-  }
-
-  .application-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .figure-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .figure-card {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .figure-card img {
-    display: block;
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    object-fit: cover;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .figure-body {
-    padding: 18px;
-  }
-
-  .feature-figure {
-    background: var(--paper);
-    border: 1px solid var(--line);
-    margin-bottom: 24px;
-  }
-
-  .feature-figure img {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .feature-figure .figure-body {
-    padding: 18px 20px;
-  }
-
-  .github-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 24px;
-    padding: 10px 18px;
-    background: var(--accent);
-    color: #ffffff;
-    font-size: 0.9rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    border: none;
-    text-decoration: none;
-  }
-
-  .github-badge svg {
-    flex-shrink: 0;
-  }
-
-  .github-badge:hover {
-    background: #0a2a54;
-    text-decoration: none;
-  }
-
-  .site-footer {
-    padding: 28px 0 40px;
-    border-top: 1px solid var(--line);
-    color: var(--muted);
-    font-size: 0.95rem;
-  }
-
+    --bg: #ffffff; --paper: #ffffff; --ink: #1a2740; --muted: #52607a;
+    --line: #d5dce6; --soft: #f4f7fb; --accent: #113b73; --accent-soft: #e8f0fb;
+    --success: #0f5c3d; --warn: #8a5a00; --max: 1100px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Source Sans 3", sans-serif; line-height: 1.7; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .site-header { border-bottom: 1px solid var(--line); background: rgba(255,255,255,0.97); position: sticky; top: 0; z-index: 10; backdrop-filter: blur(10px); }
+  .header-inner, .hero, .section, .site-footer { width: min(calc(100% - 32px), var(--max)); margin: 0 auto; }
+  .header-inner { display: flex; justify-content: flex-start; align-items: center; gap: 0; padding: 13px 0; flex-wrap: nowrap; overflow-x: auto; }
+  .brand { display: flex; flex-direction: row; align-items: center; gap: 0; flex-shrink: 0; white-space: nowrap; }
+  .brand-sep { display: inline-block; width: 1px; height: 1.1em; background: var(--line); margin: 0 12px; vertical-align: middle; flex-shrink: 0; }
+  .nav-sep { display: inline-block; width: 1px; height: 1em; background: var(--line); margin: 0 6px; vertical-align: middle; flex-shrink: 0; }
+  .eyebrow, .section-label, .kicker { font-size: 0.76rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  .brand-title { font-family: "Source Serif 4", serif; font-size: 1rem; font-weight: 700; white-space: nowrap; }
+  .nav { display: flex; flex-wrap: nowrap; align-items: center; gap: 0; font-size: 0.9rem; white-space: nowrap; margin-left: 24px; flex-shrink: 0; }
+  .nav a { padding: 0 9px; }
+  .hero { padding: 56px 0 36px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(280px, 1fr); gap: 28px; align-items: start; }
+  h1, h2, h3, h4 { margin: 0; font-family: "Source Serif 4", serif; font-weight: 700; color: var(--ink); }
+  h1 { margin-top: 12px; font-size: clamp(2.1rem, 3.6vw, 3.4rem); line-height: 1.08; letter-spacing: -0.02em; }
+  h2 { font-size: 1.8rem; margin-bottom: 14px; }
+  h3 { font-size: 1.15rem; margin-bottom: 10px; }
+  h4 { font-size: 1rem; margin-bottom: 6px; }
+  .hero-subtitle, .lede, .caption, li, td, th, p { color: var(--muted); font-size: 1rem; }
+  .hero-subtitle { margin: 18px 0 0; max-width: 780px; font-size: 1.05rem; }
+  .hero-tagline { margin: 16px 0 0; max-width: 800px; font-family: "Source Serif 4", serif; font-size: 1.2rem; font-weight: 600; line-height: 1.4; color: var(--ink); }
+  .hero-panel, .card, .figure-card, .note { background: var(--paper); border: 1px solid var(--line); }
+  .hero-panel { padding: 22px; }
+  .stats { display: grid; gap: 14px; }
+  .stat { padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .stat:last-child { border-bottom: 0; padding-bottom: 0; }
+  .stat-value { display: block; color: var(--accent); font-family: "Source Serif 4", serif; font-size: 1.9rem; font-weight: 700; line-height: 1; margin-bottom: 8px; }
+  .stat-sub { font-size: 0.92rem; }
+  .section { padding: 34px 0; border-top: 1px solid var(--line); }
+  .lede { max-width: 840px; margin-bottom: 22px; }
+  .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .card { padding: 22px; }
+  .card p:last-child { margin-bottom: 0; }
+  ul.tight { margin: 0; padding-left: 1.1em; }
+  ul.tight li { margin-bottom: 10px; }
+  ul.tight li:last-child { margin-bottom: 0; }
+  .contrib-list li strong { color: var(--ink); }
+  .note { background: var(--soft); border-left: 3px solid var(--accent); padding: 16px 18px; margin: 20px 0 0; }
+  .note.caveat { border-left-color: var(--warn); }
+  .note p:last-child { margin-bottom: 0; }
+  .note h4 { color: var(--accent); }
+  .note.caveat h4 { color: var(--warn); }
+  .math-block { background: var(--soft); border: 1px solid var(--line); padding: 14px 18px; margin: 16px 0; overflow-x: auto; }
+  .demo-shell { background: var(--soft); border: 1px solid var(--line); padding: 22px; }
+  .demo-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr); gap: 22px; align-items: start; }
+  .demo-canvas-wrap { background: var(--paper); border: 1px solid var(--line); padding: 14px; }
+  .demo-canvas { width: 100%; height: auto; display: block; background: #fbfcfe; }
+  .demo-panel { display: grid; gap: 14px; }
+  .demo-box { background: var(--paper); border: 1px solid var(--line); padding: 16px; }
+  .demo-control { margin-bottom: 14px; }
+  .demo-control:last-child { margin-bottom: 0; }
+  .demo-control label { display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+  .demo-control label span.val { color: var(--accent); font-variant-numeric: tabular-nums; }
+  .demo-control input[type="range"] { width: 100%; accent-color: var(--accent); }
+  .demo-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .demo-button { border: 1px solid var(--line); background: var(--paper); color: var(--accent); font: inherit; font-size: 0.85rem; padding: 7px 11px; cursor: pointer; }
+  .demo-button.is-active, .demo-button:hover { background: var(--accent); border-color: var(--accent); color: #ffffff; text-decoration: none; }
+  .metric-list { display: grid; gap: 10px; margin-top: 8px; }
+  .metric-row { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+  .metric-row:last-child { border-bottom: 0; padding-bottom: 0; }
+  .metric-key { color: var(--muted); font-size: 0.92rem; }
+  .metric-value { color: var(--accent); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; font-size: 0.85rem; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+  .swatch { width: 14px; height: 3px; display: inline-block; border-radius: 2px; }
+  .evidence-table { width: 100%; border-collapse: collapse; margin-top: 18px; background: var(--paper); border: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  .evidence-table th, .evidence-table td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; font-size: 0.95rem; }
+  .evidence-table.numeric td, .evidence-table.numeric th { text-align: right; }
+  .evidence-table.numeric td:first-child, .evidence-table.numeric th:first-child { text-align: left; }
+  .evidence-table thead th { background: var(--soft); color: var(--ink); font-weight: 700; }
+  .evidence-table tbody tr:last-child td { border-bottom: 0; }
+  .evidence-table tbody tr.highlight { background: var(--accent-soft); }
+  .table-scroll { overflow-x: auto; }
+  .good { color: var(--success); font-weight: 700; }
+  .tag { display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; padding: 2px 8px; border-radius: 3px; background: var(--accent-soft); color: var(--accent); }
+  .tag.train { background: #eef3ea; color: var(--success); }
+  .tag.transfer { background: #fff2dd; color: var(--warn); }
+  .application-grid { display: grid; gap: 20px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.88em; background: var(--soft); padding: 1px 5px; border-radius: 3px; color: var(--ink); }
+  pre { background: #0f1c33; color: #e7eefc; padding: 16px 18px; border-radius: 6px; overflow-x: auto; font-size: 0.85rem; line-height: 1.55; }
+  pre code { background: none; color: inherit; padding: 0; }
+  .footnote { font-size: 0.85rem; color: var(--muted); margin-top: 10px; }
+  .github-badge { display: inline-flex; align-items: center; gap: 8px; margin-top: 24px; padding: 10px 18px; background: var(--accent); color: #ffffff; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.04em; border: none; text-decoration: none; }
+  .github-badge svg { flex-shrink: 0; }
+  .github-badge:hover { background: #0a2a54; text-decoration: none; }
+  .site-footer { padding: 28px 0 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.95rem; }
   @media (max-width: 960px) {
-    .hero-grid,
-    .cards,
-    .demo-grid,
-    .application-grid,
-    .figure-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .header-inner {
-      align-items: flex-start;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .nav {
-      flex-wrap: wrap;
-      margin-left: 0;
-    }
-
-    .nav-sep {
-      display: none;
-    }
+    .hero-grid, .cards, .demo-grid, .application-grid { grid-template-columns: 1fr; }
+    .nav-sep { display: none; }
   }
 </style>
 </head>
@@ -495,271 +122,510 @@
       <div class="brand">
         <span class="eyebrow">Research Project</span>
         <span class="brand-sep" aria-hidden="true"></span>
-        <span class="brand-title">Lie-Algebraic Residual Compilation</span>
+        <span class="brand-title">Residual-Generator Trotter Compilation</span>
       </div>
       <nav class="nav" aria-label="Primary">
         <span class="nav-sep" aria-hidden="true"></span>
-        <a href="#summary">Overview</a>
+        <a href="#overview">Overview</a>
         <span class="nav-sep" aria-hidden="true"></span>
-        <a href="#breakthrough">Breakthrough</a>
+        <a href="#background">Background</a>
         <span class="nav-sep" aria-hidden="true"></span>
-        <a href="#findings">Theory</a>
+        <a href="#contributions">Contributions</a>
         <span class="nav-sep" aria-hidden="true"></span>
-        <a href="#applications">Applications</a>
+        <a href="#method">Method</a>
         <span class="nav-sep" aria-hidden="true"></span>
-        <a href="#demo">Experiments</a>
+        <a href="#design">Design</a>
         <span class="nav-sep" aria-hidden="true"></span>
-        <a href="#figures">Figures</a>
+        <a href="#results">Results</a>
         <span class="nav-sep" aria-hidden="true"></span>
-        <a href="https://github.com/thmolena/Lie-Algebra-for-Hamiltonian-Simulation" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="#demo">Demo</a>
+        <span class="nav-sep" aria-hidden="true"></span>
+        <a href="#conclusion">Conclusion</a>
+        <span class="nav-sep" aria-hidden="true"></span>
+        <a href="#paper">Paper &amp; Code</a>
       </nav>
     </div>
   </header>
 
   <main>
-    <section class="hero" id="summary">
+    <section class="hero" id="overview">
       <div class="hero-grid">
         <div>
-          <div class="kicker">Quantum Algorithms &middot; Machine Learning &middot; Applied Mathematics</div>
-          <h1>Lie-Algebraic Residual Compilation for Hamiltonian Simulation</h1>
-          <p class="hero-tagline">A neural network that learns the exact correction to quantum-simulation error &mdash; with a mathematical guarantee, and the ability to transfer from tiny training systems to ones it has never seen.</p>
+          <div class="kicker">Hamiltonian Simulation &middot; Lie-Algebra Methods &middot; Operator Learning</div>
+          <h1>Provable operator learning of size-transferable Trotter corrections</h1>
+          <p class="hero-tagline">
+            The finite-step defect of a product formula is the unique unitary residual $R_q=U\,S_q^\dagger$; we prove its generator $K_q=i\log R_q$ is geometrically local for the TFIM and learn it with one translation-equivariant network that transfers from 4&ndash;5-qubit training chains to 10-qubit chains under a closed-form $r\eta$ stability bound.
+          </p>
           <p class="hero-subtitle">
-            Product-formula (Trotter&ndash;Suzuki) error is recast as an operator to be <em>learned</em> under a provable bound. A single translation-equivariant network predicts the residual generator <em>K<sub>q</sub></em>(&delta;t) from local Hamiltonian couplings. Trained only on 4&ndash;5-qubit chains, it corrects 10-qubit systems it never saw, trains with <em>no</em> exponential-size oracle, and beats the analytic baseline by more than an order of magnitude &mdash; all on top of closed-form theorems for optimality, compression, and linear stability, with every number recomputed from first-principles simulation.
+            We recast product-formula (Trotter&ndash;Suzuki) error as an operator to be learned under provable guarantees. The residual factor is the unique, norm-optimal left correction; Pauli-subspace projection of its Hermitian generator is the unique Frobenius-optimal compression; approximate residuals convert per-step error into global error linearly. For the open-boundary transverse-field Ising model (TFIM) the leading Strang generator has Pauli weight $\le 3$, which turns compilation into a local learning problem &mdash; learnable from fixed-size patches without access to the dense $2^n$ propagator. Every number on this page is recomputed from deterministic dense-matrix simulation; values near $10^{-13}$ are the double-precision floor, not physical error.
           </p>
           <a class="github-badge" href="https://github.com/thmolena/Lie-Algebra-for-Hamiltonian-Simulation" target="_blank" rel="noopener noreferrer">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
             View on GitHub
           </a>
         </div>
-        <aside class="hero-panel" aria-label="Key metrics">
+        <aside class="hero-panel" aria-label="Headline numbers">
           <div class="stats">
             <div class="stat">
-              <span class="stat-value">4&ndash;5 &rarr; 10</span>
-              <div>Out-of-distribution size transfer: trained only on 4&ndash;5-qubit chains, the same network corrects 10-qubit systems (a 1024-dimensional Hilbert space) it never saw in training.</div>
+              <span class="stat-value">$R^2 = 0.9998$</span>
+              <div class="stat-sub">Predicted-vs-exact residual coefficients on held-out sizes $n=6,\dots,10$ (relative $\ell_2$ error $1.32\times10^{-2}$), trained only on $n=4,5$.</div>
             </div>
             <div class="stat">
-              <span class="stat-value">R&sup2; = 0.9998</span>
-              <div>Accuracy of the learned correction&rsquo;s coefficients on system sizes entirely absent from the training set.</div>
+              <span class="stat-value">$38\text{--}46\times$</span>
+              <div class="stat-sub">Reduction of the uncorrected Strang spectral-norm error by the learned correction, uniform across $n=4\to10$ (mean over disordered chains; abstract headline $36\text{--}43\times$).</div>
             </div>
             <div class="stat">
-              <span class="stat-value">40&ndash;45&times;</span>
-              <div>Lower spectral-norm simulation error than the uncorrected product formula, uniformly across every tested system size.</div>
+              <span class="stat-value">$4,5 \rightarrow 10$</span>
+              <div class="stat-sub">One per-site network transfers from 4&ndash;5-qubit training chains to a 1024-dimensional (10-qubit) Hilbert space never seen in training.</div>
             </div>
             <div class="stat">
-              <span class="stat-value">r&eta;</span>
-              <div>Provable guarantee: a learned correction with per-step error &eta; yields global error at most <em>r</em>&eta; over <em>r</em> steps&mdash;machine learning that is safe by construction.</div>
+              <span class="stat-value">$\le r\eta$</span>
+              <div class="stat-sub">Closed-form global-error certificate: per-step residual error $\eta$ yields global error at most $r\eta$ over $r$ steps (order-optimal; not improvable to $o(r\eta)$).</div>
             </div>
           </div>
         </aside>
       </div>
     </section>
 
-    <section class="section" id="breakthrough">
-      <div class="section-label">Headline Contributions</div>
-      <h2>Provably-bounded operator learning that generalizes &mdash; and removes the exponential bottleneck.</h2>
+    <section class="section" id="background">
+      <div class="section-label">Background &amp; Motivation</div>
+      <h2>The finite-step defect, treated as a structured Lie-algebra operator.</h2>
       <p class="lede">
-        Quantum-simulation corrections have been either exact-but-unscalable or cheap-but-heuristic. This work delivers a learned correction that is cheap, scalable, <em>and</em> carries a closed-form error guarantee &mdash; demonstrated on disordered transverse-field Ising chains, every number reproduced from first principles.
+        Digital Hamiltonian simulation realizes $U(t)=\exp(-iHt)$ by composing easily-exponentiated factors of a splitting $H=A+B$. Trotter&ndash;Suzuki product formulas remain the most transparent, hardware-aligned route, and the modern theory &mdash; commutator-sensitive bounds, locality and Lieb&ndash;Robinson arguments &mdash; sharpens the worst-case asymptotics. Every product-formula, multi-product, randomized, Magnus, qubitization, and Lie-algebraic-compilation method nonetheless confronts the same object: the finite-step defect between the desired and the implemented unitary. This work isolates that defect, bounds it, compresses it, and ultimately learns it.
       </p>
-      <div class="application-grid">
+      <div class="cards">
         <article class="card">
-          <h3>Out-of-distribution size transfer</h3>
-          <p>
-            A single per-site network trained on 4&ndash;5-qubit chains corrects systems up to 10 qubits &mdash; a 32&times; larger Hilbert space &mdash; that it never saw in training (R&sup2;&nbsp;=&nbsp;0.9998). The generalization is not luck: a proved locality theorem explains exactly why one local map works at any chain length.
-          </p>
+          <h3>Hamiltonian simulation</h3>
+          <p>For a two-term splitting $H=A+B$ with $A,B$ Hermitian, the order-$q$ step $S_q(\delta t)$ approximates $e^{-iH\delta t}$ to $O(\delta t^{q+1})$. Over $r=t/\delta t$ steps the error accumulates; the benchmark uses the spectral norm $\lVert U(t)-S_q(\delta t)^r\rVert_2$ &mdash; basis independent and operationally a worst-case state-vector error.</p>
         </article>
         <article class="card">
-          <h3>Trains with no exponential oracle</h3>
-          <p>
-            Training labels come from fixed-size local patches of at most seven qubits &mdash; never a dense 2<sup><em>n</em></sup> propagator. The oracle-free model matches the oracle-trained one, removing the scalability bottleneck that limits exact methods.
-          </p>
+          <h3>Lie-algebra ideals &amp; generator structure</h3>
+          <p>Because $S_q$ is unitary, the residual $R_q=U S_q^\dagger$ is unitary and admits a Hermitian generator $K_q=i\log R_q$ in the dynamical Lie algebra. By the symmetric BCH expansion the leading Strang defect is a combination of the double commutators $[A,[A,B]]$ and $[B,[A,B]]$ &mdash; nested-commutator structure that controls both the size and the geometric locality of $K_q$.</p>
         </article>
         <article class="card">
-          <h3>Machine learning with a proof</h3>
-          <p>
-            The learned correction inherits a closed-form stability bound: global simulation error is guaranteed to grow only linearly in the model&rsquo;s per-step prediction error. The network is therefore safe by construction &mdash; a rare property for a learned physical model.
-          </p>
-        </article>
-        <article class="card">
-          <h3>Beats the analytic baseline</h3>
-          <p>
-            Conditioned on the step size, the learned correction outperforms the parameter-free leading-order (BCH) correction by more than an order of magnitude exactly where that correction fails, capturing structure that hand analysis misses.
-          </p>
+          <h3>Pauli-weight compressibility</h3>
+          <p>Expanding $K_q$ in the Pauli basis, most of its Frobenius mass concentrates on low-weight strings: for the $n=5$, $q=2$ TFIM generator at $\delta t=0.1$, weight $\le 3$ already captures $99.997\%$ of the squared-coefficient mass. The leading defect is local, so a small, implementable operator family suffices for the dominant correction.</p>
         </article>
       </div>
+      <div class="note">
+        <h4>The residual-learning gap this work addresses</h4>
+        <p>The exact identity $R_q S_q = U$ is, by itself, tautological &mdash; and the oracle that computes $R_q$ from the dense $e^{-iH\delta t}$ is as hard as exact simulation. The open question is what happens when the residual is <em>approximated</em>, and whether a structured approximation can be obtained <em>without</em> the dense propagator. We close that gap by proving stability and compression theorems and then instantiating the residual generator as a <strong>learned, geometrically local, step-size-conditioned operator</strong> trained from oracle-free local patches, whose accuracy is bounded <em>a priori</em> rather than validated only after the fact.</p>
+      </div>
+    </section>
 
-      <div class="feature-figure" style="margin-top:24px;">
-        <img src="submission/figures/fig7_learned_residual.png" alt="Learned residual generator results: size transfer to 10 qubits, step-size dependence vs leading-order BCH, linear stability, and coefficient parity">
-        <div class="figure-body">
-          <h3>The result in one figure</h3>
-          <p class="caption"><strong>Top left:</strong> trained on 4&ndash;5 qubits, the learned correction (oracle and oracle-free, overlapping) cuts error 40&ndash;45&times; out to 10 qubits never seen in training, tracking the exact oracle and beating leading-order BCH. <strong>Top right:</strong> as the step size grows, leading-order BCH collapses toward the uncorrected formula while the learned correction tracks the oracle. <strong>Bottom left:</strong> total error grows linearly in the number of steps, exactly as the stability theorem predicts. <strong>Bottom right:</strong> predicted-versus-exact coefficients on held-out sizes, R&sup2;&nbsp;=&nbsp;0.9998.</p>
+    <section class="section" id="contributions">
+      <div class="section-label">Contributions &amp; Novelty</div>
+      <h2>What is new, stated precisely.</h2>
+      <p class="lede">The framework is &ldquo;oracle-to-algorithm&rdquo;: an ideal mathematical target (the exact residual generator), a set of certificates that make approximating it safe, and a concrete learned approximation that removes the exponential bottleneck. The contributions, as stated in the manuscript:</p>
+      <div class="cards">
+        <article class="card" style="grid-column: 1 / -1;">
+          <ul class="tight contrib-list">
+            <li><strong>(i) Exact factorization, uniqueness, optimality.</strong> Formalizes residual-generator Trotter compilation (RGTC) and proves $R_q=US_q^\dagger$ is the unique unitary left correction and a global minimizer of the one-step error in <em>every</em> unitarily invariant norm.</li>
+            <li><strong>(ii) Multi-step stability theorems.</strong> Approximate residuals and generator approximations convert per-step error into global error linearly, with explicit $r\eta$ and $r\lVert K_q-\widehat K_q\rVert_2$ targets; the linear-in-$r$ rate is proven order-optimal ($o(r\eta)$ bounds fail to hold uniformly).</li>
+            <li><strong>(iii) Frobenius-optimal compression.</strong> Pauli-subspace projection is the <em>unique</em> Frobenius-optimal compressed residual generator, with a direct spectral-norm simulation certificate for projected generators.</li>
+            <li><strong>(iv) TFIM locality theorem.</strong> The degree-three leading term of the Strang residual generator has Pauli weight $\le 3$ &mdash; a concrete structural explanation for why $w\le 3$ projected residuals work for the TFIM.</li>
+            <li><strong>(v) Learned residual mode (central practical advance).</strong> One translation-equivariant network predicts the step-size-conditioned weight-$\le 3$ coefficients of $K_2$ from local couplings; it transfers from $n=4,5$ to $n\le 10$ ($R^2=0.9998$ on held-out sizes), cuts the uncorrected Strang error by $\sim\!38\text{--}46\times$, can be trained <em>without any dense $2^n$ oracle</em> from fixed-size local patches, and surpasses the analytic leading-order BCH correction by more than an order of magnitude where the latter fails &mdash; all while obeying the proven $r\eta$ bound.</li>
+            <li><strong>(vi) Reproducibility.</strong> Deterministic dense-matrix experiments, figures, tables, and code recompute every reported number from first principles.</li>
+          </ul>
+        </article>
+      </div>
+      <div class="note">
+        <h4>Methodological novelty beyond quantum simulation</h4>
+        <p>The truncation error of a numerical integrator &mdash; usually an analytic object to be bounded &mdash; is shown to be a <em>learnable</em> operator that is geometrically local, conditioned on the discretization step, and transferable across system size, with approximation quality controlled <em>a priori</em> by a stability bound. This situates the work within structure-preserving, physics-constrained operator learning, where a restricted symmetry-respecting hypothesis class is what makes generalization both data-efficient and certifiable.</p>
+      </div>
+    </section>
+
+    <section class="section" id="method">
+      <div class="section-label">Mathematics &amp; Method</div>
+      <h2>From the Hamiltonian to a certified learned correction.</h2>
+      <p class="lede">The benchmark Hamiltonian is the open-boundary TFIM with its natural two-term splitting:</p>
+      <div class="math-block">$$ H = A + B, \qquad A = J\sum_{j=1}^{n-1} Z_j Z_{j+1}, \qquad B = h\sum_{j=1}^{n} X_j. $$</div>
+
+      <h3 style="margin-top:26px;">Product-formula steps and the residual factor</h3>
+      <p>The first-order Lie&ndash;Trotter step is $S_1(\delta t)=e^{-iB\delta t}e^{-iA\delta t}$ and the symmetric Strang step is $S_2(\delta t)=e^{-iB\delta t/2}e^{-iA\delta t}e^{-iB\delta t/2}$; higher even orders follow the Suzuki recursion $S_{2k}(\delta t)=S_{2k-2}(p_k\delta t)^2\,S_{2k-2}((1-4p_k)\delta t)\,S_{2k-2}(p_k\delta t)^2$ with $p_k=(4-4^{1/(2k-1)})^{-1}$ (elementary-factor counts $2,3,15,75,375$ for $q=1,2,4,6,8$). The <strong>residual factor</strong> is the unique left correction:</p>
+      <div class="math-block">$$ R_q(\delta t) = U(\delta t)\,S_q(\delta t)^\dagger, \qquad R_q(\delta t)\,S_q(\delta t) = U(\delta t), \qquad \big[R_q(t/r)\,S_q(t/r)\big]^r = U(t). $$</div>
+      <p>$R_q$ is unitary and is the global minimizer of $\lVert U(\delta t)-L\,S_q(\delta t)\rVert$ over all left multipliers $L$, in every unitarily invariant norm; the minimum is zero and the minimizer is unique. This is an oracle ceiling, not a cost statement.</p>
+
+      <h3 style="margin-top:26px;">The residual generator and its norm scaling</h3>
+      <p>Since $R_q$ is unitary it has a Hermitian logarithm $K_q(\delta t)=i\log R_q(\delta t)$ (principal branch, well defined for small $\delta t$). If $S_q$ is order $q$ with $\lVert U(\delta t)-S_q(\delta t)\rVert_2\le C_q|\delta t|^{q+1}$, then</p>
+      <div class="math-block">$$ \lVert K_q(\delta t)\rVert_2 \;\le\; 2\,C_q\,|\delta t|^{q+1}, $$</div>
+      <p>so higher-order formulas yield smaller residual generators. For the Strang step ($q=2$), time-reversal symmetry kills the even-power term and the leading defect is degree three:</p>
+      <div class="math-block">$$ K_2(\delta t) = \delta t^3\, K_2^{(3)} + O(\delta t^5), \qquad K_2^{(3)} \in \operatorname{span}_{\mathbb R}\big\{\, i[A,[A,B]],\; i[B,[A,B]] \,\big\}. $$</div>
+
+      <h3 style="margin-top:26px;">Pauli-weight truncation, cumulative mass, and the locality theorem</h3>
+      <p>With $\mathcal P_n=\{I,X,Y,Z\}^{\otimes n}$ and $\mathcal B_w=\operatorname{span}_{\mathbb R}\{P:\operatorname{wt}(P)\le w\}$, the unique Frobenius-optimal compressed generator is the orthogonal Pauli projection</p>
+      <div class="math-block">$$ \Pi_w K_q = \!\!\sum_{\operatorname{wt}(P)\le w}\!\! \frac{\operatorname{Tr}(P K_q)}{2^n}\,P, \qquad \lVert e^{-iK_q}-e^{-i\Pi_w K_q}\rVert_2 \le \lVert K_q-\Pi_w K_q\rVert_2 \le \lVert K_q-\Pi_w K_q\rVert_F. $$</div>
+      <p>For the open-boundary TFIM, $[Z_jZ_{j+1},X_j]=2iY_jZ_{j+1}$ and the union of two overlapping nearest-neighbor edges spans at most three sites, so every Pauli string in the leading double commutators has weight $\le 3$: $K_2^{(3)}\in\mathcal B_3$. Empirically (cumulative squared-coefficient mass $M(w)$, $n=5$, $q=2$, $\delta t=0.1$): $M(1)=39.4\%$, $M(2)=66.1\%$, $M(3)=99.997\%$, with weights four/five capturing only sub-leading BCH structure near the double-precision floor.</p>
+
+      <h3 style="margin-top:26px;">The learned-residual model</h3>
+      <p>Locality makes the map from couplings to generator coefficients itself local, so a single per-site function applies at every site and at any chain length. On the disordered TFIM ($J_i,h_i\sim\mathcal U[0.5,1.5]$), each site is parameterized by the $T=48$ contiguous weight-$\le 3$ Pauli templates in its three-site window. A translation-equivariant MLP &mdash; <strong>12 inputs (11 local couplings + step size $\delta t$) &rarr; two width-64 tanh layers &rarr; 48 coefficients</strong>, weights shared across all sites and all chain lengths &mdash; predicts the $\delta t^{-3}$-scaled coefficients; the correction is rebuilt as $\delta t^3\widehat K_2^{(3)}$ and applied as $\widehat G(\delta t)=\exp(-i\delta t^3\widehat K_2^{(3)})\,S_2(\delta t)$. Sparse Pauli arithmetic evaluates generators up to $n=10$ without materializing dense Pauli matrices.</p>
+      <div class="note">
+        <h4>Coefficient error &rarr; global certificate</h4>
+        <p>With $T$ templates per site and per-site coefficient error $\lVert c_j-\widehat c_j\rVert_2\le\delta_c$, the per-site operator error obeys $\eta\le\sqrt T\,\delta_c$, and the size-transfer plus stability theorems give, for $t=r\delta t$, $\lVert \widehat G(\delta t)^r - U(t)\rVert_2 \le r\,\delta t^3\, n\sqrt T\,\delta_c + r\,O(\delta t^5)$. The measured held-out accuracy ($\delta_c$ corresponding to relative $\ell_2$ error $1.32\times10^{-2}$, $R^2=0.9998$) thus converts directly into an <em>a priori</em> global error bound, whose linear-in-$r$ growth the experiments verify.</p>
+      </div>
+    </section>
+
+    <section class="section" id="design">
+      <div class="section-label">Experimental Design &amp; Statistics</div>
+      <h2>How the numbers are produced &mdash; and how to read them transparently.</h2>
+      <div class="cards">
+        <article class="card">
+          <h3>Deterministic dense benchmarks</h3>
+          <p>The fixed-time, projected, and order-scaling studies are single exact dense-matrix computations on a fixed grid ($J=h=1$, $t=1$, $r=10$). There is zero stochastic sampling and therefore <em>deterministic values</em>: each value is deterministic. $U(t)=e^{-iHt}$ is computed independently of the product-formula steps; spectral norms come from singular values; $K_q=i\log R_q$ is symmetrized to remove round-off skew-Hermitian contamination before projection.</p>
+        </article>
+        <article class="card">
+          <h3>Learned-transfer protocol</h3>
+          <p>Disordered TFIM, $J_i,h_i\sim\mathcal U[0.5,1.5]$, $\delta t$ sampled in $[0.05,0.30]$. <strong>Train:</strong> 220 realizations each at $n=4,5$; 4000 full-batch Adam steps; fixed seed (20240517) for sampler, split, and init. <strong>Test/transfer:</strong> held-out realizations at each size &mdash; 40 for $n=4\text{--}7$, 24 for $n=8$, 16 for $n=9$, 12 for $n=10$. Reported errors are mean $\pm$ one standard deviation over disordered chains; $R^2=0.9998$ is predicted-vs-exact coefficient parity on held-out sizes $n=6,\dots,10$.</p>
+        </article>
+        <article class="card">
+          <h3>Two label sources</h3>
+          <p><strong>Oracle labels</strong> come from the exact global residual generator (dense matrix log) at the small training sizes. <strong>Oracle-free labels</strong> come from the residual generator of a fixed-size local patch (radius two, $\le 7$ qubits), so zero dense $2^n$ object enters training. At inference, either network sees only local couplings &mdash; never $U(\delta t)$. The two curves overlap, and the oracle-free model slightly improves on the oracle-trained one at every size.</p>
+        </article>
+      </div>
+      <div class="note caveat">
+        <h4>Finite-precision / float-floor caveat (oracle residuals)</h4>
+        <p>The exact residual theorem is an algebraic identity; in floating point, every matrix exponential and multiply contributes round-off. For low and moderate order the product-formula error dominates and oracle RGTC improves it by many orders of magnitude. But for $q=8$ at $\delta t=0.1$ the baseline is already near round-off, and the oracle construction adds dense multiplications &mdash; so its observed error can be of the same order as, or slightly larger than, the baseline. Values near $10^{-13}$&ndash;$10^{-14}$ are the double-precision floor, <em>not</em> physical error and <em>not</em> a contradiction of the factorization theorem. Compression results should be judged at levels well above round-off (e.g. the $w=3,4$ projected rows).</p>
+      </div>
+    </section>
+
+    <section class="section" id="results">
+      <div class="section-label">Results</div>
+      <h2>Tables mirroring the manuscript &mdash; learned correction in focus.</h2>
+
+      <h3 style="margin-top:8px;">1 &middot; Learned residual transferred across system size</h3>
+      <p>Disordered open-boundary TFIM, $t=1$, $\delta t=0.1$. Global spectral-norm error as mean $\pm$ one standard deviation over the disordered chains; reduction is $\epsilon_{\mathrm{Strang}}/\epsilon_{\mathrm{learned}}$. The oracle-free network is trained only on $n=4,5$ (<span class="tag train">train</span>); sizes $n\ge 6$ are absent from training (<span class="tag transfer">transfer</span>). This is the central practical result.</p>
+      <div class="table-scroll">
+      <table class="evidence-table numeric" aria-label="Learned residual transfer table">
+        <thead><tr><th>$n$</th><th>regime</th><th>$\epsilon_{\mathrm{Strang}}$</th><th>$\epsilon_{\mathrm{learned}}$</th><th>reduction</th><th>$n_c$</th></tr></thead>
+        <tbody>
+          <tr><td>4</td><td><span class="tag train">train</span></td><td>$1.234{\times}10^{-2}\!\pm\!4.20{\times}10^{-3}$</td><td>$2.705{\times}10^{-4}\!\pm\!2.01{\times}10^{-4}$</td><td class="high-quality">$45.6\times$</td><td>40</td></tr>
+          <tr><td>5</td><td><span class="tag train">train</span></td><td>$1.418{\times}10^{-2}\!\pm\!4.42{\times}10^{-3}$</td><td>$3.634{\times}10^{-4}\!\pm\!1.42{\times}10^{-4}$</td><td class="high-quality">$39.0\times$</td><td>40</td></tr>
+          <tr><td>6</td><td><span class="tag transfer">transfer</span></td><td>$1.921{\times}10^{-2}\!\pm\!4.21{\times}10^{-3}$</td><td>$4.428{\times}10^{-4}\!\pm\!1.21{\times}10^{-4}$</td><td class="high-quality">$43.4\times$</td><td>40</td></tr>
+          <tr><td>7</td><td><span class="tag transfer">transfer</span></td><td>$2.255{\times}10^{-2}\!\pm\!5.68{\times}10^{-3}$</td><td>$5.820{\times}10^{-4}\!\pm\!2.23{\times}10^{-4}$</td><td class="high-quality">$38.8\times$</td><td>40</td></tr>
+          <tr><td>8</td><td><span class="tag transfer">transfer</span></td><td>$2.656{\times}10^{-2}\!\pm\!5.27{\times}10^{-3}$</td><td>$6.933{\times}10^{-4}\!\pm\!1.74{\times}10^{-4}$</td><td class="high-quality">$38.3\times$</td><td>24</td></tr>
+          <tr><td>9</td><td><span class="tag transfer">transfer</span></td><td>$3.007{\times}10^{-2}\!\pm\!6.63{\times}10^{-3}$</td><td>$7.400{\times}10^{-4}\!\pm\!1.60{\times}10^{-4}$</td><td class="high-quality">$40.6\times$</td><td>16</td></tr>
+          <tr class="highlight"><td>10</td><td><span class="tag transfer">transfer</span></td><td>$3.507{\times}10^{-2}\!\pm\!8.56{\times}10^{-3}$</td><td>$8.739{\times}10^{-4}\!\pm\!2.29{\times}10^{-4}$</td><td class="high-quality">$40.1\times$</td><td>12</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="footnote">Locality is exact: reconstructing from contiguous local templates and from <em>all</em> weight-$\le 3$ strings gives identical global error at every size (e.g. $n=10$: $4.548\times10^{-4}$ either way), numerically confirming the locality theorem. The learned correction tracks the exact weight-$\le 3$ oracle to within a factor of $\sim\!2$&ndash;$3$ and sits roughly $5\times$ below leading-order BCH at this step size; the separations exceed the run-to-run spread.</p>
+
+      <h3 style="margin-top:30px;">2 &middot; Learning surpasses leading-order BCH as the step grows ($n=6$ single-step sweep)</h3>
+      <p>Per-step error vs $\delta t$ at $n=6$ (mean over 24 disordered chains). Leading-order BCH is accurate at small $\delta t$ but degrades rapidly because it captures only the $\delta t^3$ term; the learned correction, having seen the working-$\delta t$ coefficients, holds far below it.</p>
+      <div class="table-scroll">
+      <table class="evidence-table numeric" aria-label="dt sweep table">
+        <thead><tr><th>$\delta t$</th><th>uncorrected</th><th>leading-order BCH</th><th>learned (ours)</th><th>exact $w\le3$ oracle</th></tr></thead>
+        <tbody>
+          <tr><td>0.05</td><td>$6.71{\times}10^{-4}$</td><td>$5.91{\times}10^{-5}$</td><td>$1.23{\times}10^{-5}$</td><td>$8.88{\times}10^{-7}$</td></tr>
+          <tr><td>0.10</td><td>$4.78{\times}10^{-3}$</td><td>$1.08{\times}10^{-3}$</td><td>$6.12{\times}10^{-5}$</td><td>$2.01{\times}10^{-5}$</td></tr>
+          <tr><td>0.20</td><td>$3.75{\times}10^{-2}$</td><td>$1.95{\times}10^{-2}$</td><td>$8.99{\times}10^{-4}$</td><td>$6.85{\times}10^{-4}$</td></tr>
+          <tr class="highlight"><td>0.30</td><td>$1.33{\times}10^{-1}$</td><td>$1.07{\times}10^{-1}$</td><td>$6.24{\times}10^{-3}$</td><td>$5.23{\times}10^{-3}$</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="footnote">At $\delta t=0.3$ leading-order BCH ($1.07\times10^{-1}$) is barely below the uncorrected step ($1.33\times10^{-1}$), while the learned correction holds at $6.2\times10^{-3}$ &mdash; about $17\times$ below BCH and within $\sim\!1.2\times$ of the exact oracle. Sweeping the number of steps $r$, the learned error grows linearly in $r$, exactly as the $r\eta$ stability bound (and its proven order-optimality) predict.</p>
+
+      <h3 style="margin-top:30px;">3 &middot; Fixed-time oracle benchmark (deterministic, $J=h=1$, $t=1$, $r=10$)</h3>
+      <p>Baseline $\epsilon_{T,q}=\lVert U(t)-S_q(t/r)^r\rVert_2$ vs oracle residual $\epsilon_{R,q}=\lVert U(t)-[R_qS_q]^r\rVert_2$. Every entry is a single deterministic dense computation; entries near $10^{-13}$ are the double-precision floor (see the caveat above).</p>
+      <div class="table-scroll">
+      <table class="evidence-table numeric" aria-label="Fixed-time oracle benchmark">
+        <thead><tr><th>$n$</th><th>$d$</th><th>$q$</th><th>$\epsilon_{T,q}$ (baseline)</th><th>$\epsilon_{R,q}$ (oracle)</th></tr></thead>
+        <tbody>
+          <tr><td>4</td><td>16</td><td>1</td><td>$1.389{\times}10^{-1}$</td><td class="high-quality">$3.810{\times}10^{-15}$</td></tr>
+          <tr><td>4</td><td>16</td><td>2</td><td>$1.037{\times}10^{-2}$</td><td class="high-quality">$8.092{\times}10^{-15}$</td></tr>
+          <tr><td>4</td><td>16</td><td>4</td><td>$1.154{\times}10^{-5}$</td><td class="high-quality">$1.501{\times}10^{-14}$</td></tr>
+          <tr><td>4</td><td>16</td><td>6</td><td>$1.486{\times}10^{-9}$</td><td class="high-quality">$5.046{\times}10^{-14}$</td></tr>
+          <tr><td>4</td><td>16</td><td>8</td><td>$1.176{\times}10^{-13}$</td><td>$2.188{\times}10^{-13}$</td></tr>
+          <tr><td>5</td><td>32</td><td>1</td><td>$1.774{\times}10^{-1}$</td><td class="high-quality">$6.606{\times}10^{-15}$</td></tr>
+          <tr><td>5</td><td>32</td><td>2</td><td>$1.384{\times}10^{-2}$</td><td class="high-quality">$1.036{\times}10^{-14}$</td></tr>
+          <tr><td>5</td><td>32</td><td>4</td><td>$1.591{\times}10^{-5}$</td><td class="high-quality">$1.724{\times}10^{-14}$</td></tr>
+          <tr><td>5</td><td>32</td><td>6</td><td>$2.576{\times}10^{-9}$</td><td class="high-quality">$5.270{\times}10^{-14}$</td></tr>
+          <tr><td>5</td><td>32</td><td>8</td><td>$1.832{\times}10^{-13}$</td><td>$3.039{\times}10^{-13}$</td></tr>
+          <tr><td>6</td><td>64</td><td>1</td><td>$2.264{\times}10^{-1}$</td><td class="high-quality">$7.709{\times}10^{-15}$</td></tr>
+          <tr><td>6</td><td>64</td><td>2</td><td>$1.727{\times}10^{-2}$</td><td class="high-quality">$1.533{\times}10^{-14}$</td></tr>
+          <tr><td>6</td><td>64</td><td>4</td><td>$2.064{\times}10^{-5}$</td><td class="high-quality">$6.517{\times}10^{-14}$</td></tr>
+          <tr><td>6</td><td>64</td><td>6</td><td>$3.499{\times}10^{-9}$</td><td class="high-quality">$8.067{\times}10^{-14}$</td></tr>
+          <tr><td>6</td><td>64</td><td>8</td><td>$1.785{\times}10^{-13}$</td><td>$2.014{\times}10^{-13}$</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3 style="margin-top:30px;">4 &middot; Projected (compressed) residual by Pauli weight ($n=5$, $q=2$)</h3>
+      <p>Keeping Pauli strings of weight $\le w$ in the exact generator. Weight three is the first meaningful threshold &mdash; consistent with the locality theorem &mdash; while weights two and below are not automatically useful.</p>
+      <div class="table-scroll">
+      <table class="evidence-table numeric" aria-label="Projected residual table">
+        <thead><tr><th>$w$</th><th>$\lVert K_q-\Pi_w K_q\rVert_2$</th><th>projected error</th><th>improvement</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>$3.656{\times}10^{-3}$</td><td>$1.384{\times}10^{-2}$</td><td>$1.00\times$</td></tr>
+          <tr><td>1</td><td>$2.859{\times}10^{-3}$</td><td>$1.330{\times}10^{-2}$</td><td>$1.04\times$</td></tr>
+          <tr><td>2</td><td>$1.949{\times}10^{-3}$</td><td>$1.607{\times}10^{-2}$</td><td>$0.86\times$</td></tr>
+          <tr class="highlight"><td>3</td><td>$1.573{\times}10^{-5}$</td><td>$1.545{\times}10^{-4}$</td><td class="high-quality">$89.56\times$</td></tr>
+          <tr><td>4</td><td>$1.850{\times}10^{-8}$</td><td>$1.850{\times}10^{-7}$</td><td class="high-quality">$7.48{\times}10^{4}\times$</td></tr>
+          <tr><td>5</td><td>$1.143{\times}10^{-18}$</td><td>$1.089{\times}10^{-14}$</td><td>floor</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="footnote">The $w=5$ row sits at the double-precision floor. Per-step resource proxy (Suzuki factor counts $2,3,15,75,375$ for $q=1,2,4,6,8$; one extra dense $U(\delta t)$ exponential and one dense multiply for the oracle residual) is reported in the manuscript; the dense residual matrix is <em>not</em> counted as a quantum gate &mdash; any practical implementation must replace it by a compiled circuit, a local commutator formula, or a learned generator. Corresponding manuscript figures (PDF, vector): <a href="submission/figures/fig2_compressed_residual.pdf">compressed residual</a>, <a href="submission/figures/fig4_generator_structure.pdf">generator structure</a>, <a href="submission/figures/fig5_learned_transfer.pdf">learned transfer</a>, <a href="submission/figures/fig6_headline_improvement.pdf">headline improvement</a>.</p>
+    </section>
+
+    <section class="section" id="demo">
+      <div class="section-label">Interactive Demo</div>
+      <h2>Residual error budget vs step size and order &mdash; in the browser.</h2>
+      <p class="lede">This live illustration plots, on the TFIM regime, three quantities as a function of step size: the uncorrected product-formula error (per step $\sim\delta t^{q+1}$, accumulating over $r=\lceil t/\delta t\rceil$ steps), the leading-order BCH correction (which removes only the $\delta t^3$ term and degrades as $\delta t$ grows), and the learned residual together with its $r\eta$ stability envelope. It is a qualitative aid to the scaling laws above &mdash; the quantitative results are the deterministic tables. Move the sliders to see why a learned, step-conditioned correction overtakes the analytic baseline as $\delta t$ increases.</p>
+
+      <div class="demo-shell">
+        <div class="demo-grid">
+          <div class="demo-canvas-wrap">
+            <canvas id="demoCanvas" class="demo-canvas" width="640" height="420" role="img" aria-label="Log-log plot of simulation error versus step size"></canvas>
+            <div class="legend">
+              <span><span class="swatch" style="background:#9aa7bd"></span>Uncorrected $S_q$</span>
+              <span><span class="swatch" style="background:#c0563b"></span>Leading-order BCH</span>
+              <span><span class="swatch" style="background:#113b73"></span>Learned residual (ours)</span>
+              <span><span class="swatch" style="background:#0f5c3d"></span>$r\eta$ envelope</span>
+            </div>
+          </div>
+
+          <div class="demo-panel">
+            <div class="demo-box">
+              <h4>Controls</h4>
+              <div class="demo-control">
+                <label>Product-formula order $q$</label>
+                <div class="demo-buttons" id="orderButtons" role="group" aria-label="Select order">
+                  <button type="button" class="demo-button is-active" data-order="2">q = 2 (Strang)</button>
+                  <button type="button" class="demo-button" data-order="4">q = 4</button>
+                  <button type="button" class="demo-button" data-order="6">q = 6</button>
+                </div>
+                <select id="orderSelect" style="display:none"><option value="2">2</option><option value="4">4</option><option value="6">6</option></select>
+              </div>
+              <div class="demo-control">
+                <label for="dtSlider">Step size $\delta t$ <span class="val" id="dtVal">0.100</span></label>
+                <input type="range" id="dtSlider" min="0.02" max="0.40" step="0.005" value="0.10">
+              </div>
+              <div class="demo-control">
+                <label for="totalSlider">Total time $t$ <span class="val" id="totalVal">1.0</span></label>
+                <input type="range" id="totalSlider" min="0.5" max="4.0" step="0.1" value="1.0">
+              </div>
+              <div class="demo-control">
+                <label for="etaSlider">Learned per-step error $\eta$ <span class="val" id="etaVal">3.0e-5</span></label>
+                <input type="range" id="etaSlider" min="-6" max="-3" step="0.05" value="-4.52">
+              </div>
+            </div>
+
+            <div class="demo-box">
+              <h4>Error budget at current $\delta t$</h4>
+              <div class="metric-list">
+                <div class="metric-row"><span class="metric-key">Steps $r=\lceil t/\delta t\rceil$</span><span class="metric-value" id="mSteps">10</span></div>
+                <div class="metric-row"><span class="metric-key">Uncorrected $S_q$</span><span class="metric-value" id="mBaseline">&ndash;</span></div>
+                <div class="metric-row"><span class="metric-key">Leading-order BCH</span><span class="metric-value" id="mBCH">&ndash;</span></div>
+                <div class="metric-row"><span class="metric-key">Learned residual</span><span class="metric-value" id="mLearned">&ndash;</span></div>
+                <div class="metric-row"><span class="metric-key">$r\eta$ envelope</span><span class="metric-value" id="mEnvelope">&ndash;</span></div>
+              </div>
+              <p class="footnote" id="demoNote" style="margin-top:12px;">Illustrative scaling model; quantitative values are in the tables above.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="findings">
-      <div class="section-label">Theory &amp; Results</div>
-      <h2>Rigorous Lie-algebraic theory, matched number-for-number by deterministic experiments.</h2>
-      <p class="lede">
-        The finite-step error of a product formula is treated as an operator to be studied, bounded, and compressed. Existence, uniqueness, optimality, and stability are established by closed-form proofs, then verified to floating-point precision on 4&ndash;6 qubit transverse-field Ising chains. The framework is deliberately honest about scope: the exact residual sets the target, and the practical contribution is a provable way to <em>compress</em> it.
-      </p>
-
-      <div class="cards">
-        <article class="card">
-          <h3>Exact residual factorization</h3>
-          <p>
-            The residual <em>R<sub>q</sub></em>(&delta;t)&nbsp;=&nbsp;<em>U</em>(&delta;t)&thinsp;<em>S<sub>q</sub></em>(&delta;t)<sup>&dagger;</sup> is the unique unitary left multiplier mapping a Trotter&ndash;Suzuki step back to exact evolution. Its Hermitian generator <em>K<sub>q</sub></em>&nbsp;=&nbsp;<em>i</em>&thinsp;log&thinsp;<em>R<sub>q</sub></em> lives in the dynamical Lie algebra, is small for small &delta;t, and inherits the local commutator structure of the product-formula defect.
-          </p>
-        </article>
-
-        <article class="card">
-          <h3>Optimality and uniqueness</h3>
-          <p>
-            <em>R<sub>q</sub></em> is the unique minimizer of the one-step correction error in <em>every</em> unitarily invariant norm&mdash;not one chosen figure of merit. Projecting <em>K<sub>q</sub></em> onto an implementable operator subspace yields the unique Frobenius-optimal compressed generator, so the cheapest useful correction is mathematically determined rather than searched for.
-          </p>
-        </article>
-
-        <article class="card">
-          <h3>Stability of approximate residuals</h3>
-          <p>
-            When the residual is only approximately implemented&mdash;by BCH truncation, variational compilation, or a learned model&mdash;the global simulation error is bounded by <em>r</em>&thinsp;&eta; over <em>r</em> steps, with a Duhamel-type bound linking spectral error to the generator error &Vert;<em>K<sub>q</sub></em>&nbsp;&minus;&nbsp;<em>K&#770;<sub>q</sub></em>&Vert;. A fidelity or learning-loss target converts directly into a per-step design budget.
-          </p>
-        </article>
-      </div>
-
-      <table class="evidence-table" aria-label="Benchmark evidence table">
-        <thead>
-          <tr>
-            <th>Result</th>
-            <th>Statement</th>
-            <th>Why it matters</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Exact factorization &amp; optimality</td>
-            <td><span class="good">R<sub>q</sub> is the unique norm-optimal left correction</span></td>
-            <td>Sets a closed-form oracle ceiling for any order-matched correction.</td>
-          </tr>
-          <tr>
-            <td>Multi-step stability</td>
-            <td><span class="good">Global error &le; r&eta; for approximate residuals</span></td>
-            <td>Turns a fidelity or learning-loss spec into a per-step synthesis budget.</td>
-          </tr>
-          <tr>
-            <td>Frobenius-optimal projection &amp; TFIM weight &le; 3</td>
-            <td><span class="good">Low-weight Pauli residuals are provably near-optimal</span></td>
-            <td>Cheap, local compressed generators inherit the oracle's accuracy.</td>
-          </tr>
-          <tr>
-            <td>Compressed TFIM benchmark (n = 5, q = 2)</td>
-            <td><span class="good">1.384&times;10<sup>-2</sup> &rarr; 1.545&times;10<sup>-4</sup> (w &le; 3) &rarr; 1.850&times;10<sup>-7</sup> (w &le; 4)</span></td>
-            <td>Structured compression recovers most of the oracle gain at a fraction of the cost.</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section class="section" id="applications">
-      <div class="section-label">Applications</div>
-      <h2>Where exact, compressible residual correction creates value across quantum computing R&amp;D.</h2>
+    <section class="section" id="conclusion">
+      <div class="section-label">Conclusion &amp; Impact</div>
+      <h2>An oracle target, made safe to approximate &mdash; and learned without the oracle.</h2>
+      <p class="lede">The value is the combination: a uniquely defined oracle correction target; stability theorems translating residual error into global error; a generator view exposing the defect as a small Hermitian operator; a projection theorem making compressed generators well posed; a support theorem explaining why low-weight projection works for the TFIM; and a demonstration that the residual generator can be <em>learned</em> as a geometrically local, size-transferable operator whose learned approximation inherits the stability guarantee.</p>
       <div class="application-grid">
         <article class="card">
-          <h3>Fault-tolerant quantum simulation</h3>
-          <p>
-            Product formulas are the workhorses of fault-tolerant Hamiltonian simulation for quantum chemistry, materials science, and condensed matter. The oracle residual provides a mathematically sharp bound on the best possible accuracy at each Suzuki order, directly informing T-gate budget allocation and error-budget decomposition for fault-tolerant algorithms.
-          </p>
+          <h3>Meaning</h3>
+          <p>Compilation becomes a learning problem with a proof attached. A single per-site network, trained on small systems from oracle-free patches, corrects systems $32\times$ larger in Hilbert-space dimension, surpasses the analytic leading-order correction where it fails, and stays inside a closed-form $r\eta$ error budget &mdash; turning a fidelity or learning-loss spec into a per-step synthesis target.</p>
         </article>
-
         <article class="card">
-          <h3>Circuit synthesis and compilation</h3>
-          <p>
-            The residual generator <em>K<sub>q</sub></em>(&delta;t) is a well-defined Hermitian target for variational compilation and quantum optimal control. The linear stability bound converts a hardware fidelity spec directly into a per-step residual-synthesis budget, enabling automated compiler pipelines for high-accuracy simulation circuits.
-          </p>
+          <h3>Transparent limitations</h3>
+          <p>Oracle RGTC needs $U(\delta t)$ and is as hard as exact dense simulation. The oracle-free learned residual removes the dense $2^n$ oracle <em>from training</em> and conditions on $\delta t$, but evaluation here is still dense (up to ten qubits), the local templates are TFIM-specific and leading-order, results use double precision, and circuit-level synthesis of $\widehat K_q$ into native gates is not attempted. These define the next tasks; they do not invalidate the contribution.</p>
         </article>
-
-        <article class="card">
-          <h3>Benchmarking and certification</h3>
-          <p>
-            The dense residual construction provides a reproducible, closed-form performance ceiling for any order-matched simulation method. Because every value is recomputed from first principles with no hand entry, it is a clean reference for benchmarking simulation backends, validating quantum hardware, and certifying the accuracy of compiled circuits.
-          </p>
-        </article>
-
-        <article class="card">
-          <h3>Learned &amp; GPU-accelerated residual compilers</h3>
-          <p>
-            Demonstrated here: a learned model predicts the residual generator from local Hamiltonian features, transfers across system size, and trains without an exponential oracle. The stability theorem guarantees global error scales linearly in prediction error, making learned residuals safe by construction. The dense-linear-algebra and parameter-sweep workloads map naturally onto GPU acceleration&mdash;connecting the framework to operator learning and AI-assisted circuit optimization at scale.
-          </p>
-        </article>
+      </div>
+      <div class="note">
+        <h4>Outlook</h4>
+        <p>The most credible path forward uses the oracle residual as a target for algebraic, variational, and learned compilers, with rigorous certificates connecting per-step residual error to global accuracy. Concrete continuations: scale evaluation beyond dense simulation; extend local templates beyond the TFIM and to higher orders; replace patch labels with classical-shadow or commutator estimates on hardware; and synthesize the learned generator $e^{-i\widehat K_q}$ into native gates using the stability and Duhamel bounds as the operator-norm target. The dense-linear-algebra, parameter-sweep workload maps naturally onto GPU acceleration for larger offline training sets. This is implementation, not a change of principle.</p>
       </div>
     </section>
 
-    <section class="section" id="demo">
-      <div class="section-label">Experiments</div>
-      <h2>Spectral-norm error across orders, times, and Hamiltonian parameters.</h2>
-      <p class="lede">
-        Every figure is regenerated by reproducible Python from first-principles dense-matrix simulation&mdash;no value is hand-entered. The oracle residual reaches floating-point precision at every order; the compressed residual tracks it closely using only local, low-weight structure.
-      </p>
-      <div class="figure-grid">
-        <article class="figure-card">
-          <img src="submission/figures/fig1_fixed_time_errors.png" alt="Fixed-time spectral-norm error benchmark, n = 4 qubits">
-          <div class="figure-body">
-            <h3>Fixed-time benchmark (n = 4)</h3>
-            <p class="caption">Spectral-norm error at a fixed total time for five Suzuki orders. The corrected step sits at floating-point precision; each same-order Trotter&ndash;Suzuki baseline is orders of magnitude higher.</p>
-          </div>
-        </article>
-        <article class="figure-card">
-          <img src="submission/figures/fig3_time_sweep.png" alt="Time-resolved spectral-norm error">
-          <div class="figure-body">
-            <h3>Time-resolved sweep (n = 4)</h3>
-            <p class="caption">Spectral-norm error as a function of total simulation time. The corrected step holds floating-point accuracy while the product-formula baseline grows monotonically with time.</p>
-          </div>
-        </article>
-        <article class="figure-card">
-          <img src="submission/figures/fig4_parameter_heatmap.png" alt="Improvement ratio over Hamiltonian parameter grid">
-          <div class="figure-body">
-            <h3>Improvement-ratio heatmap</h3>
-            <p class="caption">Ratio of product-formula error to residual error across a grid of coupling strength <em>J</em> and transverse field <em>h</em>. Every cell exceeds 1, confirming uniform advantage over the Hamiltonian parameter space.</p>
-          </div>
-        </article>
-      </div>
-    </section>
+    <section class="section" id="paper">
+      <div class="section-label">Paper &amp; Code</div>
+      <h2>Reproduce every number from first principles.</h2>
+      <p class="lede">All data are generated by deterministic scripts from the Hamiltonian definition; every result is generated, never hand-entered. Reproducibility checks include unitarity of $S_q$, $R_q$, and corrected steps; same-order $S_q$ vs $R_qS_q$ comparisons; exact dense recomputation of $U(t)$; saved raw CSV/JSON before plotting; and fixed seeds for the learned-residual sampler, split, and initialization.</p>
+      <div class="application-grid">
+        <article class="card">
+          <h3>Regenerate figures &amp; tables</h3>
+          <pre><code>cd submission/code
+export PYTHONPATH=.
 
-    <section class="section" id="figures">
-      <div class="section-label">Additional Figures</div>
-      <h2>Compressed generators, higher orders, and parameter structure.</h2>
-      <div class="figure-grid">
-        <article class="figure-card">
-          <img src="submission/figures/fig2_projected_residual.png" alt="Projected-residual compression error versus Pauli weight">
-          <div class="figure-body">
-            <h3>Projected-residual compression</h3>
-            <p class="caption">Spectral-norm error of the compressed residual as the Pauli-weight cutoff increases. Low-weight projection already recovers most of the oracle accuracy&mdash;the 10<sup>-2</sup>&nbsp;&rarr;&nbsp;10<sup>-7</sup> drop at <em>n</em>&nbsp;=&nbsp;5, <em>q</em>&nbsp;=&nbsp;2.</p>
-          </div>
+# Regenerate every figure in submission/figures/
+# and every table in submission/tables/
+python make_all.py
+
+# Re-check the reported numbers
+python validate_submission.py</code></pre>
+          <p class="footnote">CPU-only. Outputs are written to <code>submission/figures/</code> (PDF) and <code>submission/tables/</code>; raw data lands in <code>submission/code/generated_data/</code>.</p>
         </article>
-        <article class="figure-card">
-          <img src="submission/figures/fig5_generator_compressibility.png" alt="Residual-generator weight distribution">
-          <div class="figure-body">
-            <h3>Generator compressibility</h3>
-            <p class="caption">Weight distribution of the exact residual generator. The dominant terms are local and low-weight&mdash;the structural reason compressed residuals stay cheap to implement.</p>
-          </div>
-        </article>
-        <article class="figure-card">
-          <img src="submission/figures/fig6_generator_order_scaling.png" alt="Residual behavior across Suzuki orders">
-          <div class="figure-body">
-            <h3>Order scaling (q = 2&ndash;8)</h3>
-            <p class="caption">Residual-generator size and accuracy across Suzuki orders. The corrected step dominates its same-order baseline at every order and every sampled time.</p>
-          </div>
+        <article class="card">
+          <h3>Primary materials</h3>
+          <ul class="tight">
+            <li><a href="submission/main.pdf">Manuscript (PDF)</a> &middot; <a href="submission/main.tex">LaTeX source</a></li>
+            <li>Figures (PDF, vector): <a href="submission/figures/fig1_exact_residual.pdf">fixed-time residual</a>, <a href="submission/figures/fig2_compressed_residual.pdf">compressed residual</a>, <a href="submission/figures/fig5_learned_transfer.pdf">learned transfer</a>, <a href="submission/figures/fig6_headline_improvement.pdf">headline improvement</a></li>
+            <li>Rendered notebooks: <a href="notebooks/liegpt_architecture_unitarity.html">Architecture &amp; Unitarity</a> &middot; <a href="notebooks/liegpt_stability.html">Stability</a> &middot; <a href="notebooks/liegpt_efficiency_robustness.html">Efficiency &amp; Robustness</a></li>
+            <li><a href="https://github.com/thmolena/Lie-Algebra-for-Hamiltonian-Simulation" target="_blank" rel="noopener noreferrer">GitHub repository</a></li>
+          </ul>
+          <p class="footnote">Figures are linked as PDF (vector); the page renders results as HTML tables rather than embedding PDFs.</p>
         </article>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <a href="https://github.com/thmolena/Lie-Algebra-for-Hamiltonian-Simulation" target="_blank" rel="noopener noreferrer">GitHub Repository</a> ·
-    <a href="submission/main.pdf">Paper (PDF)</a> ·
-    <a href="notebooks/liegpt_architecture_unitarity.html">Architecture &amp; Unitarity</a> ·
-    <a href="notebooks/liegpt_stability.html">Stability</a> ·
+    <strong>Provable operator learning of size-transferable Trotter corrections for Hamiltonian simulation.</strong><br>
+    <a href="https://github.com/thmolena/Lie-Algebra-for-Hamiltonian-Simulation" target="_blank" rel="noopener noreferrer">GitHub Repository</a> &middot;
+    <a href="submission/main.pdf">Paper (PDF)</a> &middot;
+    <a href="notebooks/liegpt_architecture_unitarity.html">Architecture &amp; Unitarity</a> &middot;
+    <a href="notebooks/liegpt_stability.html">Stability</a> &middot;
     <a href="notebooks/liegpt_efficiency_robustness.html">Efficiency &amp; Robustness</a>
+    <p class="footnote">All numbers recomputed from deterministic dense-matrix simulation. Values near the double-precision floor ($\sim10^{-13}$) are round-off, not physical error.</p>
   </footer>
 
+  <script>
+  (function () {
+    "use strict";
+    var canvas = document.getElementById("demoCanvas");
+    if (!canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext("2d");
+    var state = { q: 2, dt: 0.10, total: 1.0, eta: Math.pow(10, -4.52) };
+    var prefac = { 2: 0.9, 4: 0.45, 6: 0.25 };
+    function perStepBaseline(dt, q) { return prefac[q] * Math.pow(dt, q + 1); }
+    function perStepBCH(dt, q) {
+      if (q === 2) {
+        var captured = 0.12 * Math.pow(dt, 5);
+        var mismatch = 0.85 * perStepBaseline(dt, q) * Math.min(1, Math.pow(dt / 0.18, 2));
+        return captured + mismatch;
+      }
+      return 0.5 * perStepBaseline(dt, q);
+    }
+    function perStepLearned(dt, q, eta) {
+      var oracle = 0.10 * perStepBaseline(dt, q);
+      return Math.max(oracle, eta);
+    }
+    function steps(dt, total) { return Math.max(1, Math.ceil(total / dt)); }
+    function fmt(x) {
+      if (!isFinite(x) || x <= 0) return "0";
+      var e = Math.floor(Math.log10(x));
+      var m = x / Math.pow(10, e);
+      return m.toFixed(2) + "e" + (e >= 0 ? "+" : "") + e;
+    }
+    var pad = { l: 56, r: 16, t: 16, b: 40 };
+    var xMin = 0.02, xMax = 0.40, yMin = 1e-12, yMax = 1e0;
+    var lxMin = Math.log10(xMin), lxMax = Math.log10(xMax);
+    var lyMin = Math.log10(yMin), lyMax = Math.log10(yMax);
+    var cssW = 640, cssH = 420;
+    function px(dt) { var fr = (Math.log10(dt) - lxMin) / (lxMax - lxMin); return pad.l + fr * (cssW - pad.l - pad.r); }
+    function py(err) { var v = Math.max(yMin, Math.min(yMax, err)); var fr = (Math.log10(v) - lyMin) / (lyMax - lyMin); return (cssH - pad.b) - fr * (cssH - pad.t - pad.b); }
+    function drawGrid() {
+      ctx.clearRect(0, 0, cssW, cssH);
+      ctx.font = "11px 'Source Sans 3', sans-serif";
+      ctx.lineWidth = 1;
+      ctx.textAlign = "left";
+      for (var ye = lyMin; ye <= lyMax + 0.001; ye += 2) {
+        var y = py(Math.pow(10, ye));
+        ctx.strokeStyle = "#e4e9f1";
+        ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(cssW - pad.r, y); ctx.stroke();
+        ctx.fillStyle = "#7a87a0"; ctx.fillText("1e" + ye, 6, y + 3);
+      }
+      var xticks = [0.02, 0.05, 0.1, 0.2, 0.4];
+      ctx.textAlign = "center";
+      for (var i = 0; i < xticks.length; i++) {
+        var x = px(xticks[i]);
+        ctx.strokeStyle = "#eef1f6";
+        ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, cssH - pad.b); ctx.stroke();
+        ctx.fillStyle = "#7a87a0"; ctx.fillText(xticks[i].toString(), x, cssH - pad.b + 16);
+      }
+      ctx.fillStyle = "#52607a"; ctx.font = "12px 'Source Sans 3', sans-serif";
+      ctx.save(); ctx.translate(14, cssH / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = "center";
+      ctx.fillText("global spectral-norm error", 0, 0); ctx.restore();
+      ctx.textAlign = "center"; ctx.fillText("step size  δt", (cssW + pad.l) / 2, cssH - 6);
+      ctx.textAlign = "left";
+    }
+    function curve(fn, color, dashed) {
+      ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.setLineDash(dashed ? [5, 4] : []);
+      ctx.beginPath(); var first = true; var stepLx = (lxMax - lxMin) / 120;
+      for (var lx = lxMin; lx <= lxMax + 1e-6; lx += stepLx) {
+        var dt = Math.pow(10, lx); var r = steps(dt, state.total); var err = fn(dt) * r;
+        var X = px(dt), Y = py(err);
+        if (first) { ctx.moveTo(X, Y); first = false; } else { ctx.lineTo(X, Y); }
+      }
+      ctx.stroke(); ctx.setLineDash([]);
+    }
+    function marker(dt, err, color) {
+      ctx.fillStyle = color; ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(px(dt), py(err), 4.5, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+    }
+    function render() {
+      var q = state.q, total = state.total, eta = state.eta;
+      drawGrid();
+      curve(function (dt) { return perStepBaseline(dt, q); }, "#9aa7bd", false);
+      curve(function (dt) { return perStepBCH(dt, q); }, "#c0563b", false);
+      curve(function (dt) { return perStepLearned(dt, q, eta); }, "#113b73", false);
+      curve(function () { return eta; }, "#0f5c3d", true);
+      var r = steps(state.dt, total);
+      var bl = perStepBaseline(state.dt, q) * r;
+      var bch = perStepBCH(state.dt, q) * r;
+      var ln = perStepLearned(state.dt, q, eta) * r;
+      var env = eta * r;
+      ctx.strokeStyle = "#c3ccda"; ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(px(state.dt), pad.t); ctx.lineTo(px(state.dt), cssH - pad.b); ctx.stroke();
+      ctx.setLineDash([]);
+      marker(state.dt, bl, "#9aa7bd"); marker(state.dt, bch, "#c0563b"); marker(state.dt, ln, "#113b73");
+      document.getElementById("mSteps").textContent = r;
+      document.getElementById("mBaseline").textContent = fmt(bl);
+      document.getElementById("mBCH").textContent = fmt(bch);
+      document.getElementById("mLearned").textContent = fmt(ln);
+      document.getElementById("mEnvelope").textContent = fmt(env);
+      var note = document.getElementById("demoNote");
+      if (q === 2 && ln < bch) {
+        note.textContent = "Learned residual is below leading-order BCH here — the step-conditioned model captures structure BCH's δt³-only term misses.";
+      } else {
+        note.textContent = "Illustrative scaling model; quantitative values are in the tables above.";
+      }
+    }
+    var dtSlider = document.getElementById("dtSlider");
+    var totalSlider = document.getElementById("totalSlider");
+    var etaSlider = document.getElementById("etaSlider");
+    var dtVal = document.getElementById("dtVal");
+    var totalVal = document.getElementById("totalVal");
+    var etaVal = document.getElementById("etaVal");
+    dtSlider.addEventListener("input", function () { state.dt = parseFloat(this.value); dtVal.textContent = state.dt.toFixed(3); render(); });
+    totalSlider.addEventListener("input", function () { state.total = parseFloat(this.value); totalVal.textContent = state.total.toFixed(1); render(); });
+    etaSlider.addEventListener("input", function () { state.eta = Math.pow(10, parseFloat(this.value)); etaVal.textContent = fmt(state.eta); render(); });
+    var orderButtons = document.querySelectorAll("#orderButtons .demo-button");
+    Array.prototype.forEach.call(orderButtons, function (btn) {
+      btn.addEventListener("click", function () {
+        Array.prototype.forEach.call(orderButtons, function (b) { b.classList.remove("is-active"); });
+        btn.classList.add("is-active");
+        state.q = parseInt(btn.getAttribute("data-order"), 10);
+        document.getElementById("orderSelect").value = btn.getAttribute("data-order");
+        render();
+      });
+    });
+    dtVal.textContent = state.dt.toFixed(3);
+    totalVal.textContent = state.total.toFixed(1);
+    etaVal.textContent = fmt(state.eta);
+    function resizeForDPR() {
+      var ratio = window.devicePixelRatio || 1;
+      cssW = canvas.clientWidth || 640;
+      cssH = Math.round(cssW * 420 / 640);
+      canvas.width = Math.round(cssW * ratio);
+      canvas.height = Math.round(cssH * ratio);
+      canvas.style.height = cssH + "px";
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      render();
+    }
+    window.addEventListener("resize", resizeForDPR);
+    resizeForDPR();
+  })();
+  </script>
 </body>
 </html>
