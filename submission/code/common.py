@@ -22,7 +22,7 @@ publication-grade figure styling (colour-blind-safe Okabe--Ito palette, Type-42
 fonts), and small plotting helpers (`shaded_band`, `panel_label`).  Every other
 script imports from here, so all results share one verified, reproducible base.
 
-Run instructions are in README.txt; the mathematics is derived in THEORY.txt.
+Run instructions and the from-scratch theory map are in foundations.py.
 """
 from __future__ import annotations
 
@@ -473,12 +473,12 @@ def panel_label(ax: plt.Axes, text: str, dx: float = -0.16, dy: float = 1.04) ->
 def save_figure(fig: plt.Figure, pdf_name: str) -> None:
     ensure_directories()
     pdf_path = FIGURE_DIR / pdf_name
-    png_path = pdf_path.with_suffix(".png")
-    # Pinned metadata (no embedded creation timestamp) so the rendered PDF/PNG
-    # bytes are identical on every run -- the figures are part of the
-    # deterministic artifact set verified by ``rgtc-verify``.
+    # Pinned metadata (no embedded creation timestamp) so the rendered PDF bytes
+    # are identical on every run.  Only the vector PDF is written: it is the
+    # publication artifact embedded in main.tex and the deterministic figure set
+    # verified by ``rgtc-verify`` (which expects the figures/ directory to hold
+    # exactly the referenced PDFs, no raster duplicates).
     fig.savefig(pdf_path, bbox_inches="tight", metadata={"CreationDate": None})
-    fig.savefig(png_path, dpi=300, bbox_inches="tight", metadata={"Software": None})
     plt.close(fig)
 
 

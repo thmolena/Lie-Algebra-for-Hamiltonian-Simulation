@@ -1,3 +1,0 @@
-[console_scripts]
-lieideal-reproduce = cli:main
-lieideal-verify = cli:verify

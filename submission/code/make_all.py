@@ -8,8 +8,8 @@ definition in common.py and a fixed random seed, so reruns reproduce the same
 results; the learned experiment and headline figure are wrapped in try/except so the
 dense-matrix figures still build in a torch-free setup.
 
-Afterwards run `python validate_submission.py` to check the artifact set.  See
-README.txt for environment setup and expected runtime.
+Afterwards run `python validate_submission.py` to check the artifact set. See
+foundations.py for the from-scratch theory-to-code map.
 """
 from __future__ import annotations
 

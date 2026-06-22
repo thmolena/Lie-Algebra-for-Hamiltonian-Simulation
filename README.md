@@ -147,7 +147,6 @@ src/
 results/                      CSV result tables
 outputs/                     Rendered figures from the notebook studies
 index.html                   Project homepage (demo)
-requirements.txt
 ```
 
 ## Reproducing the results
@@ -157,10 +156,10 @@ All experiments are configured to run on CPU.
 ### Paper figures and tables
 
 ```bash
-pip install -r requirements.txt
+cd submission/code
+export PYTHONPATH=.
 
 # Regenerates every figure in submission/figures/ and table in submission/tables/
-cd submission/code
 python make_all.py
 
 # Re-checks the reported numbers
