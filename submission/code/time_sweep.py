@@ -1,3 +1,13 @@
+"""Experiment 3 -- time-resolved correction hierarchy (the time-sweep figure).
+
+Varies the total time t (with n = 4, q = 2, r = 10 fixed) and plots four curves: the
+uncorrected baseline S_2, the projected residual at w <= 2 and w <= 3, and the exact
+oracle.  It shows that w <= 3 uniformly improves the baseline across the sweep while
+w <= 2 is unreliable -- i.e. compression must respect the commutator support of the
+leading defect.
+
+Outputs: generated_data/time_sweep_n4_q2.{csv,json} and the figure.
+"""
 from __future__ import annotations
 
 import argparse

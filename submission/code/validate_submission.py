@@ -1,3 +1,11 @@
+"""Reproducibility gate: verify the generated artifact set is exactly correct.
+
+Cross-checks that (a) every \\cite key in main.tex exists in refs.bib, (b) the figures
+referenced by main.tex match the expected set, and (c) the figures/, tables/ and
+generated_data/ directories plus the code/ scripts contain exactly the expected files.
+Run it after make_all.py; it exits non-zero on any mismatch.  Update the EXPECTED_*
+sets here whenever an artifact is added or removed.
+"""
 from __future__ import annotations
 
 from pathlib import Path
@@ -8,6 +16,7 @@ MAIN_TEX = SUBMISSION_DIR / "main.tex"
 REFS_BIB = SUBMISSION_DIR / "refs.bib"
 
 EXPECTED_FIGURES = {
+    "fig0_overview.pdf",
     "fig1_fixed_time_errors.pdf",
     "fig2_projected_residual.pdf",
     "fig3_time_sweep.pdf",
@@ -23,6 +32,7 @@ EXPECTED_TABLES = {
     "error_summary.tex",
     "projected_summary.tex",
     "resource_proxy.tex",
+    "learned_residual_summary.tex",
 }
 
 EXPECTED_DATA = {
@@ -54,6 +64,7 @@ EXPECTED_DATA = {
 
 EXPECTED_SCRIPTS = {
     "common.py",
+    "overview.py",
     "fixed_time.py",
     "projected_residual.py",
     "time_sweep.py",

@@ -1,3 +1,18 @@
+"""Experiment 2 -- weight-truncated (compressed) residual (Table II and figure).
+
+Instead of the full oracle generator K_q, keep only Pauli strings of weight <= w:
+K_{q,w} = Pi_w K_q (the unique Frobenius-optimal compression), then correct with
+exp(-i K_{q,w}).  This is the first *non-tautological* test -- it measures how much
+of the useful correction lives in a small operator family.
+
+For n = 5, q = 2, t = 1, r = 10 the baseline 1.384e-2 drops to 1.545e-4 at w = 3
+(an ~89.6x improvement) and to 1.850e-7 at w = 4.  The sharp gain at w = 3 is exactly
+the threshold predicted by the leading-Strang locality theorem (the degree-three
+TFIM defect has Pauli weight <= 3).
+
+Outputs: tables/projected_summary.tex and
+generated_data/projected_residual_n5_q2.{csv,json}.
+"""
 from __future__ import annotations
 
 import argparse

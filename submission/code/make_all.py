@@ -1,3 +1,15 @@
+"""One-command, deterministic regeneration of every figure, table and data file.
+
+`python make_all.py` runs, in order: the conceptual overview schematic, the five
+dense-matrix experiments (fixed-time, projected, time-sweep, parameter-heatmap,
+generator-scaling), the resource-proxy table, and the torch-based learned-residual
+experiment.  Every step reads its inputs from the TFIM definition in common.py and a
+fixed random seed, so reruns reproduce the same results; the learned experiment is
+wrapped in try/except so the dense-matrix figures still build in a torch-free setup.
+
+Afterwards run `python validate_submission.py` to check the artifact set.  See
+README.txt for environment setup and expected runtime.
+"""
 from __future__ import annotations
 
 import argparse
@@ -5,6 +17,7 @@ import argparse
 from common import ORDERS, TABLE_DIR, ensure_directories, write_latex_table
 import fixed_time
 import generator_scaling
+import overview
 import parameter_heatmap
 import projected_residual
 import time_sweep
@@ -30,6 +43,7 @@ def write_resource_table() -> None:
 
 def main(force: bool = False) -> None:
     ensure_directories()
+    overview.main(force=force)
     fixed_time.main(force=force)
     projected_residual.main(force=force)
     time_sweep.main(force=force)

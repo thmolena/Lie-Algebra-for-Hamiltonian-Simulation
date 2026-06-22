@@ -1,0 +1,16 @@
+\begin{table}[t]
+\caption{Learned residual generator transferred across system size on the disordered open-boundary \tfim{} ($J_i,h_i\sim\mathcal{U}[0.5,1.5]$, $t=1$, $\delta t=0.1$). Errors are global spectral-norm errors averaged over disordered chains (count in the last column; run-to-run dispersion is shown as bands in Fig.~\ref{fig:learned}); the reduction factor is $\epsilon_{\mathrm{Strang}}/\epsilon_{\mathrm{learned}}$. The oracle-free network is trained only on $n=4,5$; sizes $n\geq6$ are absent from training. All values are recomputed from dense matrices.}
+\label{tab:learned-summary}
+\begin{ruledtabular}
+\begin{tabular}{ccccccc}
+$n$ & regime & $\epsilon_{\mathrm{Strang}}$ & $\epsilon_{\mathrm{learned}}$ & reduction & $\epsilon_{w\leq3}$ & chains\\
+4 & train & $1.234e-2$ & $2.705e-4$ & $45.6\times$ & $9.433e-5$ & 40\\
+5 & train & $1.418e-2$ & $3.634e-4$ & $39.0\times$ & $1.305e-4$ & 40\\
+6 & transfer & $1.921e-2$ & $4.428e-4$ & $43.4\times$ & $2.269e-4$ & 40\\
+7 & transfer & $2.255e-2$ & $5.820e-4$ & $38.8\times$ & $2.745e-4$ & 40\\
+8 & transfer & $2.656e-2$ & $6.933e-4$ & $38.3\times$ & $3.310e-4$ & 24\\
+9 & transfer & $3.007e-2$ & $7.400e-4$ & $40.6\times$ & $3.509e-4$ & 16\\
+10 & transfer & $3.507e-2$ & $8.739e-4$ & $40.1\times$ & $4.548e-4$ & 12\\
+\end{tabular}
+\end{ruledtabular}
+\end{table}

@@ -1,3 +1,15 @@
+"""Experiments 5 & 6 -- generator compressibility and order scaling (two figures).
+
+(5) Compressibility: the cumulative squared Pauli-coefficient mass of the residual
+    generator K_2 (n = 5, q = 2, dt = 0.1) as a function of Pauli weight, showing
+    that most of the mass is captured by weight three.
+(6) Order scaling: the spectral norm ||K_q(dt)||_2 versus step size dt for orders
+    q = 1,2,4,6, confirming that higher-order formulas have smaller residual
+    generators -- consistent with the small-step bound ||K_q|| = O(dt^{q+1}).
+
+Outputs: generated_data/generator_energy_n5_q2.json,
+generator_order_scaling.{csv,json}, and the two figures.
+"""
 from __future__ import annotations
 
 import argparse

@@ -1,3 +1,12 @@
+"""Experiment 4 -- parameter-grid robustness (the parameter-heatmap figure).
+
+Sweeps the TFIM couplings J, h over a 0.25..2.00 grid (64 points; n = 4, q = 2,
+t = 1, r = 10, w <= 3) and records the improvement ratio eps_baseline / eps_{w<=3}.
+Every grid point improves over the baseline (ratio from ~32.5 up to ~5.07e3), showing
+the projected-residual gain is not an artefact of one hand-picked coupling point.
+
+Outputs: generated_data/parameter_heatmap_n4_q2_w3.{csv,json} and the heatmap.
+"""
 from __future__ import annotations
 
 import argparse

@@ -1,3 +1,18 @@
+"""Experiment 1 -- fixed-time oracle benchmark (Table I and the fixed-time figure).
+
+Question: does the *exact* residual R_q = U S_q^dagger cancel the Trotter--Suzuki
+error of the corrected step G_q = R_q S_q down to the floating-point floor?
+
+For the TFIM with J = h = 1, total time t = 1 and r = 10 steps, this compares the
+baseline error  ||U(t) - S_q(t/r)^r||_2  against the oracle-residual error
+||U(t) - [R_q S_q]^r||_2  for n = 4,5,6 qubits and orders q = 1,2,4,6,8.  The oracle
+reaches 1e-15..1e-14 (machine precision) while the baseline ranges from ~1e-1 (q=1)
+down to ~1e-9 (q=6); at q=8 the baseline is itself near round-off, which is the
+expected finite-precision behaviour, not a violation of the exact-cancellation
+theorem.
+
+Outputs: tables/error_summary.tex and generated_data/fixed_time_errors.{csv,json}.
+"""
 from __future__ import annotations
 
 import argparse

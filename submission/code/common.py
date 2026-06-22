@@ -1,3 +1,29 @@
+"""Shared numerical toolkit for residual-generator Trotter compilation (RGTC).
+
+This module builds, from first principles, every primitive the experiments need:
+
+  * Single-qubit Pauli matrices and n-qubit Pauli strings via Kronecker products
+    (`single_pauli`, `kron_all`, `pauli_string`, `pauli_basis`).
+  * The transverse-field Ising Hamiltonian H = A + B with A = J sum_i Z_i Z_{i+1}
+    and B = h sum_i X_i (`tfim_terms`).
+  * Trotter--Suzuki product-formula steps S_q of order q in {1,2,4,6,8}, from the
+    recursive Suzuki construction (`suzuki_sequence`, `product_formula`).
+  * The exact propagator U(dt) = exp(-i H dt) by dense matrix exponential
+    (`exact_step`); the residual factor R_q = U S_q^dagger and corrected step
+    G_q = R_q S_q (`residual_factor`); and the Hermitian residual generator
+    K_q = i log R_q (`residual_generator`).
+  * Frobenius-optimal Pauli-weight projection of K_q (`project_pauli_weight`) and
+    its squared-coefficient mass by weight (`pauli_weight_energy`).
+  * Spectral-norm error from singular values (`spectral_error`) -- the
+    operationally meaningful worst-case state-vector error.
+
+It also centralises deterministic I/O (CSV/JSON tagged with environment metadata),
+publication-grade figure styling (colour-blind-safe Okabe--Ito palette, Type-42
+fonts), and small plotting helpers (`shaded_band`, `panel_label`).  Every other
+script imports from here, so all results share one verified, reproducible base.
+
+Run instructions are in README.txt; the mathematics is derived in THEORY.txt.
+"""
 from __future__ import annotations
 
 import csv
@@ -34,6 +60,48 @@ from scipy.linalg import expm, logm, svdvals
 
 Array = np.ndarray
 ORDERS = [1, 2, 4, 6, 8]
+
+# Colour-blind-safe qualitative palette (Okabe--Ito) used across every figure.
+PALETTE = [
+    "#0072B2",  # blue
+    "#D55E00",  # vermillion
+    "#009E73",  # bluish green
+    "#CC79A7",  # reddish purple
+    "#E69F00",  # orange
+    "#56B4E9",  # sky blue
+    "#000000",  # black
+    "#F0E442",  # yellow
+]
+
+# Publication-quality defaults applied to every generated figure so the whole
+# figure set shares one consistent, journal-grade visual style.  Fonts are
+# embedded as editable Type-42 (TrueType) as required for production figures.
+plt.rcParams.update(
+    {
+        "savefig.dpi": 300,
+        "savefig.bbox": "tight",
+        "figure.dpi": 120,
+        "font.family": "sans-serif",
+        "font.size": 11,
+        "axes.titlesize": 12,
+        "axes.titleweight": "bold",
+        "axes.labelsize": 11,
+        "axes.linewidth": 0.8,
+        "xtick.labelsize": 9.5,
+        "ytick.labelsize": 9.5,
+        "xtick.direction": "out",
+        "ytick.direction": "out",
+        "legend.fontsize": 9,
+        "legend.frameon": False,
+        "lines.linewidth": 1.8,
+        "lines.markersize": 5,
+        "grid.alpha": 0.25,
+        "grid.linewidth": 0.6,
+        "pdf.fonttype": 42,
+        "ps.fonttype": 42,
+        "axes.prop_cycle": plt.cycler(color=PALETTE),
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -325,6 +393,29 @@ def line_plot_style(ax: plt.Axes) -> None:
     ax.grid(alpha=0.25)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
+
+
+def shaded_band(ax: plt.Axes, x, mean, std, color: str, alpha: float = 0.18) -> None:
+    """Shade mean +/- one standard deviation, clipped positive for log axes."""
+    mean = np.asarray(mean, dtype=float)
+    std = np.asarray(std, dtype=float)
+    lower = np.clip(mean - std, 1.0e-300, None)
+    upper = mean + std
+    ax.fill_between(np.asarray(x, dtype=float), lower, upper, color=color, alpha=alpha, linewidth=0.0)
+
+
+def panel_label(ax: plt.Axes, text: str, dx: float = -0.12, dy: float = 1.08) -> None:
+    """Place a bold panel label (a, b, ...) just outside the top-left corner."""
+    ax.text(
+        dx,
+        dy,
+        text,
+        transform=ax.transAxes,
+        fontsize=14,
+        fontweight="bold",
+        va="top",
+        ha="right",
+    )
 
 
 def save_figure(fig: plt.Figure, pdf_name: str) -> None:

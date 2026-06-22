@@ -50,11 +50,15 @@ from itertools import combinations, product
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp
+from matplotlib.patches import Patch
 from scipy.linalg import expm
 
 from common import (
+    PALETTE,
+    TABLE_DIR,
     exact_step,
     line_plot_style,
+    panel_label,
     plt,
     product_formula,
     repeated_step,
@@ -63,7 +67,10 @@ from common import (
     save_dataframe,
     save_figure,
     save_metadata,
+    scientific,
+    shaded_band,
     spectral_error,
+    write_latex_table,
 )
 
 import torch
@@ -433,9 +440,16 @@ def size_sweep(models, norm, rng):
                 sel = mask.astype(bool)
                 parity_pred.append(pred[sel])
                 parity_true.append(true[sel])
-        row = {"n_qubits": n_qubits, "trained": n_qubits in TRAIN_SIZES}
+        row = {"n_qubits": n_qubits, "trained": n_qubits in TRAIN_SIZES,
+               "n_realizations": EVAL_REALIZATIONS[n_qubits]}
         for k in keys:
-            row[f"{k}_mean"] = float(np.mean(accum[k]))
+            samples = np.asarray(accum[k], dtype=float)
+            row[f"{k}_mean"] = float(samples.mean())
+            row[f"{k}_std"] = float(samples.std(ddof=1)) if samples.size > 1 else 0.0
+        # Per-realization error-reduction factor (mean and spread of the ratio).
+        ratios = np.asarray(accum["baseline_error"], dtype=float) / np.asarray(accum["learned_free_error"], dtype=float)
+        row["reduction_free_mean"] = float(ratios.mean())
+        row["reduction_free_std"] = float(ratios.std(ddof=1)) if ratios.size > 1 else 0.0
         rows.append(row)
     parity = (np.concatenate(parity_pred), np.concatenate(parity_true)) if parity_pred else (np.array([]), np.array([]))
     return pd.DataFrame(rows), parity
@@ -451,9 +465,11 @@ def dt_sweep(models, norm, rng):
             m, _ = evaluate_realization(models, norm, js, hs, dt, 1, want_allw3=False)
             for k in accum:
                 accum[k].append(m[k])
-        row = {"dt": dt}
+        row = {"dt": dt, "n_realizations": DTSWEEP_REALIZATIONS}
         for k in accum:
-            row[f"{k}_mean"] = float(np.mean(accum[k]))
+            samples = np.asarray(accum[k], dtype=float)
+            row[f"{k}_mean"] = float(samples.mean())
+            row[f"{k}_std"] = float(samples.std(ddof=1)) if samples.size > 1 else 0.0
         rows.append(row)
     return pd.DataFrame(rows)
 
@@ -472,49 +488,81 @@ def step_sweep(models, norm, rng):
 # ---------------------------------------------------------------------------
 # Figure
 # ---------------------------------------------------------------------------
-def make_figure(sizes_df, dt_df, steps_df, parity):
-    fig, axes = plt.subplots(2, 2, figsize=(11.5, 8.0))
+_C = {
+    "baseline": PALETTE[0],   # blue
+    "bch": PALETTE[1],        # vermillion
+    "learn_oracle": PALETTE[4],  # orange
+    "learn_free": PALETTE[2],    # bluish green
+    "oracle": PALETTE[3],     # reddish purple
+}
 
+
+def make_figure(sizes_df, dt_df, steps_df, parity):
+    fig, axes = plt.subplots(2, 2, figsize=(11.5, 8.4))
+
+    # (a) Size transfer ---------------------------------------------------
     ax = axes[0, 0]
-    ax.semilogy(sizes_df["n_qubits"], sizes_df["baseline_error_mean"], "o-", label="uncorrected Strang")
-    ax.semilogy(sizes_df["n_qubits"], sizes_df["bch_leading_error_mean"], "P-", label="leading-order BCH")
-    ax.semilogy(sizes_df["n_qubits"], sizes_df["learned_oracle_error_mean"], "s-", label="learned (oracle labels)")
-    ax.semilogy(sizes_df["n_qubits"], sizes_df["learned_free_error_mean"], "D-", label="learned (oracle-free)")
-    ax.semilogy(sizes_df["n_qubits"], sizes_df["oracle_local_error_mean"], "^--", label="exact weight-3 oracle")
-    ax.axvspan(max(TRAIN_SIZES) + 0.5, max(TRANSFER_SIZES) + 0.3, color="0.92", zorder=0)
-    ax.text(max(TRAIN_SIZES) + 0.55, ax.get_ylim()[1], " sizes not seen in training",
-            va="top", ha="left", fontsize=8, color="0.35")
-    ax.set_xlabel("chain length n")
+    x = sizes_df["n_qubits"]
+    series_a = [
+        ("baseline_error", "uncorrected Strang", "o-", _C["baseline"], True),
+        ("bch_leading_error", "leading-order BCH", "P-", _C["bch"], True),
+        ("learned_oracle_error", "learned (oracle labels)", "s-", _C["learn_oracle"], False),
+        ("learned_free_error", "learned (oracle-free)", "D-", _C["learn_free"], True),
+        ("oracle_local_error", r"exact weight-$\leq$3 oracle", "^--", _C["oracle"], True),
+    ]
+    for key, label, style, color, band in series_a:
+        ax.semilogy(x, sizes_df[f"{key}_mean"], style, color=color, label=label)
+        if band:
+            shaded_band(ax, x, sizes_df[f"{key}_mean"], sizes_df[f"{key}_std"], color)
+    ax.axvspan(max(TRAIN_SIZES) + 0.5, max(TRANSFER_SIZES) + 0.3, color="0.93", zorder=0)
+    ax.set_xlabel("chain length $n$")
     ax.set_ylabel("global spectral-norm error")
     ax.set_title(r"Size transfer ($t=1$, $\delta t=0.1$)")
-    ax.legend(fontsize=7.5)
+    handles, _ = ax.get_legend_handles_labels()
+    handles.append(Patch(facecolor="0.93", label=r"held out ($n>5$)"))
+    ax.legend(handles=handles, fontsize=8, loc="best")
     line_plot_style(ax)
+    panel_label(ax, "a")
 
+    # (b) Step-size dependence -------------------------------------------
     ax = axes[0, 1]
-    ax.semilogy(dt_df["dt"], dt_df["baseline_error_mean"], "o-", label="uncorrected Strang")
-    ax.semilogy(dt_df["dt"], dt_df["bch_leading_error_mean"], "P-", label="leading-order BCH")
-    ax.semilogy(dt_df["dt"], dt_df["learned_free_error_mean"], "D-", label="learned (oracle-free)")
-    ax.semilogy(dt_df["dt"], dt_df["oracle_local_error_mean"], "^--", label="exact weight-3 oracle")
+    x = dt_df["dt"]
+    series_b = [
+        ("baseline_error", "uncorrected Strang", "o-", _C["baseline"]),
+        ("bch_leading_error", "leading-order BCH", "P-", _C["bch"]),
+        ("learned_free_error", "learned (oracle-free)", "D-", _C["learn_free"]),
+        ("oracle_local_error", r"exact weight-$\leq$3 oracle", "^--", _C["oracle"]),
+    ]
+    for key, label, style, color in series_b:
+        ax.semilogy(x, dt_df[f"{key}_mean"], style, color=color, label=label)
+        shaded_band(ax, x, dt_df[f"{key}_mean"], dt_df[f"{key}_std"], color)
     ax.set_xlabel(r"step size $\delta t$")
     ax.set_ylabel("per-step spectral-norm error")
     ax.set_title(r"Step-size dependence ($n=6$, one step)")
-    ax.legend(fontsize=7.5)
+    ax.legend(fontsize=8, loc="best")
     line_plot_style(ax)
+    panel_label(ax, "b")
 
+    # (c) Stability vs number of steps -----------------------------------
     ax = axes[1, 0]
-    ax.loglog(steps_df["r"], steps_df["baseline_error"], "o-", label="uncorrected Strang")
-    ax.loglog(steps_df["r"], steps_df["learned_free_error"], "D-", label="learned (oracle-free)")
-    ax.loglog(steps_df["r"], steps_df["oracle_local_error"], "^--", label="exact weight-3 oracle")
-    ax.set_xlabel("Trotter steps r")
+    ax.loglog(steps_df["r"], steps_df["baseline_error"], "o-", color=_C["baseline"], label="uncorrected Strang")
+    ax.loglog(steps_df["r"], steps_df["learned_free_error"], "D-", color=_C["learn_free"], label="learned (oracle-free)")
+    ax.loglog(steps_df["r"], steps_df["oracle_local_error"], "^--", color=_C["oracle"], label=r"exact weight-$\leq$3 oracle")
+    r_ref = np.asarray(steps_df["r"], dtype=float)
+    ax.loglog(r_ref, steps_df["learned_free_error"].iloc[0] * r_ref / r_ref[0], ":", color="0.5", lw=1.3,
+              label=r"linear-in-$r$ guide")
+    ax.set_xlabel("Trotter steps $r$")
     ax.set_ylabel("total spectral-norm error")
     ax.set_title(r"Stability vs steps ($n=6$, $\delta t=0.1$)")
-    ax.legend(fontsize=7.5)
+    ax.legend(fontsize=8, loc="best")
     line_plot_style(ax)
+    panel_label(ax, "c")
 
+    # (d) Coefficient parity ---------------------------------------------
     ax = axes[1, 1]
     pred, true = parity
     if pred.size:
-        ax.scatter(true, pred, s=6, alpha=0.3, color="#1f77b4")
+        ax.scatter(true, pred, s=6, alpha=0.3, color=_C["learn_free"], edgecolors="none")
         lim = max(np.abs(true).max(), np.abs(pred).max()) * 1.05
         ax.plot([-lim, lim], [-lim, lim], "k--", lw=1)
         ax.set_xlim(-lim, lim)
@@ -524,14 +572,52 @@ def make_figure(sizes_df, dt_df, steps_df, parity):
         ax.yaxis.set_major_locator(plt.MaxNLocator(5))
         ax.tick_params(axis="x", rotation=30)
         r2 = 1.0 - np.sum((pred - true) ** 2) / (np.sum((true - true.mean()) ** 2) + 1e-12)
-        ax.text(0.05, 0.95, f"$R^2 = {r2:.4f}$", transform=ax.transAxes, va="top", ha="left", fontsize=9)
+        ax.text(0.05, 0.95, f"$R^2 = {r2:.4f}$", transform=ax.transAxes, va="top", ha="left",
+                fontsize=10, fontweight="bold")
     ax.set_xlabel("exact coefficient")
     ax.set_ylabel("predicted coefficient")
-    ax.set_title(r"Coefficient parity, oracle-free (transfer $n$)")
+    ax.set_title(r"Coefficient parity (transfer $n$)")
     line_plot_style(ax)
+    panel_label(ax, "d")
 
-    fig.tight_layout()
+    fig.tight_layout(pad=1.4)
     save_figure(fig, "fig7_learned_residual.pdf")
+
+
+def write_summary_table(sizes_df) -> None:
+    lines = [
+        r"\begin{table}[t]",
+        (
+            r"\caption{Learned residual generator transferred across system size on the "
+            r"disordered open-boundary \tfim{} ($J_i,h_i\sim\mathcal{U}[0.5,1.5]$, $t=1$, "
+            r"$\delta t=0.1$). Errors are global spectral-norm errors averaged over disordered "
+            r"chains (count in the last column; run-to-run dispersion is shown as bands in "
+            r"Fig.~\ref{fig:learned}); the reduction factor is "
+            r"$\epsilon_{\mathrm{Strang}}/\epsilon_{\mathrm{learned}}$. The oracle-free network is "
+            r"trained only on $n=4,5$; sizes $n\geq6$ are absent from training. All values are "
+            r"recomputed from dense matrices.}"
+        ),
+        r"\label{tab:learned-summary}",
+        r"\begin{ruledtabular}",
+        r"\begin{tabular}{ccccccc}",
+        (
+            r"$n$ & regime & $\epsilon_{\mathrm{Strang}}$ & $\epsilon_{\mathrm{learned}}$ & "
+            r"reduction & $\epsilon_{w\leq3}$ & chains\\"
+        ),
+    ]
+    for row in sizes_df.itertuples(index=False):
+        regime = "train" if row.trained else "transfer"
+        reduction = row.baseline_error_mean / row.learned_free_error_mean
+        lines.append(
+            f"{int(row.n_qubits)} & {regime} & "
+            f"${scientific(row.baseline_error_mean)}$ & "
+            f"${scientific(row.learned_free_error_mean)}$ & "
+            f"${reduction:.1f}\\times$ & "
+            f"${scientific(row.oracle_local_error_mean)}$ & "
+            f"{int(row.n_realizations)}\\\\"
+        )
+    lines.extend([r"\end{tabular}", r"\end{ruledtabular}", r"\end{table}"])
+    write_latex_table(TABLE_DIR / "learned_residual_summary.tex", lines)
 
 
 # ---------------------------------------------------------------------------
@@ -575,6 +661,7 @@ def main(force: bool = False) -> None:
     })
 
     make_figure(sizes_df, dt_df, steps_df, parity)
+    write_summary_table(sizes_df)
 
     pd.set_option("display.width", 220)
     pd.set_option("display.max_columns", 30)

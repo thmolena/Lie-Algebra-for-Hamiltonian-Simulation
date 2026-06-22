@@ -1,0 +1,420 @@
+===============================================================================
+ RGTC FROM FIRST PRINCIPLES
+ A self-contained derivation, tied line by line to the code in this folder.
+===============================================================================
+
+This document assumes only undergraduate linear algebra and basic calculus.  It
+builds every idea the project needs from scratch and, for each one, names the
+function in this folder that implements it.  Read it alongside common.py.
+
+Contents
+  0.  The computational problem (theory of computation)
+  1.  Qubits, operators, and the building blocks of linear algebra
+  2.  The Hamiltonian: the transverse-field Ising model
+  3.  Time evolution and the matrix exponential
+  4.  Product formulas: Trotter, Strang, Suzuki
+  5.  Measuring error: the spectral norm
+  6.  The residual factor and the residual generator (the central object)
+  7.  Why approximations are safe: the multi-step stability bound
+  8.  Compression: projecting the generator onto low-weight Pauli operators
+  9.  Locality: why weight three is special for the TFIM (BCH)
+  10. Machine learning: learning the residual generator from first principles
+  11. How the theory maps onto the experiments
+  12. Reproducibility
+
+
+-------------------------------------------------------------------------------
+0.  THE COMPUTATIONAL PROBLEM (THEORY OF COMPUTATION)
+-------------------------------------------------------------------------------
+
+A quantum system of n two-level subsystems (qubits) has a state living in a
+complex vector space of dimension d = 2^n.  Its dynamics are governed by a
+Hermitian matrix H (the Hamiltonian) through the time-evolution operator
+
+        U(t) = exp(-i H t),
+
+a d x d unitary matrix.  The catch is the exponential dimension: writing U(t)
+explicitly costs memory and time that grow like 2^n, so direct simulation on a
+classical computer is intractable beyond a few tens of qubits.  This is the
+classic motivation for quantum computation: a quantum computer can apply U(t)
+using resources that scale polynomially in n for local H (Lloyd, 1996).  The
+complexity class for problems a quantum computer solves efficiently is BQP;
+Hamiltonian simulation is one of its defining members.
+
+A quantum computer cannot apply exp(-iHt) directly either -- it must build it
+from elementary gates.  The standard recipe is a *product formula*: split H into
+parts that are individually easy to exponentiate and interleave their
+exponentials.  That introduces a controlled error, and this entire project is
+about understanding, bounding, compressing, and *learning* that error.
+
+Because we want exact ground truth, all experiments here run at small n (<= 10),
+where we CAN form the 2^n x 2^n matrices densely and compare against the true
+U(t).  The dense simulation is the laboratory, not the proposed algorithm.
+
+
+-------------------------------------------------------------------------------
+1.  QUBITS, OPERATORS, AND THE BUILDING BLOCKS OF LINEAR ALGEBRA
+-------------------------------------------------------------------------------
+
+One qubit is a vector in C^2.  Operators on it are 2x2 complex matrices.  The
+four Pauli matrices form a basis for all 2x2 Hermitian matrices:
+
+    I = [[1,0],[0,1]]   X = [[0,1],[1,0]]
+    Y = [[0,-i],[i,0]]  Z = [[1,0],[0,-1]]
+
+  CODE: single_pauli(label) in common.py returns each of these.
+
+Two facts used throughout:
+  * Each Pauli P (other than I) is Hermitian (P = P^dagger) and unitary
+    (P^dagger P = I), with P^2 = I.
+  * Trace orthogonality: Tr(P Q) = 2 delta_{P,Q} for single-qubit Paulis.
+
+To describe n qubits we take tensor (Kronecker) products.  The state space is
+C^2 (x) C^2 (x) ... (x) C^2 = C^(2^n), and an operator that acts as A on qubit j
+and as identity elsewhere is I (x) ... (x) A (x) ... (x) I.
+
+  CODE: kron_all([...]) multiplies a list of matrices with numpy.kron;
+        op_on_site(label, site, n) places one Pauli on a chosen qubit;
+        pauli_string("XIZ...") builds a full n-qubit Pauli string.
+
+An "n-qubit Pauli string" is a tensor product of n single-qubit Paulis, e.g.
+X (x) I (x) Z.  There are 4^n of them and they form an orthogonal basis for all
+d x d Hermitian matrices under the Hilbert-Schmidt inner product <A,B>=Tr(A^dag B).
+The generalisation of trace orthogonality is Tr(P Q) = 2^n delta_{P,Q}.
+
+  CODE: pauli_basis(n) enumerates all 4^n strings with their matrices.
+
+The *weight* of a Pauli string is the number of non-identity tensor factors
+(e.g. X (x) I (x) Z has weight 2).  Weight measures how many qubits an operator
+touches -- the key notion of "locality" later.
+
+  CODE: pauli_weight(word) counts the non-"I" characters.
+
+
+-------------------------------------------------------------------------------
+2.  THE HAMILTONIAN: THE TRANSVERSE-FIELD ISING MODEL (TFIM)
+-------------------------------------------------------------------------------
+
+We use a standard, well-understood many-body benchmark on an open chain of n
+qubits:
+
+        H = A + B,
+        A = J * sum_{j=1}^{n-1} Z_j Z_{j+1}      (nearest-neighbour coupling)
+        B = h * sum_{j=1}^{n}   X_j              (transverse field)
+
+A is diagonal in the Z basis; B is a sum of single-site flips.  They do NOT
+commute ([A,B] != 0), which is exactly why a product formula is only approximate
+-- if they commuted, exp(-i(A+B)t) = exp(-iAt)exp(-iBt) exactly.
+
+  CODE: tfim_terms(n, J, h) builds A, B, H and checks A,B are Hermitian.
+        tfim_terms_disordered(js, hs) in learned_residual.py allows site-
+        dependent couplings J_i, h_i for the learning experiments.
+
+
+-------------------------------------------------------------------------------
+3.  TIME EVOLUTION AND THE MATRIX EXPONENTIAL
+-------------------------------------------------------------------------------
+
+The exact propagator for time t is U(t) = exp(-iHt).  For Hermitian H this is
+unitary.  We compute it densely with a Pade/scaling-and-squaring algorithm.
+
+  CODE: exact_step(H, dt) = scipy.linalg.expm(-1j * H * dt).
+
+This is the "oracle": the true answer we measure everything against.  It is
+exponentially expensive in n, which is why it is only a benchmark.
+
+
+-------------------------------------------------------------------------------
+4.  PRODUCT FORMULAS: TROTTER, STRANG, SUZUKI
+-------------------------------------------------------------------------------
+
+A product formula approximates exp(-i(A+B)dt) by a product of exponentials of A
+and B alone.
+
+  First order (Lie--Trotter):
+        S_1(dt) = exp(-iB dt) exp(-iA dt)
+        error  = O(dt^2)               [leading term ~ (dt^2/2)[A,B]]
+
+  Second order (Strang, symmetric):
+        S_2(dt) = exp(-iB dt/2) exp(-iA dt) exp(-iB dt/2)
+        error  = O(dt^3)               [the symmetric form kills the dt^2 term]
+
+  Higher even orders (Suzuki's recursion), for k >= 2:
+        S_{2k}(dt) = S_{2k-2}(p_k dt)^2 . S_{2k-2}((1-4 p_k) dt) . S_{2k-2}(p_k dt)^2
+        with  p_k = 1 / (4 - 4^{1/(2k-1)}).
+        error  = O(dt^{2k+1}).
+
+The recursion stacks scaled lower-order steps (note the negative middle scale
+1-4 p_k -- still a real time, so every factor stays unitary).  The number of
+elementary exponentials grows fast: 2, 3, 15, 75, 375 for q = 1,2,4,6,8.
+
+  CODE: suzuki_sequence(order, scale) returns the list of (term, time) factors
+        by unrolling the recursion;
+        product_formula(A, B, dt, order) exponentiates each factor and multiplies
+        them (caching repeated factors);
+        factor_count(order) returns the 2/3/15/75/375 counts.
+
+"Order q" means ||U(dt) - S_q(dt)|| <= C_q |dt|^{q+1} for small dt -- the local
+error per step.  Over r steps to reach time t = r dt the global baseline error is
+
+        eps_{T,q}(t) = || U(t) - S_q(t/r)^r ||.
+
+  CODE: global_errors(...) computes this baseline alongside the oracle-corrected
+        error; repeated_step(S, r) = matrix_power(S, r).
+
+Lemma (unitarity, proved in the paper): every S_q is unitary because it is a
+product of unitary exponentials exp(-iC tau) with C Hermitian and tau real.
+
+
+-------------------------------------------------------------------------------
+5.  MEASURING ERROR: THE SPECTRAL NORM
+-------------------------------------------------------------------------------
+
+We measure operator error in the spectral norm ||M||_2 = largest singular value
+of M.  It is:
+  * basis-independent and unitarily invariant,
+  * equal to the worst-case change it can cause to any unit state vector,
+  * directly computable from singular values for the small dense matrices here.
+
+  CODE: spectral_error(U, V) = max singular value of (U - V), via
+        scipy.linalg.svdvals.
+
+We also use the Frobenius norm ||M||_F = sqrt(sum |entries|^2) = sqrt(Tr(M^dag M))
+for the projection theorem; always ||M||_2 <= ||M||_F.
+
+
+-------------------------------------------------------------------------------
+6.  THE RESIDUAL FACTOR AND THE RESIDUAL GENERATOR (THE CENTRAL OBJECT)
+-------------------------------------------------------------------------------
+
+Given a step S_q(dt), define the *residual factor*
+
+        R_q(dt) = U(dt) S_q(dt)^dagger.
+
+Then the *corrected step* G_q = R_q S_q satisfies, exactly,
+
+        G_q = U S_q^dagger S_q = U(dt).
+
+So in exact arithmetic R_q is a perfect one-step correction.  Three facts make
+this more than a triviality (all proved in the paper):
+
+  * Uniqueness: R_q is the ONLY matrix L with L S_q = U (right-multiply by
+    S_q^dagger).
+  * Optimality: for ANY unitarily invariant norm, R_q minimises |||U - L S_q|||,
+    and the minimum is zero.  No left correction can do better.
+  * It is unitary, so it has a Hermitian *generator* K_q with
+
+        R_q(dt) = exp(-i K_q(dt)),     K_q = i log R_q.
+
+    K_q is the small Hermitian operator that encodes the entire product-formula
+    defect.  For small dt it is close to zero.
+
+  CODE: residual_factor(A, B, H, dt, order) returns (U, S, R, G);
+        residual_generator(R) = (K + K^dag)/2 with K = i*logm(R) -- the
+        symmetrisation removes round-off skew-Hermitian contamination.
+
+Small-step bound (proved): if ||U - S_q|| <= C_q |dt|^{q+1} then
+||K_q||_2 <= 2 C_q |dt|^{q+1}.  Higher order => smaller generator.  This is what
+Experiment 6 (generator_scaling.py) measures.
+
+The whole research program is: K_q is the ideal target; the oracle computes it
+from the dense U; the goal is to APPROXIMATE it cheaply (by truncation,
+analytic BCH, or -- the main contribution -- learning) without ever forming U.
+
+
+-------------------------------------------------------------------------------
+7.  WHY APPROXIMATIONS ARE SAFE: THE MULTI-STEP STABILITY BOUND
+-------------------------------------------------------------------------------
+
+Suppose we only have an approximate residual R_hat with per-step error
+eta = ||R_hat - R_q||_2, giving an approximate corrected step G_hat = R_hat S_q.
+How bad is the global error after r steps?  Using the telescoping identity
+
+    G_hat^r - G^r = sum_{j=0}^{r-1} G_hat^{r-1-j} (G_hat - G) G^j
+
+and submultiplicativity of the norm, with G = U(dt) unitary (norm 1):
+
+    if R_hat is unitary:           || G_hat^r - U(t) ||_2 <= r * eta.
+    in general:                    || G_hat^r - U(t) ||_2 <= r * eta * e^{(r-1)eta}.
+
+So a per-step generator/residual error eta turns into a global error of order
+r*eta -- linear, controllable.  To hit a target accuracy epsilon it suffices to
+make eta <= epsilon / r.  This single bound is what makes "approximate the
+generator" a principled strategy rather than a gamble, and it is the guarantee
+the learned model inherits.
+
+A companion (Duhamel) bound translates *generator* error into residual error:
+||exp(-iK) - exp(-iK_hat)||_2 <= ||K - K_hat||_2.  So approximating K well in
+operator norm is enough.
+
+  CODE: the linear-in-r growth is exactly the bottom-left panel of fig7 (the
+        step-count sweep in learned_residual.step_sweep), which is checked
+        against an r-linear guide line.
+
+
+-------------------------------------------------------------------------------
+8.  COMPRESSION: PROJECTING THE GENERATOR ONTO LOW-WEIGHT PAULI OPERATORS
+-------------------------------------------------------------------------------
+
+K_q is a full d x d Hermitian matrix, so writing it out is as expensive as the
+oracle.  But it can be expanded in the Pauli basis,
+
+        K = sum_P c_P P,     c_P = Tr(P K) / 2^n,
+
+and we can keep only the strings of weight at most w:
+
+        Pi_w K = sum_{wt(P) <= w} c_P P.
+
+Theorem (proved): Pi_w is the orthogonal projection onto the weight-<=w subspace,
+hence the UNIQUE minimiser of ||K - L||_F over that subspace -- the best possible
+low-weight approximation in Frobenius norm.  Combined with section 7, the
+projected correction obeys || G_{q,w}^r - U(t) ||_2 <= r ||K_q - Pi_w K_q||_2.
+
+  CODE: project_pauli_weight(K, n, w) computes Pi_w K;
+        pauli_weight_energy(K, n) returns sum |c_P|^2 by weight (used for the
+        compressibility curve, fig5).
+
+Experiment 2 (projected_residual.py) measures how the global error falls as w
+grows.  The dramatic jump at w = 3 is not a coincidence -- it is predicted by
+locality, next.
+
+
+-------------------------------------------------------------------------------
+9.  LOCALITY: WHY WEIGHT THREE IS SPECIAL FOR THE TFIM (BCH)
+-------------------------------------------------------------------------------
+
+The Baker--Campbell--Hausdorff (BCH) expansion writes the logarithm of a product
+of exponentials as a series of nested commutators.  For the symmetric Strang
+step the first non-vanishing correction is at order dt^3:
+
+        log S_2(dt) = -i(A+B)dt + dt^3 * Gamma_3 + O(dt^5),
+
+where Gamma_3 is a linear combination of the double commutators [A,[A,B]] and
+[B,[A,B]].  Because the residual generator cancels this leading defect,
+
+        K_2(dt) = dt^3 * K_2^{(3)} + O(dt^5).
+
+Now use the structure of the TFIM.  Write A = sum_e A_e with A_e = J Z_j Z_{j+1}
+on edge e=(j,j+1), and B = sum_v B_v with B_v = h X_v on site v.  Then:
+  * [A_e, B_v] = 0 unless v is an endpoint of e; when non-zero it is a weight-2
+    string on that edge (e.g. [Z_j Z_{j+1}, X_j] = 2i Y_j Z_{j+1}).
+  * [B, [A,B]] stays on the same edge -> weight <= 2.
+  * [A, [A,B]] can extend to an adjacent overlapping edge, and the union of two
+    overlapping nearest-neighbour edges spans at most THREE sites -> weight <= 3.
+
+Theorem (proved): the leading Strang generator K_2^{(3)} for the open-boundary
+TFIM is supported on Pauli strings of weight at most three.  That is the precise
+reason the projected residual jumps at w = 3 (Experiment 2) and stays useful over
+the parameter grid (Experiment 4): the dominant part of the correction genuinely
+lives in a tiny, geometrically local operator family.  Higher-order BCH terms add
+larger support, which is why w = 4 and 5 capture additional subleading mass
+(fig5).
+
+This locality is also what makes the correction LEARNABLE: a weight-<=3,
+geometrically local coefficient depends only on the couplings in a small
+neighbourhood, so one function applied at every site can reconstruct the whole
+generator on a chain of ANY length.
+
+
+-------------------------------------------------------------------------------
+10.  MACHINE LEARNING: LEARNING THE RESIDUAL GENERATOR FROM FIRST PRINCIPLES
+-------------------------------------------------------------------------------
+
+Goal.  Predict the local weight-<=3 coefficients of K_2 for a *disordered* TFIM
+(site-dependent J_i, h_i) directly from the local couplings, WITHOUT ever forming
+the global propagator U at inference -- and have a model trained on small chains
+work on much larger ones.
+
+(a) The learning problem.  Supervised regression: input = local features at a
+    site; output = the coefficients of the weight-<=3 Pauli templates anchored at
+    that site.  There are 48 such templates within a 3-site window (3 single-site
+    + 9+9 two-site at offsets 1 and 2 + 27 three-site).
+      CODE: build_templates(), template_word(), N_TEMPLATES = 48.
+
+(b) Features and the dt^3 scaling.  At each site we read off the nearby couplings
+    (J and h within the window), two boundary flags, and the step size dt -- 12
+    numbers.  Because K_2 ~ dt^3 (section 9), we train the network to predict the
+    dt^{-3}-scaled coefficients (a smooth O(1) target) and multiply by dt^3 at the
+    end.  Feeding dt as an input lets ONE network span a range of step sizes.
+      CODE: anchor_features(js, hs, anchor, dt) (12 features); the /dt**3 and
+            *dt**3 rescaling in build_training_set / predict_coeffs.
+
+(c) Translation equivariance (the key inductive bias).  The SAME small network is
+    applied independently at every site, with weights shared across sites and
+    across chain lengths.  This is the discrete analogue of a convolution: it
+    encodes the physical fact that the residual coefficient near a site depends
+    only on that site's neighbourhood, regardless of how long the chain is.  This
+    is exactly why a model trained on n = 4,5 transfers to n = 10.
+      CODE: LocalResidualNet (a 12 -> 64 -> 64 -> 48 tanh MLP) applied per anchor;
+            assemble_generator() sums the per-site predictions into K.
+
+(d) Two ways to get training labels.
+      * Oracle labels: compute K_2 from the exact global residual at the (small)
+        training sizes and read off its template coefficients.
+        CODE: global_generator(), coeffs_from_K().
+      * Oracle-free labels: compute the SAME coefficients from the residual
+        generator of a small fixed-size local patch (radius two around the
+        3-site support, at most 7 qubits), so no 2^n object ever appears in
+        training.  The patch cost is independent of n.
+        CODE: patch_coeffs(), realization_patch_coeffs().
+    We show the oracle-free model matches the oracle-trained one downstream -- the
+    dense oracle, the framework's central limitation, is not needed to LEARN.
+
+(e) Training.  Standardise inputs and targets, minimise the masked mean-squared
+    error with the Adam optimiser (full-batch, fixed seed), for 4000 steps.  The
+    mask handles sites near the boundary where some templates are invalid.
+      CODE: train_model() (loss = masked MSE; torch.optim.Adam).
+
+(f) A non-learned baseline: leading-order BCH.  Extract the dt^3 coefficients
+    analytically from a tiny step dt0 and rescale by (dt/dt0)^3.  It is exact as
+    dt -> 0 but, capturing only the dt^3 term, degrades as dt grows -- which the
+    dt-conditioned learned model does not.
+      CODE: bch_leading_coeffs().
+
+(g) How we judge it (all through the same dense metrics as the rest of the code).
+      * Coefficient fit: R^2 between predicted and exact coefficients on held-out
+        sizes (the parity panel; R^2 = 0.9998).
+      * Downstream simulation error: build exp(-i K_pred) S_2, raise to r steps,
+        and take the spectral-norm distance to the true U(t).
+        CODE: downstream_error(), evaluate_realization().
+      * Statistics: every transfer error is a mean over many disordered chains;
+        we also record the standard deviation (the shaded bands in fig7 and the
+        dispersion behind the reduction factors in Table III).
+      * The stability guarantee of section 7 is what certifies the learned
+        correction: its per-step generator error is the eta that bounds the
+        r-step simulation error -- so the linear-in-r growth in fig7 panel (c) is
+        the theorem made visible.
+
+The headline result: trained only on n = 4,5, one per-site network cuts the
+uncorrected Strang error by ~40-45x out to n = 10 (sizes it never saw), tracks the
+exact weight-<=3 oracle within ~2-3x, needs no global oracle to train, and beats
+leading-order BCH by >10x once the step is not tiny.
+
+
+-------------------------------------------------------------------------------
+11.  HOW THE THEORY MAPS ONTO THE EXPERIMENTS
+-------------------------------------------------------------------------------
+
+  Section 6  (exact residual)         -> fixed_time.py        -> Table I,  fig1
+  Section 8  (weight projection)      -> projected_residual.py-> Table II, fig2
+  Sections 7+8 (time-resolved)        -> time_sweep.py        -> fig3
+  Section 8  (robustness over J,h)    -> parameter_heatmap.py -> fig4
+  Section 8  (Pauli mass by weight)   -> generator_scaling.py -> fig5
+  Section 6  (||K_q|| vs dt, order)   -> generator_scaling.py -> fig6
+  Sections 9+10 (learning + transfer) -> learned_residual.py  -> Table III, fig7
+  Resource accounting                 -> make_all.py          -> Table IV
+  Conceptual summary                  -> overview.py          -> fig (overview)
+
+
+-------------------------------------------------------------------------------
+12.  REPRODUCIBILITY
+-------------------------------------------------------------------------------
+
+Everything above is executable.  `python make_all.py` regenerates every figure,
+table, and data file; `python validate_submission.py` checks the artifact set;
+see README.txt for environment and runtime.  The dense experiments are
+deterministic; the learned experiment is seeded.  Only floating-point-floor
+values can differ across BLAS builds, as noted in README.txt and the paper's
+finite-precision appendix.  No reported number is hand-entered: figures are drawn
+from saved raw data, and each data file carries a *.meta.json with the exact
+parameters, library versions, and git commit used to produce it.
