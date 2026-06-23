@@ -7,7 +7,9 @@
 \usepackage{xcolor}\definecolor{nmiaccent}{HTML}{1A4E8A}
 \usepackage[colorlinks=true,allcolors=nmiaccent]{hyperref}
 \usepackage{titlesec}\usepackage{fancyhdr}\usepackage{authblk}
-\captionsetup{font=small,labelfont=bf,labelsep=period}\graphicspath{{figures/}}\setlength{\parskip}{0.45em}
+\captionsetup{font=small,labelfont=bf,labelsep=period}\graphicspath{{code/figures/}}\setlength{\parskip}{0.45em}
+\setlength{\emergencystretch}{2em}% absorb minor overfull lines in dense math paragraphs
+\allowdisplaybreaks
 \renewcommand{\Affilfont}{\normalsize\itshape}\renewcommand{\Authfont}{\large\bfseries}
 \titleformat{\section}{\sffamily\large\bfseries\color{nmiaccent}}{\thesection}{0.6em}{}
 \titleformat{\subsection}{\sffamily\normalsize\bfseries}{\thesubsection}{0.6em}{}
@@ -68,7 +70,7 @@
 
 \begin{abstract}
 \noindent
-Digital Hamiltonian simulation by Trotter--Suzuki product formulas leaves a finite-step error fixed by nested commutator defects. We recast this error as an operator to be learned under provable guarantees. The residual factor of a product-formula step is the unique unitary left correction to the exact propagator; we prove it is optimal in every unitarily invariant norm, that projecting its Hermitian generator onto a fixed operator subspace is the unique Frobenius-optimal compression, and that approximate residuals convert per-step error into global error linearly. For the transverse-field Ising model we prove the leading Strang generator is geometrically local, of Pauli weight at most three. This locality makes compilation a learning problem: one translation-equivariant network maps local couplings to generator coefficients without ever accessing the propagator. Trained only on four- and five-qubit chains, it transfers to ten-qubit chains ($R^2=0.9998$), cutting the uncorrected error by $36$--$43\times$ while obeying the proven bound.
+Digital Hamiltonian simulation by Trotter--Suzuki product formulas leaves a finite-step error fixed by nested commutator defects. We recast this error as an operator to be learned under provable guarantees. The residual factor of a product-formula step is the unique unitary left correction to the exact propagator; we prove it is optimal in every unitarily invariant norm, that projecting its Hermitian generator onto a fixed operator subspace is the unique Frobenius-optimal compression, and that approximate residuals convert per-step error into global error linearly. For the transverse-field Ising model we prove the leading Strang generator is geometrically local, of Pauli weight at most three. This locality makes compilation a learning problem: one translation-equivariant network maps local couplings to generator coefficients without ever accessing the propagator. Trained only on four- and five-qubit chains, it transfers to ten-qubit chains ($R^2=0.9998$), cutting the uncorrected error by $38$--$46\times$ while obeying the proven bound.
 \end{abstract}
 
 % ============================================================
@@ -88,7 +90,7 @@ where $U(\dt)=\exp(-iH\dt)$. The corrected step $R_q(\dt)S_q(\dt)$ is exactly $U
 
 We distinguish two modes of residual-generator Trotter compilation (\rgtc{}). \emph{Oracle \rgtc{}} computes $R_q$ from the exact dense matrix exponential. This mode is not scalable and is not claimed to be a deployable quantum algorithm; it establishes the target and the best possible one-step left correction. \emph{Compressed \rgtc{}} uses a Hermitian generator $\widehat K_q$ from a restricted family to form $\widehat R_q=\exp(-i\widehat K_q)$. This mode is the practical object: it can be instantiated by Baker--Campbell--Hausdorff (BCH) truncation, Pauli-weight projection, variational circuit compilation, operator learning, or GPU-accelerated offline fitting. The separation is essential. A paper that merely states $US_q^\dagger S_q=U$ would be tautological; a useful residual-compilation paper must quantify what happens when the exact residual is approximated, and must provide reproducible evidence that structured approximations can work. We go beyond proposing the compressed mode: we instantiate it as a \emph{learned} residual generator and show, on disordered Ising chains, that a single local network trained on small systems transfers to larger ones it never saw, under the proven stability guarantee. The learned mode is the central practical advance, and the exact theory is what makes the learning principled and safe.
 
-The contributions are as follows. (i) We formalize \rgtc{} and prove exact residual factorization, uniqueness, and global norm optimality among all left multipliers for every unitarily invariant norm. (ii) We prove multi-step stability theorems for approximate residuals and generator approximations, giving explicit $r\eta$ and $r\norm{K_q-\widehat K_q}_2$ error targets. (iii) We prove that Pauli-subspace projection is the unique Frobenius-optimal compressed residual generator and provide a direct spectral-norm simulation bound for projected generators. (iv) For the open-boundary transverse-field Ising model (\tfim{}), we prove that the degree-three leading term in the Strang residual-generator expansion has Pauli weight at most three, giving a concrete structural explanation for the observed strong performance of $w\leq3$ projected residuals. (v) We instantiate the learned residual mode: a single translation-equivariant network predicts the step-size-conditioned local weight-$\leq3$ coefficients of $K_2$ from local couplings of a disordered \tfim{}, transfers from four- and five-qubit training chains to chains of up to ten qubits ($R^2=0.9998$ on held-out sizes), cuts the uncorrected Strang error by $36$--$43\times$, can be trained \emph{without any dense $2^n$ oracle} from fixed-size local patches, and beats the analytic leading-order correction by more than an order of magnitude where the latter fails---all while obeying the proven $r\eta$ stability bound. (vi) We provide deterministic dense-matrix experiments, figures, tables, and code that recompute every number from first principles. Figure~\ref{fig:schematic} summarizes the full pipeline, from the local Hamiltonian to the certified learned correction.
+The contributions are as follows. (i) We formalize \rgtc{} and prove exact residual factorization, uniqueness, and global norm optimality among all left multipliers for every unitarily invariant norm. (ii) We prove multi-step stability theorems for approximate residuals and generator approximations, giving explicit $r\eta$ and $r\norm{K_q-\widehat K_q}_2$ error targets. (iii) We prove that Pauli-subspace projection is the unique Frobenius-optimal compressed residual generator and provide a direct spectral-norm simulation bound for projected generators. (iv) For the open-boundary transverse-field Ising model (\tfim{}), we prove that the degree-three leading term in the Strang residual-generator expansion has Pauli weight at most three, giving a concrete structural explanation for the observed strong performance of $w\leq3$ projected residuals. (v) We instantiate the learned residual mode: a single translation-equivariant network predicts the step-size-conditioned local weight-$\leq3$ coefficients of $K_2$ from local couplings of a disordered \tfim{}, transfers from four- and five-qubit training chains to chains of up to ten qubits ($R^2=0.9998$ on held-out sizes), cuts the uncorrected Strang error by $38$--$46\times$, can be trained \emph{without any dense $2^n$ oracle} from fixed-size local patches, and beats the analytic leading-order correction by more than an order of magnitude where the latter fails---all while obeying the proven $r\eta$ stability bound. (vi) We provide deterministic dense-matrix experiments, figures, tables, and code that recompute every number from first principles. Figure~\ref{fig:schematic} summarizes the full pipeline, from the local Hamiltonian to the certified learned correction.
 
 \begin{figure}[t]
 \centering
@@ -108,7 +110,7 @@ Beyond quantum simulation, the central finding is of methodological interest to 
 
 \subsection{Hamiltonian model and product-formula baselines}
 
-Let $\cH\cong\mathbb{C}^d$ and let $H=H^\dagger\in\mathbb{C}^{d\times d}$, with exact time-$t$ propagator $U(t)=e^{-iHt}$. We assume a decomposition $H=A+B$ with $A=A^\dagger$ and $B=B^\dagger$ each easier to exponentiate than their sum; this two-term setting covers the standard even-odd or diagonal-transverse splittings used in many spin models, and generalizes directly to $m$ terms. The global $r$-step baseline error at $t=r\dt$ is
+We first fix the Hamiltonian model, the product-formula steps, and the error metric used throughout. Let $\cH\cong\mathbb{C}^d$ and let $H=H^\dagger\in\mathbb{C}^{d\times d}$, with exact time-$t$ propagator $U(t)=e^{-iHt}$. We assume a decomposition $H=A+B$ with $A=A^\dagger$ and $B=B^\dagger$ each easier to exponentiate than their sum; this two-term setting covers the standard even-odd or diagonal-transverse splittings used in many spin models, and generalizes directly to $m$ terms. The global $r$-step baseline error at $t=r\dt$ is
 \begin{equation}
     \epsilon_{T,q}(t;r)=\norm{U(t)-S_q(\dt)^r}_2.
     \label{eq:baseline-error}
@@ -124,7 +126,32 @@ a standard many-body benchmark with a clear two-term splitting~\cite{sachdev2011
 
 Table~\ref{tab:error-summary} reports the fixed-time dense benchmark. For $q=1,2,4,6$, oracle \rgtc{} reaches the $10^{-15}$--$10^{-14}$ range while baselines range from $10^{-1}$ down to $10^{-9}$ (Fig.~\ref{fig:fixed-time}). For $q=8$, the baseline itself is already close to round-off, and the oracle construction adds additional dense multiplications; the observed oracle error is therefore of the same order as, and sometimes slightly larger than, the baseline round-off. This is a finite-precision artifact, not a contradiction of Theorem~\ref{thm:factorization}.
 
-\input{tables/error_summary.tex}
+\begin{table*}[t]
+\caption{\textbf{Dense-matrix fixed-time benchmark for the open-boundary \tfim{}.} Parameters are $J=h=1$, $t=1$, and $r=10$ steps. The baseline error is $\epsilon_{T,q}=\norm{U(t)-S_q(t/r)^r}_2$ and the oracle-residual error is $\epsilon_{R,q}=\norm{U(t)-[R_q(t/r)S_q(t/r)]^r}_2$, with $n$ the number of qubits and $d=2^n$ the Hilbert-space dimension. Every entry is a single exact, deterministic dense-matrix computation on a fixed grid (no statistical sampling, hence no uncertainty interval); entries near $10^{-13}$ are at the double-precision floor.}
+\label{tab:error-summary}
+\centering
+\begin{tabular}{ccccc}
+\toprule
+$n$ & $d$ & $q$ & $\epsilon_{T,q}$ & $\epsilon_{R,q}$\\
+\midrule
+4 & 16 & 1 & $1.389\times10^{-1}$ & $3.810\times10^{-15}$\\
+4 & 16 & 2 & $1.037\times10^{-2}$ & $8.092\times10^{-15}$\\
+4 & 16 & 4 & $1.154\times10^{-5}$ & $1.501\times10^{-14}$\\
+4 & 16 & 6 & $1.486\times10^{-9}$ & $5.046\times10^{-14}$\\
+4 & 16 & 8 & $1.176\times10^{-13}$ & $2.188\times10^{-13}$\\
+5 & 32 & 1 & $1.774\times10^{-1}$ & $6.606\times10^{-15}$\\
+5 & 32 & 2 & $1.384\times10^{-2}$ & $1.036\times10^{-14}$\\
+5 & 32 & 4 & $1.591\times10^{-5}$ & $1.724\times10^{-14}$\\
+5 & 32 & 6 & $2.576\times10^{-9}$ & $5.270\times10^{-14}$\\
+5 & 32 & 8 & $1.832\times10^{-13}$ & $3.039\times10^{-13}$\\
+6 & 64 & 1 & $2.264\times10^{-1}$ & $7.709\times10^{-15}$\\
+6 & 64 & 2 & $1.727\times10^{-2}$ & $1.533\times10^{-14}$\\
+6 & 64 & 4 & $2.064\times10^{-5}$ & $6.517\times10^{-14}$\\
+6 & 64 & 6 & $3.499\times10^{-9}$ & $8.067\times10^{-14}$\\
+6 & 64 & 8 & $1.785\times10^{-13}$ & $2.014\times10^{-13}$\\
+\bottomrule
+\end{tabular}
+\end{table*}
 
 \begin{figure}[t]
 \centering
@@ -154,7 +181,7 @@ The locality theorem (Theorem~\ref{thm:tfim-support}) turns residual compilation
 
 \emph{The coefficients generalize across size.} On held-out sizes $n=6,\dots,10$, absent from training, the oracle-free network's predicted-versus-exact coefficient parity has $R^2=0.9998$ (Fig.~\ref{fig:learned}d).
 
-\emph{The correction transfers to much larger systems.} Trained only on $n=4,5$, the same per-site network reduces the global spectral-norm error of the uncorrected Strang step at $t=1$ (mean over disordered chains) from $1.23\times10^{-2}$ to $2.9\times10^{-4}$ at $n=4$, and from $3.51\times10^{-2}$ to $9.4\times10^{-4}$ at $n=10$---a $36$--$43\times$ reduction, with $n=6,\dots,10$ entirely outside the training set (Fig.~\ref{fig:learned}a; per-size errors, reduction factors, and held-out markers are tabulated in Table~\ref{tab:learned-summary}). It tracks the exact weight-$\leq3$ oracle to within a factor of about two to three, and sits roughly $5\times$ below the leading-order BCH baseline at this step size. Shaded bands in Fig.~\ref{fig:learned} are one standard deviation over disordered realizations, so the separation between the learned correction and both the uncorrected step and the analytic baseline is well outside the run-to-run spread. The linear-in-$r$ growth in Fig.~\ref{fig:learned}c and the size transfer to $n=10$ are exactly what Theorem~\ref{thm:size-transfer} predicts, since the per-site error $\eta$ is independent of $n$ under weight sharing.
+\emph{The correction transfers to much larger systems.} Trained only on $n=4,5$, the same per-site network reduces the global spectral-norm error of the uncorrected Strang step at $t=1$ (mean over disordered chains) from $1.23\times10^{-2}$ to $2.7\times10^{-4}$ at $n=4$, and from $3.51\times10^{-2}$ to $8.7\times10^{-4}$ at $n=10$---a $38$--$46\times$ reduction, with $n=6,\dots,10$ entirely outside the training set (Fig.~\ref{fig:learned}a; per-size errors, reduction factors, and held-out markers are tabulated in Table~\ref{tab:learned-summary}). It tracks the exact weight-$\leq3$ oracle to within a factor of about two to three, and sits roughly $5\times$ below the leading-order BCH baseline at this step size. Shaded bands in Fig.~\ref{fig:learned} are one standard deviation over disordered realizations, so the separation between the learned correction and both the uncorrected step and the analytic baseline is well outside the run-to-run spread. The linear-in-$r$ growth in Fig.~\ref{fig:learned}c and the size transfer to $n=10$ are exactly what Theorem~\ref{thm:size-transfer} predicts, since the per-site error $\eta$ is independent of $n$ under weight sharing.
 
 \emph{Training needs no global oracle.} The oracle-free network, trained only on at-most-seven-qubit patches, matches---and slightly improves on---the oracle-trained network at every size (the two learned curves overlap in Fig.~\ref{fig:learned}a). The dense $2^n$ oracle, the central limitation of the framework, is therefore not required to \emph{learn} the correction.
 
@@ -169,7 +196,24 @@ Two scope statements are important and are revisited in the Discussion. With ora
 \label{fig:learned}
 \end{figure}
 
-\input{tables/learned_residual_summary.tex}
+\begin{table}[t]
+\caption{\textbf{Learned residual generator transferred across system size on the disordered open-boundary \tfim{}.} Parameters are $J_i,h_i\sim\mathcal{U}[0.5,1.5]$, $t=1$, and $\dt=0.1$. Errors are global spectral-norm errors reported as the mean $\pm$ one standard deviation over the disordered chains (count $n_{\mathrm c}$ in the last column); the same dispersion is shown as bands in Fig.~\ref{fig:learned}. The reduction factor is $\epsilon_{\mathrm{Strang}}/\epsilon_{\mathrm{learned}}$. The oracle-free network is trained only on $n=4,5$; sizes $n\geq6$ are absent from training. All values are recomputed from dense matrices.}
+\label{tab:learned-summary}
+\centering
+\begin{tabular}{cccccc}
+\toprule
+$n$ & regime & $\epsilon_{\mathrm{Strang}}$ & $\epsilon_{\mathrm{learned}}$ & reduction & $n_{\mathrm c}$\\
+\midrule
+4 & train & $1.234\times10^{-2} \pm 4.197\times10^{-3}$ & $2.705\times10^{-4} \pm 2.010\times10^{-4}$ & $45.6\times$ & 40\\
+5 & train & $1.418\times10^{-2} \pm 4.419\times10^{-3}$ & $3.634\times10^{-4} \pm 1.420\times10^{-4}$ & $39.0\times$ & 40\\
+6 & transfer & $1.921\times10^{-2} \pm 4.206\times10^{-3}$ & $4.428\times10^{-4} \pm 1.213\times10^{-4}$ & $43.4\times$ & 40\\
+7 & transfer & $2.255\times10^{-2} \pm 5.680\times10^{-3}$ & $5.820\times10^{-4} \pm 2.227\times10^{-4}$ & $38.8\times$ & 40\\
+8 & transfer & $2.656\times10^{-2} \pm 5.268\times10^{-3}$ & $6.933\times10^{-4} \pm 1.735\times10^{-4}$ & $38.3\times$ & 24\\
+9 & transfer & $3.007\times10^{-2} \pm 6.634\times10^{-3}$ & $7.400\times10^{-4} \pm 1.595\times10^{-4}$ & $40.6\times$ & 16\\
+10 & transfer & $3.507\times10^{-2} \pm 8.563\times10^{-3}$ & $8.739\times10^{-4} \pm 2.287\times10^{-4}$ & $40.1\times$ & 12\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 Figure~\ref{fig:headline} summarizes the headline comparison: at the largest held-out transfer size the learned correction is nearly two orders of magnitude below the uncorrected Strang step and roughly an order of magnitude below leading-order BCH, and its error-reduction factor over the uncorrected baseline holds across every chain length, including the held-out transfer sizes.
 
@@ -193,7 +237,7 @@ The exact residual identity alone is not a practical algorithm. The value of the
 
 \rgtc{} differs from existing strategies but is compatible with them. Multi-product formulas cancel leading Trotter errors by linearly combining unitaries~\cite{childs2012mpf}; randomized formulas reduce error in expectation or concentration~\cite{campbell2019,ouyang2020,childs2022,chen2022a}; qubitization and quantum signal processing implement polynomial transformations of block encodings~\cite{berry2007,berry2014,low2017qsp,low2019qubitization}; Magnus methods construct effective generators for time-dependent or interaction-picture dynamics~\cite{magnus1954,blanes2009,sharma2024,fang2025}. \rgtc{} keeps the product-formula step and corrects it by a residual generator, so one could define a residual for a randomized product-formula realization, a multi-product formula, or a low-depth Cartan-decomposition circuit~\cite{kokcu2022,steckmann2023}.
 
-The projected residual experiment is the most important empirical component beyond the tautological oracle identity. In the dense TFIM benchmark at $n=5$, $q=2$, $t=1$, the baseline error is $1.384\times10^{-2}$; the $w\leq3$ projected generator reduces this to $1.545\times10^{-4}$, while $w\leq4$ reduces it to $1.850\times10^{-7}$. These are still dense offline experiments, but they demonstrate that most of the useful correction can live in a dramatically smaller operator family, and Theorem~\ref{thm:tfim-support} explains why weight three is the first meaningful threshold for the leading Strang defect in this regime.
+The projected residual experiment is the most important empirical component beyond the tautological oracle identity. In the dense \tfim{} benchmark at $n=5$, $q=2$, $t=1$, the baseline error is $1.384\times10^{-2}$; the $w\leq3$ projected generator reduces this to $1.545\times10^{-4}$, while $w\leq4$ reduces it to $1.850\times10^{-7}$. These are still dense offline experiments, but they demonstrate that most of the useful correction can live in a dramatically smaller operator family, and Theorem~\ref{thm:tfim-support} explains why weight three is the first meaningful threshold for the leading Strang defect in this regime.
 
 Near-term quantum algorithms, including VQE~\cite{peruzzo2014,mcclean2016}, QAOA~\cite{farhi2014}, and broader variational workflows~\cite{cerezo2021,bharti2022,endo2021}, are constrained by circuit depth and noise~\cite{preskill2018,kandala2017,kim2023}. A shallow residual generator could be used as a correction layer after a product-formula block, but only if it can be compiled into native gates with tolerable overhead. Fault-tolerant settings shift the question toward T-count, block encodings, and resource estimates~\cite{wecker2014,wecker2015,babbush2018,babbush2019,haah2021}. In either regime, Theorem~\ref{thm:residual-stability} supplies a simple target: if a compiled residual has per-step operator error at most $\epsilon/r$, then the global simulation error contribution is at most $\epsilon$. The benchmark suite is dense-linear-algebra heavy and parameter-sweep heavy, hence naturally suited to GPU acceleration, which would enable larger offline training sets for learned residual generators and more serious benchmarking of compression families without changing the theory.
 
@@ -203,8 +247,556 @@ The limitations are substantial. Oracle \rgtc{} requires $U(\dt)$ and is therefo
 % REFERENCES
 % ============================================================
 
-\bibliographystyle{naturemag}
-\bibliography{refs}
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\providecommand{\bibinfo}[2]{#2}
+\providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem{lloyd1996}
+\bibinfo{author}{Lloyd, S.}
+\newblock \bibinfo{title}{Universal quantum simulators}.
+\newblock \emph{\bibinfo{journal}{Science}} \textbf{\bibinfo{volume}{273}},
+  \bibinfo{pages}{1073--1078} (\bibinfo{year}{1996}).
+
+\bibitem{trotter1959}
+\bibinfo{author}{Trotter, H.~F.}
+\newblock \bibinfo{title}{On the product of semi-groups of operators}.
+\newblock \emph{\bibinfo{journal}{Proceedings of the American Mathematical
+  Society}} \textbf{\bibinfo{volume}{10}}, \bibinfo{pages}{545--551}
+  (\bibinfo{year}{1959}).
+
+\bibitem{suzuki1990}
+\bibinfo{author}{Suzuki, M.}
+\newblock \bibinfo{title}{Fractal decomposition of exponential operators with
+  applications to many-body theories and {Monte Carlo} simulations}.
+\newblock \emph{\bibinfo{journal}{Physics Letters A}}
+  \textbf{\bibinfo{volume}{146}}, \bibinfo{pages}{319--323}
+  (\bibinfo{year}{1990}).
+
+\bibitem{suzuki1991}
+\bibinfo{author}{Suzuki, M.}
+\newblock \bibinfo{title}{General theory of fractal path integrals with
+  applications to many-body theories and statistical physics}.
+\newblock \emph{\bibinfo{journal}{Journal of Mathematical Physics}}
+  \textbf{\bibinfo{volume}{32}}, \bibinfo{pages}{400--407}
+  (\bibinfo{year}{1991}).
+
+\bibitem{suzuki1993}
+\bibinfo{author}{Suzuki, M.}
+\newblock \bibinfo{title}{Improved {Trotter}-like formulae}.
+\newblock \emph{\bibinfo{journal}{Journal of Physics A: Mathematical and
+  General}} \textbf{\bibinfo{volume}{26}}, \bibinfo{pages}{L133--L137}
+  (\bibinfo{year}{1993}).
+
+\bibitem{yoshida1990}
+\bibinfo{author}{Yoshida, H.}
+\newblock \bibinfo{title}{Construction of higher order symplectic integrators}.
+\newblock \emph{\bibinfo{journal}{Physics Letters A}}
+  \textbf{\bibinfo{volume}{150}}, \bibinfo{pages}{262--268}
+  (\bibinfo{year}{1990}).
+
+\bibitem{forest1990}
+\bibinfo{author}{Forest, E.} \& \bibinfo{author}{Ruth, R.~D.}
+\newblock \bibinfo{title}{Fourth-order symplectic integration}.
+\newblock \emph{\bibinfo{journal}{Physica D: Nonlinear Phenomena}}
+  \textbf{\bibinfo{volume}{43}}, \bibinfo{pages}{105--117}
+  (\bibinfo{year}{1990}).
+
+\bibitem{chin1997}
+\bibinfo{author}{Chin, S.~A.}
+\newblock \bibinfo{title}{Symplectic integrators from composite operator
+  factorizations}.
+\newblock \emph{\bibinfo{journal}{Physics Letters A}}
+  \textbf{\bibinfo{volume}{226}}, \bibinfo{pages}{344--348}
+  (\bibinfo{year}{1997}).
+
+\bibitem{hatano2005}
+\bibinfo{author}{Hatano, N.} \& \bibinfo{author}{Suzuki, M.}
+\newblock \bibinfo{title}{Finding exponential product formulas of higher
+  orders}.
+\newblock In \bibinfo{editor}{Das, A.} \& \bibinfo{editor}{Chakrabarti, B.~K.}
+  (eds.) \emph{\bibinfo{booktitle}{Quantum Annealing and Other Optimization
+  Methods}}, \bibinfo{pages}{37--68} (\bibinfo{publisher}{Springer},
+  \bibinfo{address}{Berlin}, \bibinfo{year}{2005}).
+
+\bibitem{wiebe2010}
+\bibinfo{author}{Wiebe, N.}, \bibinfo{author}{Berry, D.},
+  \bibinfo{author}{H{\o}yer, P.} \& \bibinfo{author}{Sanders, B.~C.}
+\newblock \bibinfo{title}{Higher order decompositions of ordered operator
+  exponentials}.
+\newblock \emph{\bibinfo{journal}{Journal of Physics A: Mathematical and
+  Theoretical}} \textbf{\bibinfo{volume}{43}}, \bibinfo{pages}{065203}
+  (\bibinfo{year}{2010}).
+
+\bibitem{abrams1997}
+\bibinfo{author}{Abrams, D.~S.} \& \bibinfo{author}{Lloyd, S.}
+\newblock \bibinfo{title}{Simulation of many-body {Fermi} systems on a
+  universal quantum computer}.
+\newblock \emph{\bibinfo{journal}{Physical Review Letters}}
+  \textbf{\bibinfo{volume}{79}}, \bibinfo{pages}{2586--2589}
+  (\bibinfo{year}{1997}).
+
+\bibitem{sornborger1999}
+\bibinfo{author}{Sornborger, A.~T.} \& \bibinfo{author}{Stewart, E.~D.}
+\newblock \bibinfo{title}{Higher-order methods for simulations on quantum
+  computers}.
+\newblock \emph{\bibinfo{journal}{Physical Review A}}
+  \textbf{\bibinfo{volume}{60}}, \bibinfo{pages}{1956--1965}
+  (\bibinfo{year}{1999}).
+
+\bibitem{ortiz2001}
+\bibinfo{author}{Ortiz, G.}, \bibinfo{author}{Gubernatis, J.~E.},
+  \bibinfo{author}{Knill, E.} \& \bibinfo{author}{Laflamme, R.}
+\newblock \bibinfo{title}{Quantum algorithms for fermionic simulations}.
+\newblock \emph{\bibinfo{journal}{Physical Review A}}
+  \textbf{\bibinfo{volume}{64}}, \bibinfo{pages}{022319}
+  (\bibinfo{year}{2001}).
+
+\bibitem{kitaev1997}
+\bibinfo{author}{Kitaev, A.~Y.}
+\newblock \bibinfo{title}{Quantum computations: algorithms and error
+  correction}.
+\newblock \emph{\bibinfo{journal}{Russian Mathematical Surveys}}
+  \textbf{\bibinfo{volume}{52}}, \bibinfo{pages}{1191--1249}
+  (\bibinfo{year}{1997}).
+
+\bibitem{kitaev2002}
+\bibinfo{author}{Kitaev, A.~Y.}, \bibinfo{author}{Shen, A.~H.} \&
+  \bibinfo{author}{Vyalyi, M.~N.}
+\newblock \emph{\bibinfo{title}{Classical and Quantum Computation}}
+  (\bibinfo{publisher}{American Mathematical Society},
+  \bibinfo{address}{Providence, Rhode Island}, \bibinfo{year}{2002}).
+
+\bibitem{abrams1999}
+\bibinfo{author}{Abrams, D.~S.} \& \bibinfo{author}{Lloyd, S.}
+\newblock \bibinfo{title}{Quantum algorithm providing exponential speed
+  increase for finding eigenvalues and eigenvectors}.
+\newblock \emph{\bibinfo{journal}{Physical Review Letters}}
+  \textbf{\bibinfo{volume}{83}}, \bibinfo{pages}{5162--5165}
+  (\bibinfo{year}{1999}).
+
+\bibitem{cleve1998}
+\bibinfo{author}{Cleve, R.}, \bibinfo{author}{Ekert, A.},
+  \bibinfo{author}{Macchiavello, C.} \& \bibinfo{author}{Mosca, M.}
+\newblock \bibinfo{title}{Quantum algorithms revisited}.
+\newblock \emph{\bibinfo{journal}{Proceedings of the Royal Society of London,
+  Series A}} \textbf{\bibinfo{volume}{454}}, \bibinfo{pages}{339--354}
+  (\bibinfo{year}{1998}).
+
+\bibitem{aspuruguzik2005}
+\bibinfo{author}{Aspuru-Guzik, A.}, \bibinfo{author}{Dutoi, A.~D.},
+  \bibinfo{author}{Love, P.~J.} \& \bibinfo{author}{Head-Gordon, M.}
+\newblock \bibinfo{title}{Simulated quantum computation of molecular energies}.
+\newblock \emph{\bibinfo{journal}{Science}} \textbf{\bibinfo{volume}{309}},
+  \bibinfo{pages}{1704--1707} (\bibinfo{year}{2005}).
+
+\bibitem{wecker2014}
+\bibinfo{author}{Wecker, D.}, \bibinfo{author}{Bauer, B.},
+  \bibinfo{author}{Clark, B.~K.}, \bibinfo{author}{Hastings, M.~B.} \&
+  \bibinfo{author}{Troyer, M.}
+\newblock \bibinfo{title}{Gate-count estimates for performing quantum chemistry
+  on small quantum computers}.
+\newblock \emph{\bibinfo{journal}{Physical Review A}}
+  \textbf{\bibinfo{volume}{90}}, \bibinfo{pages}{022305}
+  (\bibinfo{year}{2014}).
+
+\bibitem{wecker2015}
+\bibinfo{author}{Wecker, D.}, \bibinfo{author}{Bauer, B.},
+  \bibinfo{author}{Clark, B.~K.}, \bibinfo{author}{Hastings, M.~B.} \&
+  \bibinfo{author}{Troyer, M.}
+\newblock \bibinfo{title}{Progress towards practical quantum advantage in
+  quantum chemistry simulations}.
+\newblock \emph{\bibinfo{journal}{Physical Review A}}
+  \textbf{\bibinfo{volume}{92}}, \bibinfo{pages}{042303}
+  (\bibinfo{year}{2015}).
+
+\bibitem{babbush2015}
+\bibinfo{author}{Babbush, R.}, \bibinfo{author}{McClean, J.},
+  \bibinfo{author}{Wecker, D.}, \bibinfo{author}{Aspuru-Guzik, A.} \&
+  \bibinfo{author}{Wiebe, N.}
+\newblock \bibinfo{title}{Chemical basis of {Trotter}-{Suzuki} errors in
+  quantum chemistry simulations}.
+\newblock \emph{\bibinfo{journal}{Physical Review A}}
+  \textbf{\bibinfo{volume}{91}}, \bibinfo{pages}{022311}
+  (\bibinfo{year}{2015}).
+
+\bibitem{reiher2017}
+\bibinfo{author}{Reiher, M.}, \bibinfo{author}{Wiebe, N.},
+  \bibinfo{author}{Svore, K.~M.}, \bibinfo{author}{Wecker, D.} \&
+  \bibinfo{author}{Troyer, M.}
+\newblock \bibinfo{title}{Elucidating reaction mechanisms on quantum
+  computers}.
+\newblock \emph{\bibinfo{journal}{Proceedings of the National Academy of
+  Sciences}} \textbf{\bibinfo{volume}{114}}, \bibinfo{pages}{7555--7560}
+  (\bibinfo{year}{2017}).
+
+\bibitem{kivlichan2018}
+\bibinfo{author}{Kivlichan, I.~D.} \emph{et~al.}
+\newblock \bibinfo{title}{Quantum simulation of electronic structure with
+  linear depth and connectivity}.
+\newblock \emph{\bibinfo{journal}{Physical Review Letters}}
+  \textbf{\bibinfo{volume}{120}}, \bibinfo{pages}{110501}
+  (\bibinfo{year}{2018}).
+
+\bibitem{haah2021}
+\bibinfo{author}{Haah, J.}, \bibinfo{author}{Hastings, M.~B.},
+  \bibinfo{author}{Kothari, R.} \& \bibinfo{author}{Low, G.~H.}
+\newblock \bibinfo{title}{Quantum algorithm for simulating real time dynamics
+  of lattice {Hamiltonians}}.
+\newblock \emph{\bibinfo{journal}{SIAM Journal on Computing}}
+  \textbf{\bibinfo{volume}{52}}, \bibinfo{pages}{1534--1565}
+  (\bibinfo{year}{2021}).
+\newblock \eprint{1801.00862}.
+
+\bibitem{childs2021}
+\bibinfo{author}{Childs, A.~M.}, \bibinfo{author}{Su, Y.},
+  \bibinfo{author}{Tran, M.~C.}, \bibinfo{author}{Wiebe, N.} \&
+  \bibinfo{author}{Zhu, S.}
+\newblock \bibinfo{title}{Theory of {Trotter} error with commutator scaling}.
+\newblock \emph{\bibinfo{journal}{PRX Quantum}} \textbf{\bibinfo{volume}{2}},
+  \bibinfo{pages}{010329} (\bibinfo{year}{2021}).
+
+\bibitem{layden2022}
+\bibinfo{author}{Layden, D.}
+\newblock \bibinfo{title}{First-order {Trotter} error from a second-order
+  perspective}.
+\newblock \emph{\bibinfo{journal}{Physical Review Letters}}
+  \textbf{\bibinfo{volume}{128}}, \bibinfo{pages}{210501}
+  (\bibinfo{year}{2022}).
+
+\bibitem{zhuk2023}
+\bibinfo{author}{Zhuk, S.}, \bibinfo{author}{Sun, N.~F.} \&
+  \bibinfo{author}{Bravyi, S.}
+\newblock \bibinfo{title}{{Trotter} error bounds and dynamic structure factors
+  for quantum spin systems far from equilibrium}.
+\newblock \emph{\bibinfo{journal}{PRX Quantum}} \textbf{\bibinfo{volume}{4}},
+  \bibinfo{pages}{020345} (\bibinfo{year}{2023}).
+
+\bibitem{childs2019lattice}
+\bibinfo{author}{Childs, A.~M.} \& \bibinfo{author}{Su, Y.}
+\newblock \bibinfo{title}{Nearly optimal lattice simulation by product
+  formulas}.
+\newblock \emph{\bibinfo{journal}{Physical Review Letters}}
+  \textbf{\bibinfo{volume}{123}}, \bibinfo{pages}{050503}
+  (\bibinfo{year}{2019}).
+
+\bibitem{lieb1972}
+\bibinfo{author}{Lieb, E.~H.} \& \bibinfo{author}{Robinson, D.~W.}
+\newblock \bibinfo{title}{The finite group velocity of quantum spin systems}.
+\newblock \emph{\bibinfo{journal}{Communications in Mathematical Physics}}
+  \textbf{\bibinfo{volume}{28}}, \bibinfo{pages}{251--257}
+  (\bibinfo{year}{1972}).
+
+\bibitem{tran2020}
+\bibinfo{author}{Tran, M.~C.} \emph{et~al.}
+\newblock \bibinfo{title}{Locality and digital quantum simulation of power-law
+  interactions}.
+\newblock \emph{\bibinfo{journal}{Physical Review X}}
+  \textbf{\bibinfo{volume}{9}}, \bibinfo{pages}{031006} (\bibinfo{year}{2019}).
+
+\bibitem{low2023pra}
+\bibinfo{author}{Low, G.~H.}, \bibinfo{author}{Su, Y.}, \bibinfo{author}{Tong,
+  Y.} \& \bibinfo{author}{Tran, M.~C.}
+\newblock \bibinfo{title}{Complexity of implementing {Trotter} steps}.
+\newblock \emph{\bibinfo{journal}{PRX Quantum}} \textbf{\bibinfo{volume}{4}},
+  \bibinfo{pages}{020323} (\bibinfo{year}{2023}).
+
+\bibitem{childs2012mpf}
+\bibinfo{author}{Childs, A.~M.} \& \bibinfo{author}{Wiebe, N.}
+\newblock \bibinfo{title}{Hamiltonian simulation using linear combinations of
+  unitary operations}.
+\newblock \emph{\bibinfo{journal}{Quantum Information \& Computation}}
+  \textbf{\bibinfo{volume}{12}}, \bibinfo{pages}{901--924}
+  (\bibinfo{year}{2012}).
+\newblock \eprint{1202.5822}.
+
+\bibitem{berry2015prl}
+\bibinfo{author}{Berry, D.~W.}, \bibinfo{author}{Childs, A.~M.},
+  \bibinfo{author}{Cleve, R.}, \bibinfo{author}{Kothari, R.} \&
+  \bibinfo{author}{Somma, R.~D.}
+\newblock \bibinfo{title}{Simulating hamiltonian dynamics with a truncated
+  {Taylor} series}.
+\newblock \emph{\bibinfo{journal}{Physical Review Letters}}
+  \textbf{\bibinfo{volume}{114}}, \bibinfo{pages}{090502}
+  (\bibinfo{year}{2015}).
+
+\bibitem{berry2007}
+\bibinfo{author}{Berry, D.~W.}, \bibinfo{author}{Ahokas, G.},
+  \bibinfo{author}{Cleve, R.} \& \bibinfo{author}{Sanders, B.~C.}
+\newblock \bibinfo{title}{Efficient quantum algorithms for simulating sparse
+  {Hamiltonians}}.
+\newblock \emph{\bibinfo{journal}{Communications in Mathematical Physics}}
+  \textbf{\bibinfo{volume}{270}}, \bibinfo{pages}{359--371}
+  (\bibinfo{year}{2007}).
+
+\bibitem{berry2014}
+\bibinfo{author}{Berry, D.~W.}, \bibinfo{author}{Childs, A.~M.},
+  \bibinfo{author}{Cleve, R.}, \bibinfo{author}{Kothari, R.} \&
+  \bibinfo{author}{Somma, R.~D.}
+\newblock \bibinfo{title}{Exponential improvement in precision for simulating
+  sparse {Hamiltonians} via quantum walks}.
+\newblock In \emph{\bibinfo{booktitle}{Proceedings of the 46th Annual ACM
+  Symposium on Theory of Computing}}, \bibinfo{pages}{283--292}
+  (\bibinfo{year}{2014}).
+
+\bibitem{low2017qsp}
+\bibinfo{author}{Low, G.~H.} \& \bibinfo{author}{Chuang, I.~L.}
+\newblock \bibinfo{title}{Optimal {Hamiltonian} simulation by quantum signal
+  processing}.
+\newblock \emph{\bibinfo{journal}{Physical Review Letters}}
+  \textbf{\bibinfo{volume}{118}}, \bibinfo{pages}{010501}
+  (\bibinfo{year}{2017}).
+
+\bibitem{low2019qubitization}
+\bibinfo{author}{Low, G.~H.} \& \bibinfo{author}{Chuang, I.~L.}
+\newblock \bibinfo{title}{Hamiltonian simulation by qubitization}.
+\newblock \emph{\bibinfo{journal}{Quantum}} \textbf{\bibinfo{volume}{3}},
+  \bibinfo{pages}{163} (\bibinfo{year}{2019}).
+
+\bibitem{campbell2019}
+\bibinfo{author}{Campbell, E.~T.}
+\newblock \bibinfo{title}{Random compiler for fast {Hamiltonian} simulation}.
+\newblock \emph{\bibinfo{journal}{Physical Review Letters}}
+  \textbf{\bibinfo{volume}{123}}, \bibinfo{pages}{070503}
+  (\bibinfo{year}{2019}).
+
+\bibitem{ouyang2020}
+\bibinfo{author}{Ouyang, Y.}, \bibinfo{author}{White, D.~R.} \&
+  \bibinfo{author}{Campbell, E.~T.}
+\newblock \bibinfo{title}{Compilation by stochastic {Hamiltonian}
+  sparsification}.
+\newblock \emph{\bibinfo{journal}{Quantum}} \textbf{\bibinfo{volume}{4}},
+  \bibinfo{pages}{235} (\bibinfo{year}{2020}).
+
+\bibitem{childs2022}
+\bibinfo{author}{Childs, A.~M.}, \bibinfo{author}{Ostrander, A.} \&
+  \bibinfo{author}{Su, Y.}
+\newblock \bibinfo{title}{Faster quantum simulation by randomization}.
+\newblock \emph{\bibinfo{journal}{Quantum}} \textbf{\bibinfo{volume}{3}},
+  \bibinfo{pages}{182} (\bibinfo{year}{2019}).
+
+\bibitem{chen2022a}
+\bibinfo{author}{Chen, C.-F.}, \bibinfo{author}{Huang, H.-Y.},
+  \bibinfo{author}{Kueng, R.} \& \bibinfo{author}{Tropp, J.~A.}
+\newblock \bibinfo{title}{Concentration for random product formulas}.
+\newblock \emph{\bibinfo{journal}{PRX Quantum}} \textbf{\bibinfo{volume}{2}},
+  \bibinfo{pages}{040305} (\bibinfo{year}{2021}).
+
+\bibitem{magnus1954}
+\bibinfo{author}{Magnus, W.}
+\newblock \bibinfo{title}{On the exponential solution of differential equations
+  for a linear operator}.
+\newblock \emph{\bibinfo{journal}{Communications on Pure and Applied
+  Mathematics}} \textbf{\bibinfo{volume}{7}}, \bibinfo{pages}{649--673}
+  (\bibinfo{year}{1954}).
+
+\bibitem{blanes2009}
+\bibinfo{author}{Blanes, S.}, \bibinfo{author}{Casas, F.},
+  \bibinfo{author}{Oteo, J.~A.} \& \bibinfo{author}{Ros, J.}
+\newblock \bibinfo{title}{The {Magnus} expansion and some of its applications}.
+\newblock \emph{\bibinfo{journal}{Physics Reports}}
+  \textbf{\bibinfo{volume}{470}}, \bibinfo{pages}{151--238}
+  (\bibinfo{year}{2009}).
+
+\bibitem{sharma2024}
+\bibinfo{author}{Sharma, K.} \& \bibinfo{author}{Tran, M.~C.}
+\newblock \bibinfo{title}{Hamiltonian simulation in the interaction picture
+  using the {Magnus} expansion}.
+\newblock \emph{\bibinfo{journal}{Physical Review Research}}
+  \textbf{\bibinfo{volume}{6}}, \bibinfo{pages}{033047} (\bibinfo{year}{2024}).
+
+\bibitem{fang2025}
+\bibinfo{author}{Fang, D.}, \bibinfo{author}{Liu, D.} \&
+  \bibinfo{author}{Sarkar, R.}
+\newblock \bibinfo{title}{Time-dependent hamiltonian simulation via {Magnus}
+  expansion: Algorithm and superconvergence}.
+\newblock \emph{\bibinfo{journal}{Communications in Mathematical Physics}}
+  \textbf{\bibinfo{volume}{406}}, \bibinfo{pages}{128} (\bibinfo{year}{2025}).
+
+\bibitem{cirstoiu2020}
+\bibinfo{author}{Cirstoiu, C.} \emph{et~al.}
+\newblock \bibinfo{title}{Variational fast forwarding for quantum simulation
+  beyond the coherence time}.
+\newblock \emph{\bibinfo{journal}{npj Quantum Information}}
+  \textbf{\bibinfo{volume}{6}}, \bibinfo{pages}{82} (\bibinfo{year}{2020}).
+
+\bibitem{kokcu2022}
+\bibinfo{author}{Kökçü, E.} \emph{et~al.}
+\newblock \bibinfo{title}{Fixed depth hamiltonian simulation via {Cartan}
+  decomposition}.
+\newblock \emph{\bibinfo{journal}{Physical Review Letters}}
+  \textbf{\bibinfo{volume}{129}}, \bibinfo{pages}{070501}
+  (\bibinfo{year}{2022}).
+
+\bibitem{steckmann2023}
+\bibinfo{author}{Steckmann, T.} \emph{et~al.}
+\newblock \bibinfo{title}{Simulating the {Mott} transition on a noisy digital
+  quantum computer via {Cartan}-based fast-forwarding circuits}.
+\newblock \emph{\bibinfo{journal}{PRX Quantum}} \textbf{\bibinfo{volume}{4}},
+  \bibinfo{pages}{010308} (\bibinfo{year}{2023}).
+
+\bibitem{wu2023}
+\bibinfo{author}{Wu, S.-X.}, \bibinfo{author}{Du, S.-W.},
+  \bibinfo{author}{Fang, D.} \& \bibinfo{author}{Liu, D.-S.}
+\newblock \bibinfo{title}{Randomized hamiltonian simulation by magnetic
+  groups}.
+\newblock \emph{\bibinfo{journal}{Physical Review A}}
+  \textbf{\bibinfo{volume}{108}}, \bibinfo{pages}{022418}
+  (\bibinfo{year}{2023}).
+
+\bibitem{zeier2011}
+\bibinfo{author}{Zeier, R.} \& \bibinfo{author}{Schulte-Herbr\"{u}ggen, T.}
+\newblock \bibinfo{title}{Symmetry principles in quantum systems theory}.
+\newblock \emph{\bibinfo{journal}{Journal of Mathematical Physics}}
+  \textbf{\bibinfo{volume}{52}}, \bibinfo{pages}{113510}
+  (\bibinfo{year}{2011}).
+
+\bibitem{sachdev2011}
+\bibinfo{author}{Sachdev, S.}
+\newblock \emph{\bibinfo{title}{Quantum Phase Transitions}}
+  (\bibinfo{publisher}{Cambridge University Press},
+  \bibinfo{address}{Cambridge}, \bibinfo{year}{2011}), \bibinfo{edition}{2nd}
+  edn.
+
+\bibitem{cerveralierta2018}
+\bibinfo{author}{Cervera-Lierta, A.}
+\newblock \bibinfo{title}{Exact {Ising} model simulation on a quantum
+  computer}.
+\newblock \emph{\bibinfo{journal}{Quantum}} \textbf{\bibinfo{volume}{2}},
+  \bibinfo{pages}{114} (\bibinfo{year}{2018}).
+
+\bibitem{bravyi2002}
+\bibinfo{author}{Bravyi, S.~B.} \& \bibinfo{author}{Kitaev, A.~Y.}
+\newblock \bibinfo{title}{Fermionic quantum computation}.
+\newblock \emph{\bibinfo{journal}{Annals of Physics}}
+  \textbf{\bibinfo{volume}{298}}, \bibinfo{pages}{210--226}
+  (\bibinfo{year}{2002}).
+
+\bibitem{whitfield2011}
+\bibinfo{author}{Whitfield, J.~D.}, \bibinfo{author}{Biamonte, J.} \&
+  \bibinfo{author}{Aspuru-Guzik, A.}
+\newblock \bibinfo{title}{Simulation of electronic structure {Hamiltonians}
+  using quantum computers}.
+\newblock \emph{\bibinfo{journal}{Molecular Physics}}
+  \textbf{\bibinfo{volume}{109}}, \bibinfo{pages}{735--750}
+  (\bibinfo{year}{2011}).
+
+\bibitem{seeley2012}
+\bibinfo{author}{Seeley, J.~T.}, \bibinfo{author}{Richard, M.~J.} \&
+  \bibinfo{author}{Love, P.~J.}
+\newblock \bibinfo{title}{The {Bravyi}-{Kitaev} transformation for quantum
+  computation of electronic structure}.
+\newblock \emph{\bibinfo{journal}{Journal of Chemical Physics}}
+  \textbf{\bibinfo{volume}{137}}, \bibinfo{pages}{224109}
+  (\bibinfo{year}{2012}).
+
+\bibitem{verstraete2005}
+\bibinfo{author}{Verstraete, F.} \& \bibinfo{author}{Cirac, J.~I.}
+\newblock \bibinfo{title}{Mapping local {Hamiltonians} of fermions to local
+  {Hamiltonians} of spins}.
+\newblock \emph{\bibinfo{journal}{Journal of Statistical Mechanics: Theory and
+  Experiment}} \textbf{\bibinfo{volume}{2005}}, \bibinfo{pages}{P09012}
+  (\bibinfo{year}{2005}).
+
+\bibitem{cade2020}
+\bibinfo{author}{Cade, C.}, \bibinfo{author}{Mineh, L.},
+  \bibinfo{author}{Montanaro, A.} \& \bibinfo{author}{Sherborn, S.}
+\newblock \bibinfo{title}{Strategies for solving the {Fermi-Hubbard} model on
+  near-term quantum computers}.
+\newblock \emph{\bibinfo{journal}{Physical Review B}}
+  \textbf{\bibinfo{volume}{102}}, \bibinfo{pages}{235122}
+  (\bibinfo{year}{2020}).
+
+\bibitem{jordan2012}
+\bibinfo{author}{Jordan, S.~P.}, \bibinfo{author}{Lee, K. S.~M.} \&
+  \bibinfo{author}{Preskill, J.}
+\newblock \bibinfo{title}{Quantum algorithms for quantum field theories}.
+\newblock \emph{\bibinfo{journal}{Science}} \textbf{\bibinfo{volume}{336}},
+  \bibinfo{pages}{1130--1133} (\bibinfo{year}{2012}).
+
+\bibitem{babbush2018}
+\bibinfo{author}{Babbush, R.} \emph{et~al.}
+\newblock \bibinfo{title}{Encoding electronic spectra in quantum circuits with
+  linear {T} complexity}.
+\newblock \emph{\bibinfo{journal}{Physical Review X}}
+  \textbf{\bibinfo{volume}{8}}, \bibinfo{pages}{041015} (\bibinfo{year}{2018}).
+
+\bibitem{babbush2019}
+\bibinfo{author}{Babbush, R.}, \bibinfo{author}{Berry, D.~W.},
+  \bibinfo{author}{McClean, J.~R.} \& \bibinfo{author}{Neven, H.}
+\newblock \bibinfo{title}{Quantum simulation of chemistry with sublinear
+  scaling in basis size}.
+\newblock \emph{\bibinfo{journal}{npj Quantum Information}}
+  \textbf{\bibinfo{volume}{5}}, \bibinfo{pages}{92} (\bibinfo{year}{2019}).
+
+\bibitem{peruzzo2014}
+\bibinfo{author}{Peruzzo, A.} \emph{et~al.}
+\newblock \bibinfo{title}{A variational eigenvalue solver on a photonic chip}.
+\newblock \emph{\bibinfo{journal}{Nature Communications}}
+  \textbf{\bibinfo{volume}{5}}, \bibinfo{pages}{4213} (\bibinfo{year}{2014}).
+
+\bibitem{mcclean2016}
+\bibinfo{author}{McClean, J.~R.}, \bibinfo{author}{Romero, J.},
+  \bibinfo{author}{Babbush, R.} \& \bibinfo{author}{Aspuru-Guzik, A.}
+\newblock \bibinfo{title}{The theory of variational hybrid quantum-classical
+  algorithms}.
+\newblock \emph{\bibinfo{journal}{New Journal of Physics}}
+  \textbf{\bibinfo{volume}{18}}, \bibinfo{pages}{023023}
+  (\bibinfo{year}{2016}).
+
+\bibitem{farhi2014}
+\bibinfo{author}{Farhi, E.}, \bibinfo{author}{Goldstone, J.} \&
+  \bibinfo{author}{Gutmann, S.}
+\newblock \bibinfo{title}{A quantum approximate optimization algorithm}
+  (\bibinfo{year}{2014}).
+\newblock \eprint{1411.4028}.
+
+\bibitem{cerezo2021}
+\bibinfo{author}{Cerezo, M.} \emph{et~al.}
+\newblock \bibinfo{title}{Variational quantum algorithms}.
+\newblock \emph{\bibinfo{journal}{Nature Reviews Physics}}
+  \textbf{\bibinfo{volume}{3}}, \bibinfo{pages}{625--644}
+  (\bibinfo{year}{2021}).
+
+\bibitem{bharti2022}
+\bibinfo{author}{Bharti, K.} \emph{et~al.}
+\newblock \bibinfo{title}{Noisy intermediate-scale quantum algorithms}.
+\newblock \emph{\bibinfo{journal}{Reviews of Modern Physics}}
+  \textbf{\bibinfo{volume}{94}}, \bibinfo{pages}{015004}
+  (\bibinfo{year}{2022}).
+
+\bibitem{endo2021}
+\bibinfo{author}{Endo, S.}, \bibinfo{author}{Cai, Z.},
+  \bibinfo{author}{Benjamin, S.~C.} \& \bibinfo{author}{Yuan, X.}
+\newblock \bibinfo{title}{Hybrid quantum-classical algorithms and quantum error
+  mitigation}.
+\newblock \emph{\bibinfo{journal}{Journal of the Physical Society of Japan}}
+  \textbf{\bibinfo{volume}{90}}, \bibinfo{pages}{032001}
+  (\bibinfo{year}{2021}).
+
+\bibitem{preskill2018}
+\bibinfo{author}{Preskill, J.}
+\newblock \bibinfo{title}{Quantum computing in the {NISQ} era and beyond}.
+\newblock \emph{\bibinfo{journal}{Quantum}} \textbf{\bibinfo{volume}{2}},
+  \bibinfo{pages}{79} (\bibinfo{year}{2018}).
+
+\bibitem{kandala2017}
+\bibinfo{author}{Kandala, A.} \emph{et~al.}
+\newblock \bibinfo{title}{Hardware-efficient variational quantum eigensolver
+  for small molecules and quantum magnets}.
+\newblock \emph{\bibinfo{journal}{Nature}} \textbf{\bibinfo{volume}{549}},
+  \bibinfo{pages}{242--246} (\bibinfo{year}{2017}).
+
+\bibitem{kim2023}
+\bibinfo{author}{Kim, Y.} \emph{et~al.}
+\newblock \bibinfo{title}{Evidence for the utility of quantum computing before
+  fault tolerance}.
+\newblock \emph{\bibinfo{journal}{Nature}} \textbf{\bibinfo{volume}{618}},
+  \bibinfo{pages}{500--505} (\bibinfo{year}{2023}).
+
+\end{thebibliography}
 
 % ============================================================
 % METHODS
@@ -333,6 +925,10 @@ The normalized Pauli operators $P/\sqrt{2^n}$ form an orthonormal basis under th
 For $K_{q,w}=\Pi_wK_q$ and $\widehat G_{q,w}=e^{-iK_{q,w}}S_q$, $\norm{\widehat G_{q,w}^{\;r}-U(t)}_2\leq r\norm{K_q-K_{q,w}}_2$. Thus a target global accuracy $\epsilon$ is guaranteed whenever $\norm{K_q-K_{q,w}}_2\leq\epsilon/r$.
 \end{corollary}
 
+\begin{proof}
+Both $K_q$ and $K_{q,w}=\Pi_wK_q$ are Hermitian, the latter because $\Pi_w$ is a real-linear projection onto a span of Hermitian Pauli strings (Theorem~\ref{thm:pauli-projection}); hence $R_q=e^{-iK_q}$ and $\widehat R_{q,w}=e^{-iK_{q,w}}$ are both unitary. The Duhamel bound (Theorem~\ref{thm:duhamel}) gives the per-step estimate $\norm{\widehat R_{q,w}-R_q}_2=\norm{e^{-iK_{q,w}}-e^{-iK_q}}_2\leq\norm{K_q-K_{q,w}}_2=:\eta$. Since $\widehat R_{q,w}$ is unitary, the sharp branch of Theorem~\ref{thm:residual-stability} applies to $\widehat G_{q,w}=\widehat R_{q,w}S_q$ and yields $\norm{\widehat G_{q,w}^{\;r}-U(t)}_2\leq r\eta=r\norm{K_q-K_{q,w}}_2$. Imposing $\eta\leq\epsilon/r$ makes the right-hand side at most $\epsilon$, which is the stated sufficient condition.
+\end{proof}
+
 \begin{theorem}[Leading Strang residual support for the open-boundary TFIM]
 \label{thm:tfim-support}
 Let $A$ and $B$ be the \tfim{} splitting in Eq.~\eqref{eq:tfim}. For the Strang step $S_2(\dt)$, the degree-three homogeneous term in the residual generator $K_2(\dt)$ is a real linear combination of Pauli strings with weight at most three. Equivalently,
@@ -354,7 +950,11 @@ Write $A=\sum_e A_e$ with $A_e=JZ_jZ_{j+1}$ for edges $e=(j,j+1)$ and $B=\sum_v 
 Consider the disordered open-boundary \tfim{} on $n$ sites with couplings in a fixed compact set, and let $K_2^{(3)}(n)=\sum_{j=1}^{n} h_j$ be the degree-three Strang residual generator, where by Theorem~\ref{thm:tfim-support} each $h_j$ is a real linear combination of weight-$\le 3$ Pauli strings supported in the three-site window $\{j-1,j,j+1\}$ (truncated at the boundaries). Suppose a translation-invariant per-site predictor outputs $\widehat h_j$ from the couplings in that window with $\norm{\widehat h_j-h_j}_2\le\eta$ for every $j$, where $\eta$ depends only on the predictor and the coupling range, not on $n$. Then $\widehat K_2^{(3)}(n)=\sum_j\widehat h_j$ satisfies $\norm{\widehat K_2^{(3)}(n)-K_2^{(3)}(n)}_2\le n\,\eta$, and the corrected step $\widehat G(\dt)=\exp(-i\dt^3\widehat K_2^{(3)})\,S_2(\dt)$ obeys, for $t=r\dt$, $\norm{\widehat G(\dt)^r-U(t)}_2\le r\,\dt^3 n\,\eta + r\,O(\dt^5)$.
 \end{theorem}
 \begin{proof}
-The first bound is the triangle inequality over the $n$ site-anchored terms, $\norm{\sum_j(\widehat h_j-h_j)}_2\le\sum_j\norm{\widehat h_j-h_j}_2\le n\eta$; translation invariance makes the per-site bound $\eta$ independent of $n$. For the second, set $\widehat K=\dt^3\widehat K_2^{(3)}$; the BCH expansion of Appendix~\ref{app:bch} gives $K_2(\dt)=\dt^3K_2^{(3)}+O(\dt^5)$, so $\norm{\widehat K-K_2(\dt)}_2\le\dt^3 n\eta+O(\dt^5)$. The Duhamel bound (Theorem~\ref{thm:duhamel}) gives $\norm{e^{-i\widehat K}-R_2}_2\le\norm{\widehat K-K_2}_2$, and the multi-step stability bound (Theorem~\ref{thm:residual-stability}) multiplies by $r$, giving the estimate.
+The first bound is the triangle inequality over the $n$ site-anchored terms,
+\begin{equation*}
+    \norm{\textstyle\sum_j(\widehat h_j-h_j)}_2\le\sum_j\norm{\widehat h_j-h_j}_2\le n\eta;
+\end{equation*}
+translation invariance makes the per-site bound $\eta$ independent of~$n$. For the second, set $\widehat K=\dt^3\widehat K_2^{(3)}$. The BCH expansion in the Extended Data (detailed \tfim{} support analysis) gives $K_2(\dt)=\dt^3K_2^{(3)}+O(\dt^5)$, so $\norm{\widehat K-K_2(\dt)}_2\le\dt^3 n\eta+O(\dt^5)$. The Duhamel bound (Theorem~\ref{thm:duhamel}) gives $\norm{e^{-i\widehat K}-R_2}_2\le\norm{\widehat K-K_2}_2$, and the multi-step stability bound of Theorem~\ref{thm:residual-stability} multiplies by~$r$, giving the stated estimate.
 \end{proof}
 
 \begin{theorem}[From per-site coefficient error to a global certificate]
@@ -448,9 +1048,101 @@ The author acknowledges the foundational literature on product formulas, Hamilto
 \label{edfig:genstruct}
 \end{edfigure}
 
-\input{tables/projected_summary.tex}
+\begin{table}[t]
+\caption{\textbf{Weight-truncated residual compilation for $n=5$, $q=2$.} Parameters are $J=h=1$, $t=1$, and $r=10$. The column $w$ keeps Pauli strings of weight at most $w$ in the exact residual generator; ``projected error'' is the resulting global spectral-norm error and ``improvement'' is its ratio to the uncorrected baseline. Every entry is a single exact, deterministic dense-matrix computation (no statistical sampling, hence no uncertainty interval); the $w=5$ row is at the double-precision floor.}
+\label{tab:projected-summary}
+\centering
+\begin{tabular}{cccc}
+\toprule
+$w$ & $\norm{K_q-\Pi_wK_q}_2$ & projected error & improvement\\
+\midrule
+0 & $3.656\times10^{-3}$ & $1.384\times10^{-2}$ & $1.00\times$\\
+1 & $2.859\times10^{-3}$ & $1.330\times10^{-2}$ & $1.04\times$\\
+2 & $1.949\times10^{-3}$ & $1.607\times10^{-2}$ & $0.86\times$\\
+3 & $1.573\times10^{-5}$ & $1.545\times10^{-4}$ & $89.56\times$\\
+4 & $1.850\times10^{-8}$ & $1.850\times10^{-7}$ & $74829.05\times$\\
+5 & $1.143\times10^{-18}$ & $1.089\times10^{-14}$ & $(1.27080550904855\times10^{12})\times$\\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\input{tables/resource_proxy.tex}
+\begin{table}[t]
+\caption{\textbf{Per-step resource proxy.} The baseline factor count is the number of elementary $e^{-iA\tau}$ or $e^{-iB\tau}$ exponentials in the product-formula step $S_q$ of order $q$. The oracle residual construction uses one additional dense exponential for $U(\dt)$ and one dense multiplication by $S_q^\dagger$; it is not a scalable gate-level implementation. All entries are exact integer counts, not measured quantities.}
+\label{tab:resources}
+\centering
+\begin{tabular}{cccc}
+\toprule
+$q$ & Suzuki factors & dense $U(\dt)$ expm & dense residual multiply\\
+\midrule
+1 & 2 & 1 & 1\\
+2 & 3 & 1 & 1\\
+4 & 15 & 1 & 1\\
+6 & 75 & 1 & 1\\
+8 & 375 & 1 & 1\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\caption{\textbf{Residual-generator spectral norm versus step size and product-formula order.} $\norm{K_q(\dt)}_2$ for the open-boundary \tfim{} at $n=4$, $J=h=1$, computed by dense matrix logarithm of the exact residual factor. The norm falls steeply with order $q$ and scales as $\dt^{q+1}$ at small $\dt$, the quantitative content of Theorem~\ref{thm:small-step} and Extended Data Fig.~\ref{edfig:genstruct}b. Each entry is a single exact, deterministic dense-matrix computation (no sampling, hence no uncertainty interval).}
+\label{tab:generator-scaling}
+\centering
+\begin{tabular}{ccccc}
+\toprule
+$\dt$ & $\norm{K_1}_2$ & $\norm{K_2}_2$ & $\norm{K_4}_2$ & $\norm{K_6}_2$\\
+\midrule
+$0.025$ & $2.794\times10^{-3}$ & $4.280\times10^{-5}$ & $4.714\times10^{-9}$  & $8.777\times10^{-14}$\\
+$0.050$ & $1.116\times10^{-2}$ & $3.420\times10^{-4}$ & $1.507\times10^{-7}$  & $1.122\times10^{-11}$\\
+$0.075$ & $2.505\times10^{-2}$ & $1.152\times10^{-3}$ & $1.142\times10^{-6}$  & $1.915\times10^{-10}$\\
+$0.100$ & $4.439\times10^{-2}$ & $2.724\times10^{-3}$ & $4.802\times10^{-6}$  & $1.432\times10^{-9}$\\
+$0.150$ & $9.894\times10^{-2}$ & $9.120\times10^{-3}$ & $3.622\times10^{-5}$  & $2.433\times10^{-8}$\\
+$0.200$ & $1.736\times10^{-1}$ & $2.138\times10^{-2}$ & $1.512\times10^{-4}$  & $1.809\times10^{-7}$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\caption{\textbf{Per-size error breakdown of every correction on the disordered \tfim{}.} Global spectral-norm error at $t=1$, $\dt=0.1$ ($J_i,h_i\sim\mathcal{U}[0.5,1.5]$), reported as mean $\pm$ one standard deviation over $n_{\mathrm c}$ disordered chains (sizes and $n_{\mathrm c}$ as in Table~\ref{tab:learned-summary}). $\epsilon_{w\leq3}$ is the exact weight-$\leq3$ oracle; $\epsilon_{\mathrm{learned}}^{\,\mathrm{oracle}}$ and $\epsilon_{\mathrm{learned}}^{\,\mathrm{free}}$ are the learned corrections trained on global-oracle and on oracle-free patch labels, respectively; $\epsilon_{\mathrm{BCH}}$ is the analytic leading-order correction. The oracle-free network matches or slightly beats the oracle-trained one at every size, and both beat $\epsilon_{\mathrm{BCH}}$ by roughly $5\times$; sizes $n\geq6$ are absent from training. Best learned column in each row is bold. All values recomputed from dense matrices.}
+\label{tab:learned-breakdown}
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{cccccc}
+\toprule
+$n$ & regime & $\epsilon_{w\leq3}$ (oracle) & $\epsilon_{\mathrm{learned}}^{\,\mathrm{oracle}}$ & $\epsilon_{\mathrm{learned}}^{\,\mathrm{free}}$ & $\epsilon_{\mathrm{BCH}}$\\
+\midrule
+4  & train    & $9.43\times10^{-5} \pm 7.05\times10^{-5}$ & $3.29\times10^{-4} \pm 1.73\times10^{-4}$ & $\mathbf{2.71\times10^{-4}} \pm 2.01\times10^{-4}$ & $1.44\times10^{-3} \pm 8.00\times10^{-4}$\\
+5  & train    & $1.31\times10^{-4} \pm 8.75\times10^{-5}$ & $3.79\times10^{-4} \pm 1.22\times10^{-4}$ & $\mathbf{3.63\times10^{-4}} \pm 1.42\times10^{-4}$ & $1.65\times10^{-3} \pm 7.76\times10^{-4}$\\
+6  & transfer & $2.27\times10^{-4} \pm 1.16\times10^{-4}$ & $4.73\times10^{-4} \pm 1.41\times10^{-4}$ & $\mathbf{4.43\times10^{-4}} \pm 1.21\times10^{-4}$ & $2.23\times10^{-3} \pm 7.81\times10^{-4}$\\
+7  & transfer & $2.75\times10^{-4} \pm 1.45\times10^{-4}$ & $6.37\times10^{-4} \pm 2.21\times10^{-4}$ & $\mathbf{5.82\times10^{-4}} \pm 2.23\times10^{-4}$ & $2.75\times10^{-3} \pm 1.03\times10^{-3}$\\
+8  & transfer & $3.31\times10^{-4} \pm 1.37\times10^{-4}$ & $6.95\times10^{-4} \pm 1.69\times10^{-4}$ & $\mathbf{6.93\times10^{-4}} \pm 1.73\times10^{-4}$ & $3.29\times10^{-3} \pm 9.76\times10^{-4}$\\
+9  & transfer & $3.51\times10^{-4} \pm 1.66\times10^{-4}$ & $8.10\times10^{-4} \pm 1.82\times10^{-4}$ & $\mathbf{7.40\times10^{-4}} \pm 1.59\times10^{-4}$ & $3.56\times10^{-3} \pm 1.23\times10^{-3}$\\
+10 & transfer & $4.55\times10^{-4} \pm 2.07\times10^{-4}$ & $9.29\times10^{-4} \pm 1.78\times10^{-4}$ & $\mathbf{8.74\times10^{-4}} \pm 2.29\times10^{-4}$ & $4.35\times10^{-3} \pm 1.54\times10^{-3}$\\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\begin{table}[t]
+\caption{\textbf{Single-step error versus step size for the learned residual at $n=6$.} Disordered open-boundary \tfim{} with $J_i,h_i\sim\mathcal{U}[0.5,1.5]$; each row is a mean $\pm$ one standard deviation over $n_{\mathrm c}=24$ disordered chains. $\epsilon_{\mathrm{Strang}}$ is the uncorrected Strang per-step spectral-norm error; $\epsilon_{w\leq3}$ is the exact weight-$\leq3$ oracle; $\epsilon_{\mathrm{learned}}$ is the oracle-free learned correction; $\epsilon_{\mathrm{BCH}}$ is the analytic leading-order ($\dt^3$) correction. As $\dt$ grows the analytic baseline degrades toward the uncorrected step while the $\dt$-conditioned learned correction tracks the oracle, quantifying Fig.~\ref{fig:learned}b. Best (smallest) correction in each row is bold; values are recomputed from dense matrices.}
+\label{tab:learned-dtsweep}
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{ccccc}
+\toprule
+$\dt$ & $\epsilon_{\mathrm{Strang}}$ & $\epsilon_{w\leq3}$ (oracle) & $\epsilon_{\mathrm{learned}}$ & $\epsilon_{\mathrm{BCH}}$\\
+\midrule
+$0.05$ & $6.71\times10^{-4} \pm 1.83\times10^{-4}$ & $\mathbf{8.88\times10^{-7}} \pm 4.72\times10^{-7}$ & $1.23\times10^{-5} \pm 6.42\times10^{-6}$ & $5.91\times10^{-5} \pm 2.08\times10^{-5}$\\
+$0.10$ & $4.78\times10^{-3} \pm 1.07\times10^{-3}$ & $\mathbf{2.01\times10^{-5}} \pm 9.59\times10^{-6}$ & $6.12\times10^{-5} \pm 1.42\times10^{-5}$ & $1.08\times10^{-3} \pm 3.06\times10^{-4}$\\
+$0.15$ & $1.76\times10^{-2} \pm 5.19\times10^{-3}$ & $\mathbf{1.95\times10^{-4}} \pm 1.15\times10^{-4}$ & $3.07\times10^{-4} \pm 1.53\times10^{-4}$ & $6.74\times10^{-3} \pm 2.68\times10^{-3}$\\
+$0.20$ & $3.75\times10^{-2} \pm 1.12\times10^{-2}$ & $\mathbf{6.85\times10^{-4}} \pm 3.90\times10^{-4}$ & $8.99\times10^{-4} \pm 4.01\times10^{-4}$ & $1.95\times10^{-2} \pm 7.65\times10^{-3}$\\
+$0.25$ & $7.10\times10^{-2} \pm 2.03\times10^{-2}$ & $\mathbf{1.87\times10^{-3}} \pm 9.01\times10^{-4}$ & $2.33\times10^{-3} \pm 9.31\times10^{-4}$ & $4.65\times10^{-2} \pm 1.68\times10^{-2}$\\
+$0.30$ & $1.33\times10^{-1} \pm 3.60\times10^{-2}$ & $\mathbf{5.23\times10^{-3}} \pm 3.11\times10^{-3}$ & $6.24\times10^{-3} \pm 3.31\times10^{-3}$ & $1.07\times10^{-1} \pm 4.00\times10^{-2}$\\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+The per-size breakdown of every correction (Extended Data Table~\ref{tab:learned-breakdown}) makes the overlap of the oracle-trained and oracle-free learned curves in Fig.~\ref{fig:learned}a quantitative: at every size the oracle-free network matches or slightly improves on the oracle-trained one and both sit about a factor of five below the analytic leading-order correction, while staying within a small constant factor of the exact weight-$\leq3$ oracle. The single-step step-size sweep at $n=6$ (Extended Data Table~\ref{tab:learned-dtsweep}) tabulates the numbers behind Fig.~\ref{fig:learned}b: the analytic $\dt^3$ correction degrades from an $11\times$ improvement over the uncorrected step at $\dt=0.05$ to only $1.24\times$ at $\dt=0.30$, whereas the $\dt$-conditioned learned correction stays close to the exact oracle, closing from about a factor of fourteen at $\dt=0.05$ to within roughly $20\%$ at $\dt=0.30$ and remaining far below the analytic baseline throughout. The residual-generator norms in Extended Data Table~\ref{tab:generator-scaling} confirm the order scaling underlying Theorem~\ref{thm:small-step}: increasing the order from $q=1$ to $q=6$ shrinks $\norm{K_q(0.1)}_2$ from $4.44\times10^{-2}$ to $1.43\times10^{-9}$.
 
 \subsection*{Supplementary theory: detailed BCH support analysis for the TFIM}
 \label{app:bch}
