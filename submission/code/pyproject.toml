@@ -6,10 +6,31 @@ build-backend = "setuptools.build_meta"
 name = "lieideal-hs"
 version = "1.0.0"
 description = "Residual-Generator Trotter Compilation (RGTC): deterministic, provable, size-transferable operator learning of Trotter corrections for Hamiltonian simulation."
-readme = { text = "Residual-Generator Trotter Compilation code artifact. Run python make_all.py and python validate_submission.py; see foundations.py for the from-scratch theory-to-code map.", content-type = "text/plain" }
+readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-authors = [{ name = "Molena Huynh" }]
+authors = [{ name = "Molena Huynh", email = "molena.huynh@jmp.com" }]
+maintainers = [{ name = "Molena Huynh", email = "molena.huynh@jmp.com" }]
+keywords = [
+  "hamiltonian-simulation",
+  "trotter-suzuki",
+  "product-formula",
+  "lie-algebra",
+  "operator-learning",
+  "quantum-computing",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Physics",
+  "Topic :: Scientific/Engineering :: Mathematics",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 dependencies = [
   "numpy>=1.24",
   "scipy>=1.10",
@@ -19,13 +40,18 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=7.0"]
+dev = ["pytest>=7.0", "build>=1.0"]
+
+[project.urls]
+Homepage = "https://github.com/thmolena/Lie-Algebra-for-Hamiltonian-Simulation"
+Repository = "https://github.com/thmolena/Lie-Algebra-for-Hamiltonian-Simulation"
 
 [project.scripts]
 lieideal-reproduce = "cli:main"
 lieideal-verify = "cli:verify"
 
 [tool.setuptools]
+packages = ["lieideal_hs"]
 py-modules = [
   "common",
   "fixed_time",
@@ -34,6 +60,7 @@ py-modules = [
   "headline",
   "learned_residual",
   "make_all",
+  "overview",
   "projected_residual",
   "theory",
   "time_sweep",

@@ -335,10 +335,17 @@ def sample_couplings(rng, n_qubits):
     return rng.uniform(*J_RANGE, size=n_qubits - 1), rng.uniform(*H_RANGE, size=n_qubits)
 
 
-def build_training_set(rng, label_kind: str):
+def build_training_set(rng, label_kind: str, use_prior: bool = True):
     """label_kind: 'global' (dense oracle) or 'patch' (oracle-free local patches).
     Coefficients are divided by dt^3 to remove the leading scale; the network
-    therefore predicts a smooth O(1) object and dt is an input feature."""
+    therefore predicts a smooth O(1) object and dt is an input feature.
+
+    When use_prior is True the analytic leading-order (second-order Zassenhaus)
+    generator -- the patch-local dt^3 term -- is subtracted from the target, so
+    the network learns only the *residual beyond the analytic prior* (delta
+    learning).  The prior is added back at prediction time.  Both the prior and
+    the patch labels are oracle-free, so the 'patch' mode remains free of any
+    dense 2^n propagator."""
     feats, targs, masks = [], [], []
     for n_qubits in TRAIN_SIZES:
         for _ in range(N_TRAIN_REALIZATIONS):
@@ -348,6 +355,9 @@ def build_training_set(rng, label_kind: str):
                 rows, mk = coeffs_from_K(global_generator(js, hs, dt), n_qubits)
             else:
                 rows, mk = realization_patch_coeffs(js, hs, dt)
+            if use_prior:
+                prior, _ = bch_leading_coeffs(js, hs, dt)
+                rows = rows - prior
             f = np.stack([anchor_features(js, hs, a, dt) for a in range(n_qubits)])
             feats.append(f)
             targs.append(rows / dt ** 3)
@@ -355,8 +365,8 @@ def build_training_set(rng, label_kind: str):
     return np.concatenate(feats), np.concatenate(targs), np.concatenate(masks)
 
 
-def train_model(rng, label_kind: str):
-    feats, targs, masks = build_training_set(rng, label_kind)
+def train_model(rng, label_kind: str, use_prior: bool = True):
+    feats, targs, masks = build_training_set(rng, label_kind, use_prior)
     f_mean, f_std = feats.mean(0), feats.std(0) + 1e-8
     counts = masks.sum(0) + 1e-8
     t_mean = (targs * masks).sum(0) / counts
@@ -376,7 +386,8 @@ def train_model(rng, label_kind: str):
         loss.backward()
         opt.step()
         final = float(loss.item())
-    norm = {"f_mean": f_mean, "f_std": f_std, "t_mean": t_mean, "t_std": t_std}
+    norm = {"f_mean": f_mean, "f_std": f_std, "t_mean": t_mean, "t_std": t_std,
+            "use_prior": use_prior}
     return model, norm, final
 
 
@@ -385,7 +396,11 @@ def predict_coeffs(model, norm, js, hs, dt) -> np.ndarray:
     Xf = (feats - norm["f_mean"]) / norm["f_std"]
     with torch.no_grad():
         out = model(torch.tensor(Xf, dtype=torch.float32)).numpy()
-    return (out * norm["t_std"] + norm["t_mean"]) * dt ** 3   # undo standardize + dt^3 scale
+    coeffs = (out * norm["t_std"] + norm["t_mean"]) * dt ** 3   # undo standardize + dt^3 scale
+    if norm.get("use_prior", False):
+        prior, _ = bch_leading_coeffs(js, hs, dt)
+        coeffs = coeffs + prior   # delta learning: analytic Zassenhaus prior + learned residual
+    return coeffs
 
 
 # ---------------------------------------------------------------------------
@@ -418,6 +433,10 @@ def evaluate_realization(models, norm, js, hs, dt, r, want_allw3=True, want_pari
         "learned_free_error": downstream_error(assemble_generator(pred_free * masks, n_qubits), S, exact_total, r),
         "bch_leading_error": downstream_error(assemble_generator(bch_rows * masks, n_qubits), S, exact_total, r),
     }
+    if "free_noprior" in models:
+        pred_free_np = predict_coeffs(models["free_noprior"][0], models["free_noprior"][1], js, hs, dt)
+        metrics["learned_free_noprior_error"] = downstream_error(
+            assemble_generator(pred_free_np * masks, n_qubits), S, exact_total, r)
     if want_allw3:
         K_allw3 = oracle_allweight_generator(K, n_qubits, MAX_WEIGHT)
         metrics["oracle_allw3_error"] = downstream_error(K_allw3, S, exact_total, r)
@@ -428,7 +447,8 @@ def evaluate_realization(models, norm, js, hs, dt, r, want_allw3=True, want_pari
 def size_sweep(models, norm, rng):
     rows, parity_pred, parity_true = [], [], []
     keys = ["baseline_error", "oracle_local_error", "oracle_allw3_error",
-            "learned_oracle_error", "learned_free_error", "bch_leading_error"]
+            "learned_oracle_error", "learned_free_error", "learned_free_noprior_error",
+            "bch_leading_error"]
     for n_qubits in TRANSFER_SIZES:
         accum = {k: [] for k in keys}
         for _ in range(EVAL_REALIZATIONS[n_qubits]):
@@ -511,8 +531,9 @@ def make_figure(sizes_df, dt_df, steps_df, parity):
     series_a = [
         ("baseline_error", "uncorrected Strang", "o-", _C["baseline"], True),
         ("bch_leading_error", "leading-order BCH", "P-", _C["bch"], True),
+        ("learned_free_noprior_error", "learned (no prior)", "v:", "0.55", False),
         ("learned_oracle_error", "learned (oracle labels)", "s-", _C["learn_oracle"], False),
-        ("learned_free_error", "learned (oracle-free)", "D-", _C["learn_free"], True),
+        ("learned_free_error", "learned (Zassenhaus prior, oracle-free)", "D-", _C["learn_free"], True),
         ("oracle_local_error", r"exact weight-$\leq$3 oracle", "^--", _C["oracle"], True),
     ]
     for key, label, style, color, band in series_a:
@@ -593,18 +614,22 @@ def write_summary_table(sizes_df) -> None:
             r"$\delta t=0.1$). Errors are global spectral-norm errors reported as the mean "
             r"$\pm$ one standard deviation over the disordered chains (count $n_{\mathrm c}$ "
             r"in the last column); the same dispersion is shown as bands in "
-            r"Fig.~\ref{fig:learned}. The reduction factor is "
+            r"Fig.~\ref{fig:learned}. The column $\epsilon^{\mathrm{no\,prior}}_{\mathrm{learned}}$ "
+            r"is the ablation that learns the full generator directly; $\epsilon_{\mathrm{learned}}$ "
+            r"adds the analytic second-order Zassenhaus prior and learns only the residual. "
+            r"The reduction factor is "
             r"$\epsilon_{\mathrm{Strang}}/\epsilon_{\mathrm{learned}}$. The oracle-free network is "
             r"trained only on $n=4,5$; sizes $n\geq6$ are absent from training. All values are "
             r"recomputed from dense matrices.}"
         ),
         r"\label{tab:learned-summary}",
         r"\centering",
-        r"\begin{tabular}{cccccc}",
+        r"\begin{tabular}{ccccccc}",
         r"\toprule",
         (
-            r"$n$ & regime & $\epsilon_{\mathrm{Strang}}$ & $\epsilon_{\mathrm{learned}}$ & "
-            r"reduction & $n_{\mathrm c}$\\"
+            r"$n$ & regime & $\epsilon_{\mathrm{Strang}}$ & "
+            r"$\epsilon^{\mathrm{no\,prior}}_{\mathrm{learned}}$ & "
+            r"$\epsilon_{\mathrm{learned}}$ & reduction & $n_{\mathrm c}$\\"
         ),
         r"\midrule",
     ]
@@ -614,6 +639,7 @@ def write_summary_table(sizes_df) -> None:
         lines.append(
             f"{int(row.n_qubits)} & {regime} & "
             f"{pm(row.baseline_error_mean, row.baseline_error_std)} & "
+            f"{pm(row.learned_free_noprior_error_mean, row.learned_free_noprior_error_std)} & "
             f"{pm(row.learned_free_error_mean, row.learned_free_error_std)} & "
             f"${reduction:.1f}\\times$ & "
             f"{int(row.n_realizations)}\\\\"
@@ -629,9 +655,14 @@ def main(force: bool = False) -> None:
     torch.set_num_threads(1)
     rng = np.random.default_rng(SEED)
 
-    model_oracle, norm_oracle, loss_oracle = train_model(rng, "global")
-    model_free, norm_free, loss_free = train_model(rng, "patch")
-    models = {"oracle": (model_oracle, norm_oracle), "free": (model_free, norm_free)}
+    # Zassenhaus-prior delta learning: the oracle and oracle-free networks learn
+    # the residual beyond the analytic leading-order generator; 'free_noprior' is
+    # the prior-free ablation (the previous full-target variant) for comparison.
+    model_oracle, norm_oracle, loss_oracle = train_model(rng, "global", use_prior=True)
+    model_free, norm_free, loss_free = train_model(rng, "patch", use_prior=True)
+    model_free_np, norm_free_np, loss_free_np = train_model(rng, "patch", use_prior=False)
+    models = {"oracle": (model_oracle, norm_oracle), "free": (model_free, norm_free),
+              "free_noprior": (model_free_np, norm_free_np)}
 
     sizes_df, parity = size_sweep(models, norm_oracle, rng)
     dt_df = dt_sweep(models, norm_oracle, rng)
@@ -659,6 +690,7 @@ def main(force: bool = False) -> None:
         "epochs": EPOCHS, "lr": LR, "seed": SEED,
         "J_range": list(J_RANGE), "h_range": list(H_RANGE),
         "final_train_loss_oracle": loss_oracle, "final_train_loss_free": loss_free,
+        "final_train_loss_free_noprior": loss_free_np, "zassenhaus_prior": True,
         "transfer_coeff_rel_l2": rel_l2, "transfer_coeff_r2": r2,
     })
 
@@ -668,11 +700,12 @@ def main(force: bool = False) -> None:
     pd.set_option("display.width", 220)
     pd.set_option("display.max_columns", 30)
     print(f"\ncoeff fit (oracle-free, transfer sizes): rel L2 = {rel_l2:.4f}, R^2 = {r2:.4f}")
-    print(f"train loss  oracle={loss_oracle:.2e}  oracle-free={loss_free:.2e}")
+    print(f"train loss  oracle={loss_oracle:.2e}  oracle-free={loss_free:.2e}  oracle-free(no prior)={loss_free_np:.2e}")
     print("\n=== size sweep (mean error) ===")
     print(sizes_df[["n_qubits", "trained", "baseline_error_mean", "bch_leading_error_mean",
-                    "learned_oracle_error_mean", "learned_free_error_mean",
-                    "oracle_local_error_mean", "oracle_allw3_error_mean"]].to_string(index=False))
+                    "learned_free_noprior_error_mean", "learned_oracle_error_mean",
+                    "learned_free_error_mean", "oracle_local_error_mean",
+                    "oracle_allw3_error_mean"]].to_string(index=False))
     print("\n=== step-size sweep (n=6) ===")
     print(dt_df.to_string(index=False))
     print("\n=== step-count sweep (n=6) ===")

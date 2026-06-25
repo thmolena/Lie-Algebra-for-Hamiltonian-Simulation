@@ -582,7 +582,16 @@ def write_latex_table(path: Path, lines: Iterable[str]) -> None:
 
 
 def scientific(value: float) -> str:
-    return f"{value:.3e}".replace("e-0", "e-").replace("e+0", "e+")
+    """Format a float as LaTeX scientific notation, e.g. ``1.049\\times10^{-2}``.
+
+    The output is intended for use inside math mode ($...$).  A zero exponent is
+    rendered as a bare mantissa so small integers stay readable.
+    """
+    mantissa, exponent = f"{value:.3e}".split("e")
+    exp_value = int(exponent)
+    if exp_value == 0:
+        return mantissa
+    return f"{mantissa}\\times10^{{{exp_value}}}"
 
 
 def parse_graphics_references(tex: str) -> set[str]:

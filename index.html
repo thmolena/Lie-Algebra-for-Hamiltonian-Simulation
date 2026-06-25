@@ -112,7 +112,7 @@
   .tag.transfer { background: #fff2dd; color: var(--warn); }
   .application-grid { display: grid; gap: 20px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.88em; background: var(--soft); padding: 1px 5px; border-radius: 3px; color: var(--ink); }
-  pre { background: #0f1c33; color: #e7eefc; padding: 16px 18px; border-radius: 6px; overflow-x: auto; font-size: 0.85rem; line-height: 1.55; }
+  pre { background: #eef2f7; color: #1b2330; border: 1px solid var(--line); padding: 16px 18px; border-radius: 6px; overflow-x: auto; font-size: 0.85rem; line-height: 1.55; }
   pre code { background: none; color: inherit; padding: 0; }
   .footnote { font-size: 0.85rem; color: var(--muted); margin-top: 10px; }
   .github-badge { display: inline-flex; align-items: center; gap: 8px; margin-top: 24px; padding: 10px 18px; background: var(--accent); color: #ffffff; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.04em; border: none; text-decoration: none; }
@@ -162,13 +162,17 @@
     <section class="hero" id="overview">
       <div class="hero-grid">
         <div>
-          <div class="kicker">Hamiltonian Simulation &middot; Lie-Algebra Methods &middot; Operator Learning</div>
+          <div class="kicker">Hamiltonian Simulation &middot; Lie-Algebra Methods &middot; Operator Learning &middot; Part of a unified graph-learning program for quantum computation</div>
           <h1>Provable operator learning of size-transferable Trotter corrections</h1>
           <p class="hero-tagline">
-            The finite-step defect of a product formula is the unique unitary residual $R_q=U\,S_q^\dagger$; we prove its generator $K_q=i\log R_q$ is geometrically local for the TFIM and learn it with one translation-equivariant network that transfers from 4&ndash;5-qubit training chains to 10-qubit chains under a closed-form $r\eta$ stability bound.
+            The finite-step defect of a product formula is the unique unitary residual $R_q=U\,S_q^\dagger$. Its generator $K_q=i\log R_q$ is provably geometrically local for the TFIM, and one translation-equivariant network learns it well enough to transfer from 4&ndash;5-qubit training chains to 10-qubit chains under a closed-form $r\eta$ stability bound &mdash; turning circuit compilation into a certified learning problem.
+          </p>
+          <p class="hero-byline" style="margin:14px 0 0; color:var(--ink); font-size:1rem;">
+            <strong>Molena Huynh</strong><br>
+            North Carolina State University &middot; <a href="mailto:molena.huynh@jmp.com">molena.huynh@jmp.com</a>
           </p>
           <p class="hero-subtitle">
-            Digital Hamiltonian simulation by Trotter&ndash;Suzuki product formulas leaves a finite-step error fixed by nested commutator defects. We recast that error as an operator to be learned under provable guarantees. The residual factor of a product-formula step is the unique unitary left correction to the exact propagator; we prove it is optimal in every unitarily invariant norm, that projecting its Hermitian generator onto a fixed operator subspace is the unique Frobenius-optimal compression, and that approximate residuals convert per-step error into global error linearly. For the open-boundary transverse-field Ising model (TFIM) the leading Strang generator carries Pauli weight at most three, reducing compilation to a local learning problem. Every value on this page is recomputed from deterministic dense-matrix simulation; quantities near $10^{-13}$ reflect the double-precision floor rather than physical error.
+            Digital Hamiltonian simulation by Trotter&ndash;Suzuki product formulas incurs a finite-step error fixed by nested commutator defects, which prior theory bounds but does not constructively remove. This work recasts that error as an operator to be learned under provable guarantees. The residual factor of a product-formula step is the unique unitary left correction to the exact propagator; we prove it is optimal in every unitarily invariant norm, that projecting its Hermitian generator onto a fixed operator subspace is the unique Frobenius-optimal compression, and that an approximate residual converts per-step error into global error linearly. For the open-boundary transverse-field Ising model (TFIM) the leading Strang generator carries Pauli weight at most three, collapsing compilation to a local learning problem. Every value on this page is recomputed from deterministic dense-matrix simulation; quantities near $10^{-13}$ reflect the double-precision floor rather than physical error.
           </p>
           <a class="github-badge" href="https://github.com/thmolena/Lie-Algebra-for-Hamiltonian-Simulation" target="_blank" rel="noopener noreferrer">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
@@ -179,19 +183,19 @@
           <div class="stats">
             <div class="stat">
               <span class="stat-value">$R^2 = 0.9998$</span>
-              <div class="stat-sub">Predicted-versus-exact residual coefficients on held-out sizes $n=6,\dots,10$ (relative $\ell_2$ error $1.32\times10^{-2}$), with the network trained only on $n=4,5$.</div>
+              <div class="stat-sub">Predicted versus exact residual coefficients on held-out sizes $n=6,\dots,10$ (relative $\ell_2$ error $1.32\times10^{-2}$), from a network trained only on $n=4,5$.</div>
             </div>
             <div class="stat">
               <span class="stat-value">$38\text{--}46\times$</span>
-              <div class="stat-sub">Reduction of the uncorrected Strang spectral-norm error by the learned correction, holding across $n=4\to10$ (mean over disordered chains).</div>
+              <div class="stat-sub">Reduction in uncorrected Strang spectral-norm error from the learned correction, sustained across $n=4\to10$ (mean over disordered chains).</div>
             </div>
             <div class="stat">
               <span class="stat-value">$4,5 \rightarrow 10$</span>
-              <div class="stat-sub">One per-site network transfers from 4&ndash;5-qubit training chains to a 1024-dimensional (10-qubit) Hilbert space absent from training.</div>
+              <div class="stat-sub">A single per-site network transfers from 4&ndash;5-qubit training chains to a 1024-dimensional (10-qubit) Hilbert space never seen in training.</div>
             </div>
             <div class="stat">
               <span class="stat-value">$\le r\eta$</span>
-              <div class="stat-sub">Closed-form global-error certificate: per-step residual error $\eta$ induces global error at most $r\eta$ over $r$ steps; order-optimal, not improvable to $o(r\eta)$.</div>
+              <div class="stat-sub">Closed-form global-error certificate: per-step residual error $\eta$ accumulates to at most $r\eta$ over $r$ steps. The rate is order-optimal &mdash; provably not improvable to $o(r\eta)$.</div>
             </div>
           </div>
         </aside>
@@ -201,27 +205,27 @@
     <!-- ================= BACKGROUND AND MOTIVATION ================= -->
     <section class="section" id="background">
       <div class="section-label">Background and Motivation</div>
-      <h2>Product-formula simulation and the open problem of certified, cheap correction.</h2>
+      <h2>Product-formula simulation, and the open problem of a cheap, certified correction.</h2>
       <p class="lede">
-        Digital Hamiltonian simulation realizes $U(t)=\exp(-iHt)$ by composing readily exponentiated factors of a splitting $H=A+B$. Since Lloyd's observation that local quantum systems are efficiently simulable, Trotter&ndash;Suzuki product formulas have remained the most transparent and hardware-aligned construction, with higher even orders generated by the Suzuki recursion. The contemporary theory &mdash; commutator-sensitive bounds together with locality and Lieb&ndash;Robinson arguments &mdash; sharpens the worst-case asymptotics considerably. Product formulas nonetheless compete with multi-product formulas, truncated Taylor methods, quantum signal processing and qubitization, randomized formulas, and Magnus-expansion algorithms; all confront a single object: the finite-step defect between the target and the implemented unitary.
+        Digital Hamiltonian simulation realizes $U(t)=\exp(-iHt)$ by composing the readily exponentiated factors of a splitting $H=A+B$. Since Lloyd's observation that local quantum systems are efficiently simulable, Trotter&ndash;Suzuki product formulas have remained the most transparent and hardware-aligned construction, with higher even orders generated by the Suzuki recursion. Contemporary theory &mdash; commutator-sensitive bounds combined with locality and Lieb&ndash;Robinson arguments &mdash; sharpens the worst-case asymptotics considerably. Yet product formulas, multi-product formulas, truncated Taylor methods, quantum signal processing and qubitization, randomized formulas, and Magnus-expansion algorithms all confront the same object: the finite-step defect between the target propagator and the implemented unitary. That defect, not its bound, is what this work corrects.
       </p>
       <div class="cards">
         <article class="card">
           <h3>The product-formula step</h3>
-          <p>For a two-term splitting $H=A+B$ with $A,B$ Hermitian, the order-$q$ step $S_q(\delta t)$ approximates $e^{-iH\delta t}$ to $O(\delta t^{q+1})$. The error accumulates over $r=t/\delta t$ steps. The benchmark uses the spectral norm $\lVert U(t)-S_q(\delta t)^r\rVert_2$, which is basis-independent and operationally corresponds to a worst-case state-vector error.</p>
+          <p>For a two-term splitting $H=A+B$ with $A,B$ Hermitian, the order-$q$ step $S_q(\delta t)$ approximates $e^{-iH\delta t}$ to $O(\delta t^{q+1})$, and the error accumulates over $r=t/\delta t$ steps. We measure it in the spectral norm $\lVert U(t)-S_q(\delta t)^r\rVert_2$: basis-independent, and operationally the worst-case state-vector error.</p>
         </article>
         <article class="card">
           <h3>The defect as a commutator object</h3>
-          <p>The leading defect is fixed by nested commutators. By the symmetric Baker&ndash;Campbell&ndash;Hausdorff expansion, the Strang defect carries no even-power term; its first nonzero contribution is a linear combination of the double commutators $[A,[A,B]]$ and $[B,[A,B]]$. This nested-commutator structure governs both the magnitude and the geometric locality of the correction.</p>
+          <p>The leading defect is fixed entirely by nested commutators. By the symmetric Baker&ndash;Campbell&ndash;Hausdorff expansion, the Strang defect carries no even-power term; its first nonzero contribution is a linear combination of the double commutators $[A,[A,B]]$ and $[B,[A,B]]$. This commutator structure dictates both the magnitude of the correction and its geometric locality &mdash; the property the rest of this work exploits.</p>
         </article>
         <article class="card">
           <h3>The open problem</h3>
-          <p>Existing analysis bounds the defect; it does not deliver a cheap, certified <em>correction</em> with an <em>a priori</em> guarantee. The challenge addressed here is to expose this defect as an implementable operator, compress it without losing the dominant correction, learn it without forming the dense $2^n$ propagator, and validate it <em>a priori</em> rather than only <em>a posteriori</em>.</p>
+          <p>Existing analysis bounds the defect but does not deliver a cheap, certified <em>correction</em> carrying an <em>a priori</em> guarantee. Four obstacles stand in the way: exposing the defect as an implementable operator, compressing it without discarding the dominant correction, learning it without ever forming the dense $2^n$ propagator, and certifying it <em>a priori</em> rather than only <em>a posteriori</em>. This work resolves all four.</p>
         </article>
       </div>
       <div class="note">
-        <h4>Two operating modes are distinguished</h4>
-        <p><strong>Oracle RGTC</strong> computes the residual from the exact dense matrix exponential. It is not scalable and is not claimed to be a deployable quantum algorithm; it establishes the target and the best possible one-step left correction. <strong>Compressed RGTC</strong> uses a Hermitian generator from a restricted family &mdash; instantiated here by Pauli-weight projection and, centrally, by operator learning. The separation is essential: a paper that merely states $U S_q^\dagger S_q = U$ would be tautological, whereas a useful residual-compilation result must quantify what happens when the exact residual is approximated.</p>
+        <h4>Two operating modes, deliberately separated</h4>
+        <p><strong>Oracle RGTC</strong> computes the residual from the exact dense matrix exponential. It is neither scalable nor claimed to be a deployable quantum algorithm; its role is to fix the target &mdash; the best possible one-step left correction. <strong>Compressed RGTC</strong> replaces the oracle with a Hermitian generator drawn from a restricted family, instantiated here by Pauli-weight projection and, centrally, by operator learning. The distinction is the substance of the contribution: the identity $U S_q^\dagger S_q = U$ alone is tautological, so a useful result must quantify exactly what is lost when the exact residual is approximated.</p>
       </div>
     </section>
 
@@ -230,46 +234,46 @@
       <div class="section-label">Mathematical Preliminaries</div>
       <h2>The transverse-field Ising model, the product-formula step, and the residual generator.</h2>
       <p class="lede">
-        Fix a Hilbert space $\mathcal{H}\cong\mathbb{C}^d$ with $d=2^n$, and a Hermitian $H=H^\dagger$ with exact time-$t$ propagator $U(t)=e^{-iHt}$. The two-term splitting $H=A+B$, with $A,B$ Hermitian and each easier to exponentiate than their sum, covers the standard even&ndash;odd / diagonal&ndash;transverse splittings of spin models. The benchmark is the open-boundary TFIM.
+        Fix a Hilbert space $\mathcal{H}\cong\mathbb{C}^d$ with $d=2^n$ and a Hermitian $H=H^\dagger$ whose exact time-$t$ propagator is $U(t)=e^{-iHt}$. A two-term splitting $H=A+B$, with $A,B$ Hermitian and each easier to exponentiate than their sum, covers the standard even&ndash;odd and diagonal&ndash;transverse splittings of spin models. The running benchmark is the open-boundary TFIM.
       </p>
 
       <h3 style="margin-top:24px;">Hamiltonian and splitting</h3>
       <div class="math-block">$$ H = A + B,\qquad A = J\sum_{j=1}^{n-1} Z_j Z_{j+1},\qquad B = h\sum_{j=1}^{n} X_j. $$</div>
-      <p>A standard many-body benchmark with a clear two-term splitting, exactly densely simulable at $n\le 6$ while still exhibiting noncommuting local structure; the disordered variant takes site-dependent couplings $J_i,h_i\sim\mathcal{U}[0.5,1.5]$.</p>
+      <p>A canonical many-body benchmark: it admits a clean two-term splitting, is exactly densely simulable at $n\le 6$, and retains strongly noncommuting local structure. The disordered variant draws site-dependent couplings $J_i,h_i\sim\mathcal{U}[0.5,1.5]$.</p>
 
       <h3 style="margin-top:24px;">Product-formula steps</h3>
       <div class="math-block">$$ S_1(\delta t)=e^{-iB\delta t}e^{-iA\delta t},\qquad S_2(\delta t)=e^{-iB\delta t/2}\,e^{-iA\delta t}\,e^{-iB\delta t/2}, $$</div>
       <div class="math-block">$$ S_{2k}(\delta t)=S_{2k-2}(p_k\delta t)^2\,S_{2k-2}\!\big((1-4p_k)\delta t\big)\,S_{2k-2}(p_k\delta t)^2,\qquad p_k=\big(4-4^{1/(2k-1)}\big)^{-1}. $$</div>
-      <p>The first-order Lie&ndash;Trotter step, the symmetric second-order Strang step, and the Suzuki recursion for higher even orders. Elementary factor counts are $2,3,15,75,375$ for $q=1,2,4,6,8$. Every $S_q$ is unitary for real $\delta t$.</p>
+      <p>These are the first-order Lie&ndash;Trotter step, the symmetric second-order Strang step, and the Suzuki recursion that generates the higher even orders. Their elementary factor counts are $2,3,15,75,375$ for $q=1,2,4,6,8$, and every $S_q$ is unitary for real $\delta t$.</p>
 
       <h3 style="margin-top:24px;">Residual factor and residual generator</h3>
       <div class="math-block">$$ R_q(\delta t)=U(\delta t)\,S_q(\delta t)^\dagger,\qquad G_q(\delta t)=R_q(\delta t)\,S_q(\delta t),\qquad R_q(\delta t)=e^{-iK_q(\delta t)},\quad K_q(\delta t)=i\log R_q(\delta t). $$</div>
-      <p>$R_q$ is the residual factor; the corrected step $G_q=R_qS_q$ equals $U(\delta t)$ in exact arithmetic. Since $R_q$ is unitary it admits a Hermitian residual generator $K_q$, well defined as a principal logarithm for $\delta t$ small enough that $R_q$ lies near the identity (eigenphases chosen in $[-\pi,\pi]$). All reported norms are spectral norms $\lVert\cdot\rVert_2$ unless stated otherwise; the Frobenius norm $\lVert\cdot\rVert_F$ governs Pauli-coefficient compression.</p>
+      <p>The residual factor $R_q$ defines a corrected step $G_q=R_qS_q$ that equals $U(\delta t)$ exactly in exact arithmetic. Because $R_q$ is unitary it carries a Hermitian residual generator $K_q$, well defined as a principal logarithm once $\delta t$ is small enough that $R_q$ lies near the identity (eigenphases taken in $[-\pi,\pi]$). This generator is the object the learning problem targets. All reported norms are spectral norms $\lVert\cdot\rVert_2$ unless stated otherwise; the Frobenius norm $\lVert\cdot\rVert_F$ governs Pauli-coefficient compression.</p>
 
       <h3 style="margin-top:24px;">Pauli expansion and weight projection</h3>
       <div class="math-block">$$ \Pi_w K_q=\sum_{\operatorname{wt}(P)\le w}\frac{\operatorname{Tr}(P K_q)}{2^n}\,P,\qquad \mathcal{B}_w=\operatorname{span}_{\mathbb{R}}\{P\in\{I,X,Y,Z\}^{\otimes n}:\operatorname{wt}(P)\le w\}. $$</div>
-      <p>The normalized Pauli strings $P/\sqrt{2^n}$ form an orthonormal basis under the Hilbert&ndash;Schmidt inner product, so $\Pi_w$ is orthogonal projection onto the weight-$\le w$ Pauli subspace $\mathcal{B}_w$.</p>
+      <p>The normalized Pauli strings $P/\sqrt{2^n}$ form an orthonormal basis under the Hilbert&ndash;Schmidt inner product, so $\Pi_w$ is exactly the orthogonal projection onto the weight-$\le w$ Pauli subspace $\mathcal{B}_w$ &mdash; the algebraic fact that makes weight truncation canonical rather than ad hoc.</p>
     </section>
 
     <!-- ================= PROBLEM FORMULATION ================= -->
     <section class="section" id="formulation">
       <div class="section-label">Problem Formulation</div>
-      <h2>Predicting the local weight-$\le 3$ generator coefficients without forming the $2^n$ oracle.</h2>
+      <h2>Predicting the local weight-$\le 3$ generator coefficients without ever forming the $2^n$ oracle.</h2>
       <p class="lede">
-        The exact residual generator $K_q$ is defined through the dense $2^n$ propagator and is therefore as costly as exact simulation. The objective is to predict an implementable generator $\widehat{K}_q$ that reproduces the dominant correction while never accessing $U(\delta t)$ at evaluation scale. The locality theorem makes this well posed: because the leading Strang generator is supported on geometrically local Pauli strings of weight at most three, the map from local couplings to residual coefficients is itself local.
+        The exact residual generator $K_q$ is defined through the dense $2^n$ propagator, making it as costly as exact simulation &mdash; useless as a target unless it can be predicted indirectly. The objective is therefore an implementable generator $\widehat{K}_q$ that reproduces the dominant correction while never accessing $U(\delta t)$ at evaluation scale. The locality theorem makes this well posed: because the leading Strang generator is supported on geometrically local Pauli strings of weight at most three, the map from local couplings to residual coefficients is itself local, and a fixed-radius predictor suffices.
       </p>
       <div class="cards">
         <article class="card">
           <h3>Local parameterization</h3>
-          <p>At each site $j$, the per-site generator $h_j$ is expanded in the $T=48$ weight-$\le 3$ Pauli templates whose support lies within the three-site window $\{j-1,j,j+1\}$, $h_j=\sum_{\alpha=1}^{T} c_{j,\alpha}P_{j,\alpha}$, with $K_2^{(3)}=\sum_j h_j$. The unknowns are the coefficients $c_{j,\alpha}$.</p>
+          <p>At each site $j$, the per-site generator $h_j$ expands in the $T=48$ weight-$\le 3$ Pauli templates supported within the three-site window $\{j-1,j,j+1\}$, $h_j=\sum_{\alpha=1}^{T} c_{j,\alpha}P_{j,\alpha}$, with $K_2^{(3)}=\sum_j h_j$. The only unknowns are the coefficients $c_{j,\alpha}$.</p>
         </article>
         <article class="card">
           <h3>Translation-equivariant predictor</h3>
-          <p>A single per-site network maps the local couplings in the window (11 couplings) plus the step size $\delta t$ &mdash; 12 inputs &mdash; through two width-64 $\tanh$ layers to the 48 $\delta t^{-3}$-scaled coefficients, with weights shared across all sites and all chain lengths. Weight sharing is the inductive bias that makes a model trained on small chains correct larger ones.</p>
+          <p>A single per-site network maps the window's local couplings (11 of them) plus the step size $\delta t$ &mdash; 12 inputs &mdash; through two width-64 $\tanh$ layers to the 48 $\delta t^{-3}$-scaled coefficients, with weights shared across every site and every chain length. This weight sharing is precisely the inductive bias that lets a model trained on small chains correct larger ones.</p>
         </article>
         <article class="card">
           <h3>Oracle-free objective</h3>
-          <p>Training labels are obtained from the residual generator of a fixed-size local patch (radius two, at most seven qubits), so no dense $2^n$ object ever enters training; at inference the network sees only local couplings, never $U(\delta t)$. The correction is rebuilt as $\delta t^3$ times the network output and applied as $\exp(-i\delta t^3\widehat{K}_2^{(3)})\,S_2$.</p>
+          <p>Training labels come from the residual generator of a fixed-size local patch (radius two, at most seven qubits), so no dense $2^n$ object ever enters training, and at inference the network sees only local couplings, never $U(\delta t)$. The correction is reassembled as $\delta t^3$ times the network output and applied as $\exp(-i\delta t^3\widehat{K}_2^{(3)})\,S_2$.</p>
         </article>
       </div>
     </section>
@@ -277,14 +281,14 @@
     <!-- ================= PRINCIPAL CONTRIBUTIONS ================= -->
     <section class="section" id="contributions">
       <div class="section-label">Principal Contributions</div>
-      <h2>Six claims, each complete and provable.</h2>
+      <h2>Six claims, each self-contained and provable.</h2>
       <ol class="contrib-list">
-        <li><strong>Exact residual factorization with optimality.</strong> The residual $R_q=US_q^\dagger$ is the unique unitary left correction satisfying $R_qS_q=U$, and it is a global minimizer of $\lvert\lvert\lvert U-L S_q\rvert\rvert\rvert$ over all left multipliers in every unitarily invariant norm, with minimum value zero.</li>
-        <li><strong>Multi-step stability for approximate residuals.</strong> If $\eta=\lVert\widehat{R}_q-R_q\rVert_2$, then $\lVert\widehat{G}_q^{\,r}-U(t)\rVert_2\le r\eta$ for unitary $\widehat{R}_q$ (and $\le r\eta\,e^{(r-1)\eta}$ in general); a matching lower bound shows the linear-in-$r$ rate is order-optimal.</li>
-        <li><strong>Frobenius-optimal Pauli compression.</strong> Orthogonal projection $\Pi_{\mathcal B}K$ onto any real Pauli subspace is the unique minimizer of $\lVert K-L\rVert_F$, and a direct spectral-norm certificate $\lVert e^{-iK}-e^{-i\Pi_{\mathcal B}K}\rVert_2\le\lVert K-\Pi_{\mathcal B}K\rVert_F$ follows.</li>
-        <li><strong>TFIM leading-Strang locality.</strong> For the open-boundary TFIM, the degree-three homogeneous term of $K_2$ is a real linear combination of Pauli strings of weight at most three: $K_2(\delta t)=\delta t^3 K_2^{(3)}+O(\delta t^5)$ with $K_2^{(3)}\in\mathcal{B}_3$.</li>
-        <li><strong>A learned, size-transferable residual generator.</strong> A single translation-equivariant network predicts the step-conditioned local weight-$\le 3$ coefficients of $K_2$ from local couplings, trains without any dense $2^n$ oracle, transfers from $n=4,5$ to $n=10$ ($R^2=0.9998$ on held-out sizes), cuts uncorrected Strang error by $38\text{--}46\times$, and beats the analytic leading-order correction by more than an order of magnitude where the latter fails &mdash; all while obeying the proven $r\eta$ bound.</li>
-        <li><strong>Deterministic, reproducible evidence.</strong> Dense-matrix experiments, figures, tables, and code recompute every reported number from first principles, with unitarity and same-order consistency checks that would expose fabrication or implementation error.</li>
+        <li><strong>An exact, optimal residual target.</strong> The residual $R_q=US_q^\dagger$ is the unique unitary left correction satisfying $R_qS_q=U$, and it globally minimizes $\lvert\lvert\lvert U-L S_q\rvert\rvert\rvert$ over all left multipliers in every unitarily invariant norm, attaining the minimum value zero.</li>
+        <li><strong>Stability under approximation.</strong> With $\eta=\lVert\widehat{R}_q-R_q\rVert_2$, the global error obeys $\lVert\widehat{G}_q^{\,r}-U(t)\rVert_2\le r\eta$ for unitary $\widehat{R}_q$ (and $\le r\eta\,e^{(r-1)\eta}$ in general); a matching lower bound proves the linear-in-$r$ rate is order-optimal.</li>
+        <li><strong>Canonical, certified compression.</strong> Orthogonal projection $\Pi_{\mathcal B}K$ onto any real Pauli subspace is the unique minimizer of $\lVert K-L\rVert_F$, and it carries a direct spectral-norm certificate $\lVert e^{-iK}-e^{-i\Pi_{\mathcal B}K}\rVert_2\le\lVert K-\Pi_{\mathcal B}K\rVert_F$.</li>
+        <li><strong>Provable locality for the TFIM.</strong> For the open-boundary TFIM the degree-three homogeneous term of $K_2$ is a real combination of Pauli strings of weight at most three: $K_2(\delta t)=\delta t^3 K_2^{(3)}+O(\delta t^5)$ with $K_2^{(3)}\in\mathcal{B}_3$ &mdash; the structural fact that makes per-site learning possible.</li>
+        <li><strong>A learned, size-transferable generator.</strong> A single translation-equivariant network predicts the step-conditioned local weight-$\le 3$ coefficients of $K_2$ from local couplings alone, trains without any dense $2^n$ oracle, transfers from $n=4,5$ to $n=10$ ($R^2=0.9998$ on held-out sizes), cuts uncorrected Strang error by $38\text{--}46\times$, and surpasses the analytic leading-order correction by more than an order of magnitude where the latter fails &mdash; all while honoring the proven $r\eta$ bound.</li>
+        <li><strong>Deterministic, falsifiable evidence.</strong> Dense-matrix experiments, figures, tables, and code recompute every reported number from first principles, with unitarity and same-order consistency checks that would expose any fabrication or implementation error.</li>
       </ol>
     </section>
 
@@ -293,98 +297,98 @@
       <div class="section-label">Methodological Novelty</div>
       <h2>A learned, geometrically local, step-conditioned, size-transferable error operator.</h2>
       <p class="lede">
-        Prior product-formula analysis treats truncation error as an analytic object to be <em>bounded</em>. The novelty here is to treat it as a <em>learnable</em> operator with four properties that prior bounds do not jointly supply, and whose approximation quality is controlled <em>a priori</em> by a proven stability bound rather than validated only <em>a posteriori</em>.
+        Prior product-formula analysis treats truncation error as an analytic object to be <em>bounded</em>. The shift here is to treat it as a <em>learnable</em> operator that is simultaneously local, step-conditioned, and size-transferable &mdash; four properties no prior bound supplies jointly &mdash; and whose approximation quality is controlled <em>a priori</em> by a proven stability bound rather than validated only <em>a posteriori</em>.
       </p>
       <div class="application-grid">
         <article class="card">
           <h3>Prior product-formula bounds</h3>
           <ul class="tight">
-            <li>Supply worst-case or commutator-scaling estimates of the defect magnitude, not a constructive correction.</li>
-            <li>Treat the error as an analytic quantity fixed by the formula, with no learned or data-driven component.</li>
+            <li>Estimate the defect magnitude (worst-case or commutator-scaling), but supply no constructive correction.</li>
+            <li>Fix the error analytically from the formula, with no learned or data-driven component.</li>
             <li>The leading-order BCH correction captures only the $\delta t^3$ term and degrades rapidly as the step grows.</li>
-            <li>Accuracy is established <em>a posteriori</em> by evaluating the implemented unitary.</li>
+            <li>Establish accuracy only <em>a posteriori</em>, by evaluating the implemented unitary.</li>
           </ul>
         </article>
         <article class="card">
           <h3>The learned residual operator (this work)</h3>
           <ul class="tight">
-            <li><strong>Learned:</strong> one translation-equivariant network maps local couplings to generator coefficients, never accessing the propagator.</li>
-            <li><strong>Geometrically local:</strong> proven weight-$\le 3$ support reduces compilation to a per-site problem with a fixed template family.</li>
-            <li><strong>Step-conditioned:</strong> $\delta t$ is an input, so the correction tracks the working-$\delta t$ coefficients where the $\delta t^3$-only baseline fails.</li>
-            <li><strong>Size-transferable:</strong> weight sharing makes the per-site error $\eta$ independent of $n$, so the same network corrects much larger chains under an <em>a priori</em> $r\eta$ certificate.</li>
+            <li><strong>Learned:</strong> one translation-equivariant network maps local couplings to generator coefficients, never touching the propagator.</li>
+            <li><strong>Geometrically local:</strong> proven weight-$\le 3$ support collapses compilation to a per-site problem over a fixed template family.</li>
+            <li><strong>Step-conditioned:</strong> $\delta t$ enters as an input, so the correction tracks the working-$\delta t$ coefficients precisely where the $\delta t^3$-only baseline fails.</li>
+            <li><strong>Size-transferable:</strong> weight sharing keeps the per-site error $\eta$ independent of $n$, so one network corrects far larger chains under an <em>a priori</em> $r\eta$ certificate.</li>
           </ul>
         </article>
       </div>
       <div class="note">
         <h4>Methodological interest beyond quantum simulation</h4>
-        <p>The truncation error of a numerical integrator &mdash; usually an analytic object to be bounded &mdash; is here shown to be a learnable operator that is geometrically local, conditioned on the discretization step, and transferable across system size, with its approximation quality controlled <em>a priori</em> by a proven stability bound. This places the work within the broader programme of structure-preserving, physics-constrained operator learning, where a restricted, symmetry-respecting hypothesis class is what makes generalization both data-efficient and certifiable.</p>
+        <p>The truncation error of a numerical integrator &mdash; conventionally an analytic object to be bounded &mdash; is shown here to be a learnable operator: geometrically local, conditioned on the discretization step, transferable across system size, and certified <em>a priori</em> by a proven stability bound. This situates the work within structure-preserving, physics-constrained operator learning, where a restricted, symmetry-respecting hypothesis class is exactly what renders generalization both data-efficient and certifiable.</p>
       </div>
     </section>
 
     <!-- ================= THEORETICAL GUARANTEES ================= -->
     <section class="section" id="theory">
       <div class="section-label">Theoretical Guarantees</div>
-      <h2>The formal results, transcribed with one-line interpretations.</h2>
-      <p class="lede">All norms are spectral norms unless stated otherwise. Statements below are transcribed from the manuscript's Methods; each is accompanied by an operational reading.</p>
+      <h2>The formal results, transcribed verbatim with one-line interpretations.</h2>
+      <p class="lede">All norms are spectral norms unless stated otherwise. Each statement below is transcribed exactly from the manuscript's Methods and paired with its operational reading.</p>
 
       <div class="theorem">
         <div class="thm-label">Theorem 1 &middot; Exact residual factorization and uniqueness</div>
         <h4>$R_q=US_q^\dagger$ is unitary and the unique $L$ with $LS_q=U$; hence $R_qS_q=U$ and $[R_q(t/r)S_q(t/r)]^r=U(t)$.</h4>
-        <p class="interp"><strong>Reading:</strong> the residual is an exact, well-defined correction target &mdash; not an approximation &mdash; for time-independent $H$.</p>
+        <p class="interp"><strong>Reading:</strong> for time-independent $H$ the residual is an exact, uniquely defined correction target &mdash; not an approximation.</p>
       </div>
 
       <div class="theorem">
         <div class="thm-label">Theorem 2 &middot; Optimality among all left corrections</div>
         <h4>For every unitarily invariant norm, $R_q$ globally minimizes $\mathcal{J}(L)=\lvert\lvert\lvert U-LS_q\rvert\rvert\rvert$; the minimum is zero and the minimizer is unique.</h4>
-        <p class="interp"><strong>Reading:</strong> no exact left multiplier can beat $R_q$, in any such norm, because its error is already zero. This is an oracle statement, not a cost statement.</p>
+        <p class="interp"><strong>Reading:</strong> no left multiplier can beat $R_q$ in any such norm, since its error is already zero. This bounds optimality, not cost.</p>
       </div>
 
       <div class="theorem">
         <div class="thm-label">Theorem 3 &middot; Small-step residual-generator bound</div>
         <h4>If $\lVert U-S_q\rVert_2\le C_q\lvert\delta t\rvert^{q+1}\le 1$, then $K_q$ exists with phases in $[-\pi,\pi]$ and $\lVert K_q(\delta t)\rVert_2\le 2C_q\lvert\delta t\rvert^{q+1}$.</h4>
-        <p class="interp"><strong>Reading:</strong> the generator is genuinely small at small steps and shrinks with order $q$, so a low-weight or learned approximation has a small target to capture.</p>
+        <p class="interp"><strong>Reading:</strong> the generator is small at small steps and shrinks with order $q$, leaving a low-weight or learned approximation a small target to capture.</p>
       </div>
 
       <div class="theorem">
         <div class="thm-label">Theorem 4 &middot; Multi-step stability for approximate residuals</div>
         <h4>With $\eta=\lVert\widehat{R}_q-R_q\rVert_2$, $\;\lVert\widehat{G}_q^{\,r}-U(t)\rVert_2\le \eta\sum_{j=0}^{r-1}(1+\eta)^j\le r\eta\,e^{(r-1)\eta}$; if $\widehat{R}_q$ is unitary, the sharp bound $\le r\eta$ holds.</h4>
-        <p class="interp"><strong>Reading:</strong> per-step residual error converts to global error linearly &mdash; a fidelity target $\epsilon$ becomes the per-step synthesis target $\eta\le\epsilon/r$.</p>
+        <p class="interp"><strong>Reading:</strong> per-step residual error accumulates only linearly, so a global fidelity target $\epsilon$ translates directly into a per-step synthesis target $\eta\le\epsilon/r$.</p>
       </div>
 
       <div class="theorem">
         <div class="thm-label">Theorem 5 &middot; Tightness of the stability bound</div>
         <h4>For every $\eta\in(0,\pi]$ there is a unitary $\widehat{R}_q$ with $\lVert\widehat{R}_q-R_q\rVert_2\le\eta$ and $\lVert\widehat{G}_q^{\,r}-U(r\delta t)\rVert_2\ge\tfrac{2}{\pi}\,r\eta$ whenever $r\eta\le\pi$.</h4>
-        <p class="interp"><strong>Reading:</strong> the linear-in-$r$ rate is order-optimal; no bound of the form $o(r\eta)$ holds uniformly in $r$.</p>
+        <p class="interp"><strong>Reading:</strong> the linear-in-$r$ rate cannot be improved &mdash; no bound of the form $o(r\eta)$ holds uniformly in $r$.</p>
       </div>
 
       <div class="theorem">
         <div class="thm-label">Theorem 6 &middot; Duhamel bound for generator approximation</div>
         <h4>For Hermitian $K,\widehat{K}$, $\;\lVert e^{-iK}-e^{-i\widehat{K}}\rVert_2\le\lVert K-\widehat{K}\rVert_2$; hence $\lVert\widehat{G}_q^{\,r}-U(t)\rVert_2\le r\lVert K_q-\widehat{K}_q\rVert_2$.</h4>
-        <p class="interp"><strong>Reading:</strong> generator error transfers directly to unitary error, so approximating $K_q$ in operator norm suffices to control the global simulation error.</p>
+        <p class="interp"><strong>Reading:</strong> generator error passes directly to unitary error, so controlling $K_q$ in operator norm is enough to control the global simulation error.</p>
       </div>
 
       <div class="theorem">
         <div class="thm-label">Theorem 7 &middot; Frobenius-optimal Pauli compression</div>
         <h4>$\Pi_{\mathcal B}K$ uniquely minimizes $\lVert K-L\rVert_F$ over a Pauli subspace $\mathcal{B}$, and $\lVert e^{-iK}-e^{-i\Pi_{\mathcal B}K}\rVert_2\le\lVert K-\Pi_{\mathcal B}K\rVert_2\le\lVert K-\Pi_{\mathcal B}K\rVert_F$.</h4>
-        <p class="interp"><strong>Reading:</strong> Pauli-weight truncation is the mathematically canonical compression, and its residual error is certified through the Frobenius norm.</p>
+        <p class="interp"><strong>Reading:</strong> Pauli-weight truncation is the canonical compression, and the Frobenius norm certifies exactly how much it costs.</p>
       </div>
 
       <div class="theorem">
         <div class="thm-label">Theorem 8 &middot; Leading Strang residual support for the open-boundary TFIM</div>
         <h4>$K_2(\delta t)=\delta t^3 K_2^{(3)}+O(\delta t^5)$ with $K_2^{(3)}\in\mathcal{B}_3$: the degree-three term is a real combination of Pauli strings of weight $\le 3$.</h4>
-        <p class="interp"><strong>Reading:</strong> the dominant defect lives on three-site windows &mdash; the structural reason weight-$3$ projection and per-site learning succeed for the TFIM. (Leading-order and model-specific; higher BCH terms can enlarge support.)</p>
+        <p class="interp"><strong>Reading:</strong> the dominant defect lives entirely on three-site windows &mdash; the structural reason weight-$3$ projection and per-site learning succeed for the TFIM. (Leading-order and model-specific; higher BCH terms can enlarge the support.)</p>
       </div>
 
       <div class="theorem">
         <div class="thm-label">Theorem 9 &middot; Size-transfer error bound for learned local residual generators</div>
         <h4>If a translation-invariant per-site predictor has $\lVert\widehat{h}_j-h_j\rVert_2\le\eta$ ($\eta$ independent of $n$), then $\lVert\widehat{K}_2^{(3)}-K_2^{(3)}\rVert_2\le n\eta$ and, for $t=r\delta t$, $\lVert\widehat{G}^r-U(t)\rVert_2\le r\,\delta t^3 n\eta + r\,O(\delta t^5)$.</h4>
-        <p class="interp"><strong>Reading:</strong> weight sharing makes the per-site error size-independent, so a model trained on small chains carries a global certificate to much larger ones.</p>
+        <p class="interp"><strong>Reading:</strong> weight sharing makes the per-site error size-independent, so a model trained on small chains carries a provable global certificate to much larger ones.</p>
       </div>
 
       <div class="theorem">
         <div class="thm-label">Corollary &middot; Projected residual simulation certificate</div>
         <h4>For $\widehat{G}_{q,w}=e^{-i\Pi_w K_q}S_q$, $\;\lVert\widehat{G}_{q,w}^{\,r}-U(t)\rVert_2\le r\lVert K_q-\Pi_w K_q\rVert_2$; target accuracy $\epsilon$ holds whenever $\lVert K_q-\Pi_w K_q\rVert_2\le\epsilon/r$.</h4>
-        <p class="interp"><strong>Reading:</strong> the per-step coefficient error from a Theorem-9 predictor (via $\eta\le\sqrt{T}\,\delta_c$, $T=48$) converts directly into an <em>a priori</em> global error budget.</p>
+        <p class="interp"><strong>Reading:</strong> the per-step coefficient error of a Theorem-9 predictor (via $\eta\le\sqrt{T}\,\delta_c$, $T=48$) maps directly onto an <em>a priori</em> global error budget.</p>
       </div>
     </section>
 
@@ -392,7 +396,7 @@
     <section class="section" id="results">
       <div class="section-label">Empirical Validation</div>
       <h2>Headline numbers, recomputed from deterministic dense-matrix simulation.</h2>
-      <p class="lede">All values below are computed, never transcribed by hand. Deterministic studies use fixed grids without stochastic sampling, so they carry no error bars; learned-transfer values are means $\pm$ one standard deviation over disordered chains ($J_i,h_i\sim\mathcal{U}[0.5,1.5]$). Quantities near $10^{-13}$ are at the double-precision floor.</p>
+      <p class="lede">Every value below is computed, never transcribed by hand. Deterministic studies run on fixed grids with no stochastic sampling and therefore carry no error bars; learned-transfer values are reported as means $\pm$ one standard deviation over disordered chains ($J_i,h_i\sim\mathcal{U}[0.5,1.5]$). Quantities near $10^{-13}$ sit at the double-precision floor.</p>
 
       <h3 style="margin-top:8px;">1 &middot; Learned residual transferred across system size ($t=1$, $\delta t=0.1$)</h3>
       <div class="table-scroll">
@@ -411,7 +415,7 @@
           </tbody>
         </table>
       </div>
-      <p class="table-caption">Global spectral-norm error; reduction is $\epsilon_{\mathrm{Strang}}/\epsilon_{\mathrm{learned}}$. The oracle-free network is trained only on $n=4,5$; sizes $n\ge6$ are absent from training. Held-out coefficient parity at $n=6,\dots,10$ attains $R^2=0.9998$ (relative $\ell_2$ error $1.32\times10^{-2}$).</p>
+      <p class="table-caption">Global spectral-norm error; reduction is $\epsilon_{\mathrm{Strang}}/\epsilon_{\mathrm{learned}}$. The oracle-free network is trained only on $n=4,5$, so every size $n\ge6$ is held out from training. Coefficient parity on those held-out sizes $n=6,\dots,10$ reaches $R^2=0.9998$ (relative $\ell_2$ error $1.32\times10^{-2}$).</p>
 
       <h3 style="margin-top:30px;">2 &middot; Learning surpasses leading-order BCH as the step grows ($n=6$ single-step sweep)</h3>
       <div class="table-scroll">
@@ -429,7 +433,7 @@
           </tbody>
         </table>
       </div>
-      <p class="table-caption">Per-step spectral-norm error (means over $n_{\mathrm c}=24$ disordered chains; dispersion omitted for compactness). The analytic $\delta t^3$ correction degrades from an $11\times$ improvement at $\delta t=0.05$ to only $1.24\times$ at $\delta t=0.30$, while the $\delta t$-conditioned learned correction tracks the exact oracle and stays roughly $17\times$ below BCH at the working step. The learned residual remains within a factor of about two to three of the exact weight-$\le3$ oracle throughout.</p>
+      <p class="table-caption">Per-step spectral-norm error (means over $n_{\mathrm c}=24$ disordered chains; dispersion omitted for compactness). As the step grows, the analytic $\delta t^3$ correction collapses from an $11\times$ improvement at $\delta t=0.05$ to just $1.24\times$ at $\delta t=0.30$; the $\delta t$-conditioned learned correction instead tracks the exact oracle, holding roughly $17\times$ below BCH at the working step and staying within a factor of about two to three of the exact weight-$\le3$ oracle throughout.</p>
 
       <h3 style="margin-top:30px;">3 &middot; Fixed-time oracle benchmark ($J=h=1$, $t=1$, $r=10$)</h3>
       <div class="table-scroll">
@@ -447,7 +451,7 @@
           </tbody>
         </table>
       </div>
-      <p class="table-caption">Representative rows from the dense fixed-time benchmark. The oracle residual cancels product-formula error to the floating-point floor ($10^{-15}$&ndash;$10^{-14}$), exactly as Theorem&nbsp;1 predicts; values near $10^{-13}$ are round-off, not physical error. (At $q=8$ the baseline is itself near round-off, a finite-precision artifact noted in the manuscript.)</p>
+      <p class="table-caption">Representative rows from the dense fixed-time benchmark. The oracle residual cancels product-formula error down to the floating-point floor ($10^{-15}$&ndash;$10^{-14}$), precisely as Theorem&nbsp;1 predicts; values near $10^{-13}$ are round-off, not physical error. (At $q=8$ the baseline already sits near round-off, a finite-precision artifact noted in the manuscript.)</p>
 
       <h3 style="margin-top:30px;">4 &middot; Projected (compressed) residual by Pauli weight ($n=5$, $q=2$, $J=h=1$, $t=1$, $r=10$)</h3>
       <div class="table-scroll">
@@ -465,14 +469,14 @@
           </tbody>
         </table>
       </div>
-      <p class="table-caption">Weight $w=3$ is the first meaningful threshold &mdash; an $89.56\times$ improvement &mdash; exactly as the leading-support theorem (Theorem&nbsp;8) predicts; weight two is slightly worse than baseline, so not every truncated correction is automatically useful. The $w=5$ row sits at the double-precision floor. For the $n=5$, $q=2$, $\delta t=0.1$ generator, weight $\le3$ accounts for $99.997\%$ of the squared Pauli-coefficient mass.</p>
+      <p class="table-caption">Weight $w=3$ is the first threshold that pays off &mdash; an $89.56\times$ improvement &mdash; exactly as the leading-support theorem (Theorem&nbsp;8) predicts. Weight two is in fact slightly worse than baseline, a reminder that not every truncated correction helps. The $w=5$ row sits at the double-precision floor. For the $n=5$, $q=2$, $\delta t=0.1$ generator, weight $\le3$ already accounts for $99.997\%$ of the squared Pauli-coefficient mass.</p>
     </section>
 
     <!-- ================= INTERACTIVE DEMO ================= -->
     <section class="section" id="demo">
       <div class="section-label">Interactive Illustration</div>
       <h2>Residual error budget versus step size, order, and step count &mdash; in the browser.</h2>
-      <p class="lede">This qualitative interactive illustration plots, within the TFIM regime, three quantities against step size $\delta t$ on log&ndash;log axes: the uncorrected product-formula error (per step $\sim\delta t^{q+1}$, accumulating over $r$ steps), the leading-order BCH correction (which removes only the $\delta t^3$ term and degrades as $\delta t$ grows), and the learned residual together with its $r\eta$ stability envelope. It is a scaling-law illustration, <strong>not a re-run of the experiments</strong>; the quantitative results are the deterministic tables above. The order slider reproduces the order-$(q+1)$ scaling of the baseline; the step-count slider $r$ moves the $r\eta$ envelope linearly, illustrating the stability bound of Theorem&nbsp;4.</p>
+      <p class="lede">This interactive figure plots three quantities against step size $\delta t$ on log&ndash;log axes within the TFIM regime: the uncorrected product-formula error (per step $\sim\delta t^{q+1}$, accumulating over $r$ steps), the leading-order BCH correction (which removes only the $\delta t^3$ term and degrades as $\delta t$ grows), and the learned residual with its $r\eta$ stability envelope. It is a scaling-law illustration, <strong>not a re-run of the experiments</strong> &mdash; the quantitative results are the deterministic tables above. The order slider reproduces the order-$(q+1)$ scaling of the baseline; the step-count slider $r$ slides the $r\eta$ envelope linearly, making the stability bound of Theorem&nbsp;4 visible.</p>
 
       <div class="demo-shell">
         <div class="demo-grid">
@@ -530,21 +534,21 @@
     <!-- ================= SIGNIFICANCE AND IMPACT ================= -->
     <section class="section" id="impact">
       <div class="section-label">Significance and Impact</div>
-      <h2>An oracle target, made safe to approximate &mdash; and learned without the oracle.</h2>
-      <p class="lede">The contribution resides in the combination: a uniquely defined oracle correction target; stability theorems translating residual error into global error; a generator perspective exposing the defect as a compact Hermitian operator; a projection theorem rendering compressed generators well posed; a support theorem explaining why low-weight projection succeeds for the TFIM; and a demonstration that the residual generator can be <em>learned</em> as a geometrically local, size-transferable operator whose learned approximation inherits the stability guarantee.</p>
+      <h2>An oracle target, made safe to approximate &mdash; then learned without the oracle.</h2>
+      <p class="lede">The contribution is the chain of pieces fitting together: a uniquely defined oracle correction target; stability theorems that turn residual error into global error; a generator perspective that exposes the defect as a compact Hermitian operator; a projection theorem that makes compressed generators well posed; a support theorem that explains why low-weight projection succeeds for the TFIM; and, finally, a demonstration that the residual generator can be <em>learned</em> as a geometrically local, size-transferable operator whose approximation inherits the stability guarantee. No single piece is the result; their composition is.</p>
       <div class="application-grid">
         <article class="card">
           <h3>Consequence for quantum simulation</h3>
-          <p>Compilation becomes a learning problem with an attached proof. A single per-site network, trained on small systems from oracle-free patches, corrects a system $32\times$ larger in Hilbert-space dimension, surpasses the analytic leading-order correction in the regime where it fails, and stays within a closed-form $r\eta$ budget &mdash; converting a fidelity or learning-loss specification into a per-step synthesis target. This is an "oracle-to-algorithm" pattern: an ideal mathematical object (the residual generator) around which efficient block encodings, compilers, or learned estimators can be developed. As a correction layer after a product-formula block it is compatible with multi-product, randomized, qubitization, and Cartan-decomposition strategies rather than competing with them.</p>
+          <p>Compilation becomes a learning problem that ships with its own proof. A single per-site network, trained on small systems from oracle-free patches, corrects a system $32\times$ larger in Hilbert-space dimension, beats the analytic leading-order correction precisely in the regime where it fails, and stays inside a closed-form $r\eta$ budget &mdash; turning a fidelity or learning-loss specification directly into a per-step synthesis target. This is an "oracle-to-algorithm" pattern: an ideal mathematical object, the residual generator, around which efficient block encodings, compilers, or learned estimators can be built. Deployed as a correction layer after a product-formula block, it composes with multi-product, randomized, qubitization, and Cartan-decomposition strategies rather than competing with them.</p>
         </article>
         <article class="card">
-          <h3>Honest limitations</h3>
-          <p>Oracle RGTC requires $U(\delta t)$ and is as costly as exact dense simulation. The oracle-free learned residual removes the dense $2^n$ oracle <em>from training</em> and conditions on $\delta t$, yet evaluation here remains dense (up to ten qubits); the local templates are <strong>TFIM-specific and leading-order</strong>; results use double precision and small systems; and circuit-level synthesis of $\widehat{K}_q$ into native gates is not undertaken. Other Hamiltonians may need different generator families and retraining. The paper proves correction and compression guarantees, not a universal asymptotic quantum speedup. These delineate the next tasks; they do not invalidate the contribution.</p>
+          <h3>Scope and limitations</h3>
+          <p>Oracle RGTC requires $U(\delta t)$ and is as costly as exact dense simulation. The oracle-free learned residual removes the dense $2^n$ oracle <em>from training</em> and conditions on $\delta t$, while evaluation here remains dense (up to ten qubits); the local templates are <strong>TFIM-specific and leading-order</strong>; all results use double precision and small systems; and circuit-level synthesis of $\widehat{K}_q$ into native gates is left to future work. Other Hamiltonians may require different generator families and retraining. The paper establishes correction and compression guarantees rather than a universal asymptotic quantum speedup. These define the next steps and stand alongside the present contribution.</p>
         </article>
       </div>
       <div class="note">
         <h4>Outlook</h4>
-        <p>The most credible path forward uses the oracle residual as a target for algebraic, variational, and learned compilers, with rigorous certificates linking per-step residual error to global accuracy. Concrete continuations: scaling evaluation beyond dense simulation; extending the local templates beyond the TFIM and to higher orders; replacing patch labels with classical-shadow or commutator estimates on hardware; and synthesizing the learned generator $e^{-i\widehat{K}_q}$ into native gates, with the stability and Duhamel bounds as the operator-norm target. The dense-linear-algebra, parameter-sweep workload maps naturally onto GPU acceleration for larger offline training sets. These constitute implementation rather than a change of principle.</p>
+        <p>The most credible path forward treats the oracle residual as a target for algebraic, variational, and learned compilers, with rigorous certificates linking per-step residual error to global accuracy. Concrete continuations follow directly: scaling evaluation beyond dense simulation; extending the local templates past the TFIM and to higher orders; replacing patch labels with classical-shadow or commutator estimates on hardware; and synthesizing the learned generator $e^{-i\widehat{K}_q}$ into native gates, with the stability and Duhamel bounds supplying the operator-norm target. The dense-linear-algebra, parameter-sweep workload maps naturally onto GPU acceleration for larger offline training sets. Each is implementation, not a change of principle.</p>
       </div>
     </section>
 
@@ -552,7 +556,7 @@
     <section class="section" id="repro">
       <div class="section-label">Reproducibility</div>
       <h2>A pip-installable artifact that recomputes every number from first principles.</h2>
-      <p class="lede">All data are produced by deterministic scripts from the Hamiltonian definition; every result is computed, never transcribed by hand. The accompanying code artifact is the pip-installable package <code>lieideal-hs</code> 1.0.0 (MIT, requires Python $\ge 3.10$) at <code>submission/code</code>. Reproducibility checks include the unitarity of $S_q$, $R_q$, and the corrected steps; same-order $S_q$ versus $R_qS_q$ comparisons; exact dense recomputation of $U(t)$; persistence of raw CSV/JSON before plotting; and fixed seeds for the learned-residual sampler, data split, and network initialization.</p>
+      <p class="lede">All data are generated by deterministic scripts directly from the Hamiltonian definition; every result is computed, never transcribed by hand. The accompanying artifact is the pip-installable package <code>lieideal-hs</code> 1.0.0 (MIT, requires Python $\ge 3.10$) at <code>submission/code</code>. Built-in checks verify the unitarity of $S_q$, $R_q$, and the corrected steps; compare same-order $S_q$ against $R_qS_q$; recompute $U(t)$ exactly and densely; persist raw CSV/JSON before any plotting; and fix seeds for the learned-residual sampler, the data split, and network initialization &mdash; the safeguards that make fabrication or silent error detectable.</p>
       <div class="application-grid">
         <article class="card">
           <h3>Obtain identical results</h3>
@@ -568,7 +572,7 @@ python validate_submission.py
 # Or via the console entry points
 lieideal-reproduce   # cli:main
 lieideal-verify      # cli:verify</code></pre>
-          <p class="footnote">CPU-only; dependencies are numpy, scipy, pandas, matplotlib, torch. Figures land in <code>submission/code/figures/</code> (vector PDF), tables alongside, and raw records in <code>submission/code/generated_data/</code>. The learned-residual run is made deterministic by a single fixed seed; rerunning reproduces every reported value (each network trains for 4000 full-batch Adam steps on 220 disordered realizations at each of $n=4,5$).</p>
+          <p class="footnote">CPU-only; dependencies are numpy, scipy, pandas, matplotlib, torch. Figures are written to <code>submission/code/figures/</code> (vector PDF), tables alongside them, and raw records to <code>submission/code/generated_data/</code>. A single fixed seed makes the learned-residual run deterministic, so rerunning reproduces every reported value (each network trains for 4000 full-batch Adam steps on 220 disordered realizations at each of $n=4,5$).</p>
         </article>
         <article class="card">
           <h3>Primary materials</h3>
@@ -587,6 +591,7 @@ lieideal-verify      # cli:verify</code></pre>
 
   <footer class="site-footer">
     <strong>Provable operator learning of size-transferable Trotter corrections for Hamiltonian simulation.</strong><br>
+    Molena Huynh &middot; North Carolina State University &middot; <a href="mailto:molena.huynh@jmp.com">molena.huynh@jmp.com</a><br>
     <a href="https://github.com/thmolena/Lie-Algebra-for-Hamiltonian-Simulation" target="_blank" rel="noopener noreferrer">GitHub Repository</a> &middot;
     <a href="submission/main.pdf">Paper (PDF)</a> &middot;
     <a href="notebooks/liegpt_architecture_unitarity.html">Architecture &amp; Unitarity</a> &middot;
