@@ -18,6 +18,8 @@ import argparse
 from common import ORDERS, TABLE_DIR, ensure_directories, write_latex_table
 import fixed_time
 import generator_scaling
+import higher_order_frontier
+import oracle_free_q4
 import overview
 import projected_residual
 import time_sweep
@@ -50,6 +52,8 @@ def main(force: bool = False) -> None:
     projected_residual.main(force=force)
     time_sweep.main(force=force)
     generator_scaling.main(force=force)
+    higher_order_frontier.main(force=force)
+    oracle_free_q4.main(force=force)
     write_resource_table()
     # Learned-residual operator-learning experiment (requires torch).  Kept
     # optional so the dense-matrix figures still build in a torch-free setup.

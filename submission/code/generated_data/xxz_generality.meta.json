@@ -1,24 +1,13 @@
 {
-  "figure": "fig1_exact_residual.pdf",
   "parameters": {
-    "J": 1.0,
-    "h": 1.0,
+    "n": 6,
+    "Jxy": 1.0,
+    "Jz": 0.8,
+    "h": 0.3,
     "t": 1.0,
     "r": 10,
-    "n_values": [
-      4,
-      5,
-      6
-    ],
-    "orders": [
-      1,
-      2,
-      4,
-      6,
-      8
-    ]
+    "split": "even-odd"
   },
-  "force": false,
   "environment": {
     "python_version": "3.13.12",
     "numpy_version": "2.4.3",

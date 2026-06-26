@@ -1,0 +1,22 @@
+[
+  {
+    "n": 8,
+    "n_ref": 8,
+    "window": 6,
+    "oracle_free": false,
+    "q4_baseline": 2.9822275066387036e-05,
+    "tiled_error": 1.2846054615485725e-09,
+    "direct_error": 1.2846054615485725e-09,
+    "rel_mismatch": 0.0
+  },
+  {
+    "n": 10,
+    "n_ref": 8,
+    "window": 6,
+    "oracle_free": true,
+    "q4_baseline": 3.9181926979740475e-05,
+    "tiled_error": 6.604474138584994e-08,
+    "direct_error": 2.0269425697990167e-09,
+    "rel_mismatch": 31.58343002406756
+  }
+]

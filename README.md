@@ -52,7 +52,7 @@ dense-matrix simulation.
    unitarity and same-order consistency checks that expose any implementation
    error.
 
-## Headline results
+## Main results
 
 Transcribed from the manuscript ([`submission/main.tex`](submission/main.tex),
 [`submission/main.pdf`](submission/main.pdf)) and the deterministic data the code
@@ -126,7 +126,7 @@ lieideal-verify         # runs the pipeline twice and asserts byte-identical out
 
 `lieideal-reproduce` (equivalently `python make_all.py`) seeds all RNGs, then
 runs the four dense-matrix experiments, the resource-proxy table, the learned
-residual operator-learning experiment, and the headline figure. The run is
+residual operator-learning experiment, and the main figure. The run is
 deterministic: seed 42 for `random`/NumPy/PyTorch, `SEED = 20240517` inside
 `learned_residual.py` for the disorder sampler, train/test split, and network
 initialization; thread counts pinned to 1; and a fixed matplotlib PDF timestamp.

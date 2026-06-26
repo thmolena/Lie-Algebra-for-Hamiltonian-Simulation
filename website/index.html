@@ -101,10 +101,10 @@
           <p class="hero-tagline">The finite-step defect of a product formula is exactly the unique unitary residual $R_q=U\,S_q^\dagger$. Its generator $K_q=i\log R_q$ is provably geometrically local for the TFIM, and a single translation-equivariant network learns it from local couplings alone, transferring from 4&ndash;5-qubit chains to 10-qubit chains under a closed-form $r\eta$ error budget.</p>
           <p class="hero-subtitle">This work reframes product-formula (Trotter&ndash;Suzuki) error not as a quantity to bound but as an operator to learn under exact guarantees. Three structural facts make this tractable: the residual factor is the unique norm-optimal left correction, projection onto low-weight Pauli operators is the unique Frobenius-optimal compression of its generator, and approximate residuals convert per-step error into global error linearly. Every value below is recomputed from deterministic dense-matrix simulation. This page is a condensed brief; the <a href="../index.html">full project report</a> gives the complete theory, statistics, and an interactive demo.</p>
         </div>
-        <aside class="hero-panel" aria-label="Headline numbers">
+        <aside class="hero-panel" aria-label="Main numbers">
           <div class="stats">
             <div class="stat"><span class="stat-value">$R^2 = 0.9998$</span><div class="stat-sub">Predicted versus exact residual coefficients on held-out sizes $n=6,\dots,10$ (rel. $\ell_2$ error $1.32\times10^{-2}$), with training confined to $n=4,5$.</div></div>
-            <div class="stat"><span class="stat-value">$38\text{--}46\times$</span><div class="stat-sub">Uniform reduction of the uncorrected Strang spectral-norm error across $n=4\to10$ (abstract headline $36\text{--}43\times$).</div></div>
+            <div class="stat"><span class="stat-value">$38\text{--}46\times$</span><div class="stat-sub">Uniform reduction of the uncorrected Strang spectral-norm error across $n=4\to10$ (abstract value $36\text{--}43\times$).</div></div>
             <div class="stat"><span class="stat-value">$4,5 \rightarrow 10$</span><div class="stat-sub">One per-site network, unchanged, transfers to a 1024-dim (10-qubit) Hilbert space never seen in training.</div></div>
             <div class="stat"><span class="stat-value">$\le r\eta$</span><div class="stat-sub">Closed-form certificate: per-step error $\eta$ propagates to global error at most $r\eta$ over $r$ steps, an order-optimal rate.</div></div>
           </div>
@@ -139,7 +139,7 @@
       <ul class="tight">
         <li><strong>An exact, optimal correction target.</strong> $R_q=US_q^\dagger$ is the unique unitary left correction and the global minimizer of the one-step error in every unitarily invariant norm &mdash; there is nothing arbitrary about what the network is asked to learn.</li>
         <li><strong>Stability under approximation.</strong> An approximate residual still controls global error: it is bounded by $\le r\eta$ (and by $\le r\lVert K_q-\widehat K_q\rVert_2$), and the linear-in-$r$ rate is proven order-optimal, so learning error cannot amplify uncontrollably across steps.</li>
-        <li><strong>Provably optimal, provably local compression.</strong> The Pauli projection is the unique optimal compressed generator, and for the TFIM the leading Strang generator carries weight $\le3$ &mdash; together making a tiny, fixed coefficient set sufficient.</li>
+        <li><strong>Provably optimal, provably local compression.</strong> The Pauli projection is the unique optimal compressed generator, and for the TFIM the leading Strang generator carries weight $\le3$ &mdash; together making a small, fixed coefficient set sufficient.</li>
         <li><strong>An oracle-free residual learner (the central advance).</strong> A single network trains on local patches without a dense $2^n$ oracle, transfers from $n=4,5$ to $n\le10$ at $R^2=0.9998$, cuts the Strang error by $\sim\!38\text{--}46\times$, and beats leading-order BCH by &gt;10&times; exactly where BCH breaks down &mdash; all inside the $r\eta$ budget.</li>
         <li><strong>Full reproducibility.</strong> Deterministic dense-matrix experiments, figures, tables, and code recompute every value from first principles.</li>
       </ul>

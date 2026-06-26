@@ -179,7 +179,7 @@
             View on GitHub
           </a>
         </div>
-        <aside class="hero-panel" aria-label="Headline numbers">
+        <aside class="hero-panel" aria-label="Main numbers">
           <div class="stats">
             <div class="stat">
               <span class="stat-value">$R^2 = 0.9998$</span>
@@ -220,7 +220,7 @@
         </article>
         <article class="card">
           <h3>The open problem</h3>
-          <p>Existing analysis bounds the defect but does not deliver a cheap, certified <em>correction</em> carrying an <em>a priori</em> guarantee. Four obstacles stand in the way: exposing the defect as an implementable operator, compressing it without discarding the dominant correction, learning it without ever forming the dense $2^n$ propagator, and certifying it <em>a priori</em> rather than only <em>a posteriori</em>. This work resolves all four.</p>
+          <p>Existing analysis bounds the defect but does not provide a cheap, certified <em>correction</em> carrying an <em>a priori</em> guarantee. Four obstacles stand in the way: exposing the defect as an implementable operator, compressing it without discarding the dominant correction, learning it without ever forming the dense $2^n$ propagator, and certifying it <em>a priori</em> rather than only <em>a posteriori</em>. This work resolves all four.</p>
         </article>
       </div>
       <div class="note">
@@ -395,7 +395,7 @@
     <!-- ================= EMPIRICAL VALIDATION ================= -->
     <section class="section" id="results">
       <div class="section-label">Empirical Validation</div>
-      <h2>Headline numbers, recomputed from deterministic dense-matrix simulation.</h2>
+      <h2>Main numbers, recomputed from deterministic dense-matrix simulation.</h2>
       <p class="lede">Every value below is computed, never transcribed by hand. Deterministic studies run on fixed grids with no stochastic sampling and therefore carry no error bars; learned-transfer values are reported as means $\pm$ one standard deviation over disordered chains ($J_i,h_i\sim\mathcal{U}[0.5,1.5]$). Quantities near $10^{-13}$ sit at the double-precision floor.</p>
 
       <h3 style="margin-top:8px;">1 &middot; Learned residual transferred across system size ($t=1$, $\delta t=0.1$)</h3>
@@ -539,7 +539,7 @@
       <div class="application-grid">
         <article class="card">
           <h3>Consequence for quantum simulation</h3>
-          <p>Compilation becomes a learning problem that ships with its own proof. A single per-site network, trained on small systems from oracle-free patches, corrects a system $32\times$ larger in Hilbert-space dimension, beats the analytic leading-order correction precisely in the regime where it fails, and stays inside a closed-form $r\eta$ budget &mdash; turning a fidelity or learning-loss specification directly into a per-step synthesis target. This is an "oracle-to-algorithm" pattern: an ideal mathematical object, the residual generator, around which efficient block encodings, compilers, or learned estimators can be built. Deployed as a correction layer after a product-formula block, it composes with multi-product, randomized, qubitization, and Cartan-decomposition strategies rather than competing with them.</p>
+          <p>Compilation becomes a learning problem that carries its own proof. A single per-site network, trained on small systems from oracle-free patches, corrects a system $32\times$ larger in Hilbert-space dimension, beats the analytic leading-order correction precisely in the regime where it fails, and stays inside a closed-form $r\eta$ budget &mdash; turning a fidelity or learning-loss specification directly into a per-step synthesis target. This is an "oracle-to-algorithm" pattern: an ideal mathematical object, the residual generator, around which efficient block encodings, compilers, or learned estimators can be built. Deployed as a correction layer after a product-formula block, it composes with multi-product, randomized, qubitization, and Cartan-decomposition strategies rather than competing with them.</p>
         </article>
         <article class="card">
           <h3>Scope and limitations</h3>
@@ -579,7 +579,7 @@ lieideal-verify      # cli:verify</code></pre>
           <ul class="tight">
             <li><a href="submission/main.pdf">Manuscript (PDF)</a> &middot; <a href="submission/main.tex">LaTeX source</a></li>
             <li>Package: <code>lieideal-hs</code> 1.0.0 &middot; <a href="submission/code/pyproject.toml">pyproject.toml</a> &middot; <a href="submission/code/README.txt">README</a></li>
-            <li>Figures (vector PDF): <a href="submission/code/figures/fig1_exact_residual.pdf">fixed-time residual</a>, <a href="submission/code/figures/fig2_compressed_residual.pdf">compressed residual</a>, <a href="submission/code/figures/fig5_learned_transfer.pdf">learned transfer</a>, <a href="submission/code/figures/fig6_headline_improvement.pdf">headline improvement</a></li>
+            <li>Figures (vector PDF): <a href="submission/code/figures/fig1_exact_residual.pdf">fixed-time residual</a>, <a href="submission/code/figures/fig2_compressed_residual.pdf">compressed residual</a>, <a href="submission/code/figures/fig5_learned_transfer.pdf">learned transfer</a>, <a href="submission/code/figures/fig6_headline_improvement.pdf">main improvement</a></li>
             <li>Rendered notebooks: <a href="notebooks/liegpt_architecture_unitarity.html">Architecture &amp; Unitarity</a> &middot; <a href="notebooks/liegpt_stability.html">Stability</a> &middot; <a href="notebooks/liegpt_efficiency_robustness.html">Efficiency &amp; Robustness</a></li>
             <li><a href="https://github.com/thmolena/Lie-Algebra-for-Hamiltonian-Simulation" target="_blank" rel="noopener noreferrer">GitHub repository</a></li>
           </ul>
