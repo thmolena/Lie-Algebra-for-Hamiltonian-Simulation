@@ -1,19 +1,13 @@
-\documentclass[11pt]{article}
-\usepackage[utf8]{inputenc}\usepackage[T1]{fontenc}\usepackage{lmodern}
-\usepackage[a4paper,margin=1in,headheight=14pt]{geometry}
-\usepackage{graphicx}\usepackage{booktabs}\usepackage{amsmath,amssymb,amsfonts,amsthm,mathtools,bm}
-\usepackage{siunitx}\usepackage{caption}\usepackage{microtype}
-\usepackage[numbers,sort&compress]{natbib}
-\usepackage{xcolor}\definecolor{nmiaccent}{HTML}{1A4E8A}
-\usepackage[colorlinks=true,allcolors=nmiaccent]{hyperref}
-\usepackage{titlesec}\usepackage{fancyhdr}\usepackage{authblk}
-\captionsetup{font=small,labelfont=bf,labelsep=period}\graphicspath{{code/figures/}}\setlength{\parskip}{0.45em}
-\setlength{\emergencystretch}{2em}% absorb minor overfull lines in dense math paragraphs
+\documentclass[aps,prresearch,reprint,superscriptaddress,nofootinbib,amsmath,amssymb]{revtex4-2}
+
+\usepackage{graphicx}
+\usepackage{amsfonts,amsthm,mathtools,bm}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\graphicspath{{code/figures/}{figures/}}
 \allowdisplaybreaks
-\renewcommand{\Affilfont}{\normalsize\itshape}\renewcommand{\Authfont}{\large\bfseries}
-\titleformat{\section}{\sffamily\large\bfseries\color{nmiaccent}}{\thesection}{0.6em}{}
-\titleformat{\subsection}{\sffamily\normalsize\bfseries}{\thesubsection}{0.6em}{}
-\pagestyle{fancy}\fancyhf{}\fancyhead[L]{\footnotesize\itshape Lie-algebraic spectral truncation of the product-formula residual}\fancyhead[R]{\footnotesize\thepage}\renewcommand{\headrulewidth}{0.4pt}
+\setlength{\emergencystretch}{2em}% absorb minor overfull lines in dense math paragraphs
 
 % --- Macros preserved from the original manuscript ---
 \newcommand{\rgtc}{RGTC}
@@ -39,43 +33,25 @@
 \newtheorem{definition}{Definition}
 \newtheorem{remark}{Remark}
 
-% --- Extended Data float environments (numbered separately) ---
-\newcommand{\edfigname}{Extended Data Fig.}
-\newcounter{edfig}
-\renewcommand{\theedfig}{\arabic{edfig}}
-\makeatletter
-\newenvironment{edfigure}{%
-  \begin{figure}[t]\centering}{\end{figure}}
-% Step the ED-figure counter, fix \@currentlabel so a following \label resolves,
-% then typeset an unnumbered caption with the Extended Data label.
-\newcommand{\edcaption}[1]{%
-  \refstepcounter{edfig}%
-  \def\@currentlabel{\theedfig}%
-  \caption*{\small\textbf{\edfigname~\theedfig\,$\vert$}~#1}}
-\@ifundefined{ruledtabular}{%
-  \newenvironment{ruledtabular}{\par\smallskip\noindent}{\par\smallskip}%
-}{}
-\makeatother
-
-\title{\bfseries Learning and compressing the product-formula residual: a Lie-algebraic spectral truncation that advances the Hamiltonian-simulation error--cost frontier}
-
-\author[1]{Molena Huynh}
-\affil[1]{North Carolina State University \quad\textperiodcentered\quad Correspondence: \texttt{molena.huynh@jmp.com}}
-\date{}
-
 \begin{document}
 
-\maketitle
-\thispagestyle{fancy}
+\title{Learning and compressing the product-formula residual: a Lie-algebraic spectral truncation that advances the Hamiltonian-simulation error--cost frontier}
+\author{Molena Huynh}
+\email{molena.huynh@jmp.com}
+\affiliation{North Carolina State University}
 
 \begin{abstract}
-\noindent
 Digital Hamiltonian simulation by Trotter--Suzuki product formulas trades accuracy for circuit depth: reaching a smaller error demands a higher-order formula and many more gates. We relax this trade-off by treating the finite-step error itself as a structured, compressible, learnable operator. The residual factor $R_q=U(\dt)S_q(\dt)^\dagger$ of an order-$q$ step is the unique unitary correction to the exact propagator and is optimal in every unitarily invariant norm; we prove that projecting its Hermitian generator onto the Pauli-weight filtration of the Lie algebra of Hermitian operators is the unique Frobenius-optimal compression---a \emph{Lie-algebraic spectral truncation} whose level is a single knob interpolating from the uncorrected step to the exact correction. We prove this truncation converges \emph{geometrically} in the level---a measured per-level error reduction of $4.5$--$5.8\times10^{2}$---and carries an a priori certificate $r\norm{K_q-\Pi_wK_q}_2$ that fixes the truncation bandwidth directly from the target accuracy, before any simulation. Because the residual generator is geometrically local at every order (leading Pauli weight at most $q+2$) it compiles faithfully into mutually-commuting two-qubit-gate layers, and a symmetric inner compilation removes the low-order compilation floor at every order. The downstream payoff is a genuine advance of the product-formula error--cost frontier: a spectrally-truncated fourth-order correction reaches global spectral-norm errors lying between standard sixth- and eighth-order Suzuki formulas at $4.2$--$5.2\times$ fewer two-qubit gates than the cheapest standard formula of equal accuracy ($n=5$--$7$), placing new Pareto-optimal points on the frontier. The truncation is learnable without the dense propagator: a single translation-equivariant network maps local couplings to the truncated generator's coefficients and, trained only on four- and five-qubit chains, transfers to ten qubits ($R^2=0.9999$). The mechanism extends from the transverse-field Ising model to the XXZ chain. The scope is precise: the gain is a new accuracy regime reachable at a fraction of the next order's cost, not a uniform cost reduction, and every reported number is an exact, deterministic, reproducible dense-matrix computation.
 \end{abstract}
+
+\maketitle
+
 
 % ============================================================
 % INTRODUCTION (untitled, per NMI house style)
 % ============================================================
+
+\section{Introduction}
 
 Digital Hamiltonian simulation asks for accurate implementations of $U(t)=\exp(-iHt)$ for a many-body Hamiltonian $H$ on a finite-dimensional Hilbert space. Since Lloyd's observation that local quantum systems can be simulated efficiently by quantum computers~\cite{lloyd1996}, product formulas have remained one of the most transparent and hardware-aligned simulation strategies. The basic Trotter product formula originates in Trotter's theorem~\cite{trotter1959}; higher-order recursive splittings were developed by Suzuki~\cite{suzuki1990,suzuki1991,suzuki1993} and by related symplectic-composition methods~\cite{yoshida1990,forest1990,chin1997,hatano2005,wiebe2010}. Product formulas also underlie early quantum simulation proposals~\cite{abrams1997,sornborger1999,ortiz2001}, phase-estimation workflows~\cite{kitaev1997,kitaev2002,abrams1999,cleve1998}, and practical resource estimates in quantum chemistry and lattice simulation~\cite{aspuruguzik2005,wecker2014,wecker2015,babbush2015,reiher2017,kivlichan2018,haah2021}.
 
@@ -104,12 +80,12 @@ We distinguish two modes of residual-generator Trotter compilation (\rgtc{}). \e
 
 Our contributions are as follows. (i) We formalize \rgtc{} and prove exact residual factorization, uniqueness, and global norm optimality among all left corrections for every unitarily invariant norm. (ii) We prove multi-step stability theorems for approximate residuals and generator approximations, giving explicit $r\eta$ and $r\norm{K_q-\widehat K_q}_2$ error targets, and prove the linear-in-$r$ estimate is order-optimal. (iii) We recast Pauli-weight projection of the residual generator as a \emph{Lie-algebraic spectral truncation}---the unique Frobenius-optimal compressed generator (Theorem~\ref{thm:pauli-projection})---whose level $w$ interpolates from no correction ($w=0$) to the exact generator ($w=n$), the Hamiltonian-simulation counterpart of the operator-algebraic spectral truncations recently introduced in kernel learning~\cite{hashimoto2024spectral,hashimoto2023rkhm}. (iv) We prove the truncation converges \emph{geometrically} in the level---each excluded weight level carries residual content of strictly higher order in $\dt$ (Theorem~\ref{thm:spectral-rate})---with a measured per-level reduction of $4.5$--$5.8\times10^{2}$ (Fig.~\ref{fig:spectral}a, Table~\ref{tab:spectral-rate}). (v) We prove the a priori certificate $r\norm{K_q-\Pi_wK_q}_2$ is a valid global error bound at every level (Fig.~\ref{fig:spectral}c), so it selects the minimal truncation bandwidth from the target accuracy \emph{before} any simulation (Corollary~\ref{cor:bandwidth}). (vi) We prove residual locality holds at every order: the leading order-$q$ residual generator of the open-boundary transverse-field Ising model (\tfim{}) has Pauli weight at most $q+2$, with an effective threshold $\approx\lceil q/2\rceil+2$ (Table~\ref{tab:order-generality}), so higher-order corrections stay compressible. (vii) We prove and verify that the truncated correction \emph{compiles faithfully} into gates: because $K_q=O(\dt^{q+1})$, a first-order product over mutually-commuting Pauli-rotation layers adds only $O(\dt^{2(q+1)})$ error, negligible for $q\ge4$ but \emph{not} for $q=2$, and a \emph{symmetric inner compilation} removes this structural floor at every order ($O(\dt^{3(q+1)})$ error, Theorem~\ref{thm:symmetric-compilation})---e.g.\ lowering the compiled $n=6$, $q=2$, $w\le4$ error from $2.18\times10^{-5}$ to $3.76\times10^{-7}$ (Table~\ref{tab:faithful-compilation}). (viii)~This yields the central result: a genuine advance of the product-formula error--cost frontier. Under a standard two-qubit-gate (CNOT) cost model, spectrally-truncated fourth-order corrections reach global spectral-norm errors between standard sixth- and eighth-order Suzuki formulas at $4.2$--$5.2\times$ fewer two-qubit gates than the cheapest standard formula of equal accuracy ($n=5$--$7$), placing new Pareto-optimal points on the frontier (Fig.~\ref{fig:frontier}). (ix) We instantiate the learned mode: a single translation-equivariant network predicts the step-size-conditioned weight-$\leq3$ coefficients of $K_2$ from local couplings of a disordered \tfim{}, transfers from four- and five-qubit training chains to ten qubits ($R^2=0.9999$ on held-out sizes), cuts the uncorrected Strang error by $58$--$86\times$, is trained \emph{without any dense $2^n$ oracle} from fixed-size local patches, and beats the analytic leading-order correction where the latter fails---all under the proven $r\eta$ stability bound. (x) We show the mechanism extends from the \tfim{} to the XXZ/Heisenberg chain, with a larger weight threshold (Table~\ref{tab:xxz}). (xi) We provide deterministic dense-matrix experiments, figures, tables, and code that recompute every reported number from first principles. Figure~\ref{fig:schematic} summarizes the pipeline, from the local Hamiltonian to the certified, compiled, frontier-advancing correction.
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
 \includegraphics[width=\linewidth]{fig0_overview.pdf}
 \caption{\textbf{Overview of residual-generator Trotter compilation (\rgtc{}).} A local Hamiltonian $H=A+B$ is approximated by a product-formula step $S_q(\dt)$; the exact residual factor $R_q=U(\dt)S_q(\dt)^\dagger$ defines a Hermitian residual generator $K_q=i\log R_q$ whose Lie-algebraic commutator structure makes the leading Strang term geometrically local (Pauli weight $\leq3$ for the \tfim{}; Theorem~\ref{thm:tfim-support}). This locality lets $K_q$ be compressed by Pauli weight ($\Pi_wK_q$) or learned per site by a translation-equivariant network $\widehat K_q$ from local couplings, with no access to the dense propagator. The corrected step $\exp(-i\widehat K_q)S_q$ is scored by spectral-norm error against the exact $U(t)$, and inherits the proven multi-step stability certificate $\norm{\widehat G^r-U(t)}_2\leq r\eta$ (Theorem~\ref{thm:residual-stability}). The diagram is schematic and contains no numerical data.}
 \label{fig:schematic}
-\end{figure}
+\end{figure*}
 
 Beyond quantum simulation, the central finding is of methodological interest to machine learning for the physical sciences: the truncation error of a numerical integrator, usually treated as an analytic object to be bounded, is here a \emph{learnable} operator---geometrically local, conditioned on the discretization step, and transferable across system size---with its approximation quality controlled \emph{a priori} by a proven stability bound rather than validated only \emph{a posteriori}. The enabling compression is algebraic: the correction lives in the Lie algebra of Hermitian operators, and Pauli-weight projection is a \emph{spectral truncation} of that algebra to a finite-dimensional, symmetry-respecting hypothesis class indexed by an interaction-range knob, in direct analogy with the operator-algebraic spectral truncations that interpolate a locality knob in C$^\ast$-algebraic kernel learning~\cite{hashimoto2024spectral,hashimoto2023rkhm}. The analogy is exact at the level of the construction---a single parameter contracting a noncommutative algebra to a tractable, structure-respecting subspace---but the simulation setting supplies three guarantees the kernel construction does not: a quantitative \emph{geometric convergence rate} in the level rather than mere convergence (Theorem~\ref{thm:spectral-rate}); an \emph{a priori dynamical certificate} that turns the truncation level into a function of the target accuracy (Corollary~\ref{cor:bandwidth}), whose own gate-level realization we repair by a symmetric compilation (Theorem~\ref{thm:symmetric-compilation}), the analogue of the kernel construction's positivity-restoring smoothing; and a measurable downstream payoff---an advance of the algorithm's accuracy--cost frontier. This places the work within the broader programme of structure-preserving, physics-constrained operator learning, where a restricted, symmetry-respecting hypothesis class is what makes generalization both data-efficient and certifiable.
 
@@ -140,20 +116,20 @@ Table~\ref{tab:error-summary} reports the fixed-time dense benchmark. For $q=1,2
 
 \input{tables/error_summary.tex}
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
 \includegraphics[width=\linewidth]{fig1_exact_residual.pdf}
 \caption{\textbf{Fixed-time spectral-norm errors} for $n=4,5,6$ and $q=1,2,4,6,8$ ($J=h=1$, $t=1$, $r=10$). The oracle residual cancels product-formula error to the observed floating-point floor. The highest-order baseline is itself near round-off at this step size. Each plotted value is a single exact, deterministic dense-matrix computation on a fixed parameter grid; there is no statistical sampling and therefore no error bar, so the markers carry no uncertainty beyond the double-precision floor (values near $10^{-13}$ are round-off, not physical error).}
 \label{fig:fixed-time}
-\end{figure}
+\end{figure*}
 
 \subsection{Projected residual compilation}
 
-Weight-truncated compression of the residual sharpens by orders of magnitude once the truncation reaches the support of the leading defect. The non-oracle experiment for $n=5$, $q=2$, $J=h=1$, $t=1$, and $r=10$ (Extended Data Table~\ref{tab:projected-summary}; Extended Data Fig.~\ref{edfig:projected}) shows that weight zero applies essentially no correction, weight one gives a small improvement, and weight two is slightly worse than the baseline; not every truncated correction is automatically useful. Weight three then reduces the error by a factor of $89.56$, consistent with Theorem~\ref{thm:tfim-support}, and weight four reduces it by a factor of $7.48\times10^4$. Varying total time for $n=4$, $q=2$, $r=10$ (Extended Data Fig.~\ref{edfig:timesweep}), the $w\leq3$ projected residual remains below the baseline throughout the sampled times, while the $w\leq2$ projection is less reliable: compression must respect the commutator support of the leading defect.
+Weight-truncated compression of the residual sharpens by orders of magnitude once the truncation reaches the support of the leading defect. The non-oracle experiment for $n=5$, $q=2$, $J=h=1$, $t=1$, and $r=10$ (Table~\ref{tab:projected-summary}; Fig.~\ref{edfig:projected}) shows that weight zero applies essentially no correction, weight one gives a small improvement, and weight two is slightly worse than the baseline; not every truncated correction is automatically useful. Weight three then reduces the error by a factor of $89.56$, consistent with Theorem~\ref{thm:tfim-support}, and weight four reduces it by a factor of $7.48\times10^4$. Varying total time for $n=4$, $q=2$, $r=10$ (Fig.~\ref{edfig:timesweep}), the $w\leq3$ projected residual remains below the baseline throughout the sampled times, while the $w\leq2$ projection is less reliable: compression must respect the commutator support of the leading defect.
 
 \subsection{Generator compressibility and order scaling}
 
-The residual generator concentrates its Pauli-coefficient mass at low weight. For the $n=5$, $q=2$ residual generator at $\dt=0.1$ (Extended Data Fig.~\ref{edfig:genstruct}a), the cumulative squared coefficient mass shows that most of the Frobenius mass accumulates by weight three, while near-exact reconstruction requires weights four and five at the observed double-precision level. The residual-generator norm $\norm{K_q(\dt)}_2$ versus $\dt$ for several orders (Extended Data Fig.~\ref{edfig:genstruct}b) decreases with order: higher-order product formulas yield smaller residual generators, as expected from Theorem~\ref{thm:small-step}.
+The residual generator concentrates its Pauli-coefficient mass at low weight. For the $n=5$, $q=2$ residual generator at $\dt=0.1$ (Fig.~\ref{edfig:genstruct}a), the cumulative squared coefficient mass shows that most of the Frobenius mass accumulates by weight three, while near-exact reconstruction requires weights four and five at the observed double-precision level. The residual-generator norm $\norm{K_q(\dt)}_2$ versus $\dt$ for several orders (Fig.~\ref{edfig:genstruct}b) decreases with order: higher-order product formulas yield smaller residual generators, as expected from Theorem~\ref{thm:small-step}.
 
 \subsection{Residual locality generalizes to every order}
 \label{sec:order-generality}
@@ -171,12 +147,12 @@ The compression of the previous sections is, formally, a \emph{spectral truncati
 
 \paragraph{Certificate-driven bandwidth selection.} The truncation bandwidth needed for a target accuracy $\epsilon$ can be read off \emph{before} paying for any simulation. Every level carries the a priori bound $\norm{\widehat G_{q,w}^{\,r}-U(t)}_2\leq r\norm{K_q-\Pi_wK_q}_2$ (Corollary~\ref{cor:projected-certificate}), whose right-hand side is computable from the generator without simulating the dynamics, so one selects the smallest $w$ with $r\norm{K_q-\Pi_wK_q}_2\leq\epsilon$ (Corollary~\ref{cor:bandwidth}). On the $n=6$, $q=2$ benchmark this selection is both valid and tight: the certificate is an upper bound on the achieved error at every level (Fig.~\ref{fig:spectral}c), and it selects $w^\star=4$ for $\epsilon=10^{-4}$ (certificate $r\tau_{4}=3.7\times10^{-7}\leq\epsilon$; achieved error $3.65\times10^{-7}$) and $w^\star=5$ for $\epsilon=10^{-8}$ (certificate $1.1\times10^{-9}$; achieved $1.10\times10^{-9}$); here the certificate is unusually tight, but in general it is a guaranteed upper bound, not an equality. The geometric rate makes this map cheap: the required bandwidth grows only logarithmically in $1/\epsilon$. The operator-algebraic spectral truncation has no analogue of this accuracy-to-parameter map, because its guarantee is structural (it preserves positive-definiteness) rather than a quantitative bound on a downstream quantity.
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
 \includegraphics[width=\linewidth]{fig8_spectral_truncation.pdf}
 \caption{\textbf{Spectral truncation of the residual generator: rate, repair, and certificate} (open-boundary \tfim{}, $J=h=1$, $t=1$, $r=10$). \textbf{a}, Global spectral-norm error of the level-$w$ truncated residual compilation $\widehat G_{q,w}$ versus truncation level $w$ at $n=6$, for base orders $q=2,4,6$; beyond the effective threshold the error decays geometrically (Theorem~\ref{thm:spectral-rate}; per-level factors in Table~\ref{tab:spectral-rate}). \textbf{b}, The truncated correction's gate-level error at $n=6$, $q=2$: the first-order inner compilation (Theorem~\ref{thm:faithful-compilation}) stalls above the dense oracle, while the symmetric inner compilation (Theorem~\ref{thm:symmetric-compilation}) recovers it, repairing the structural floor. \textbf{c}, The a priori certificate $r\norm{K_q-\Pi_wK_q}_2$ versus the achieved error across levels ($n=6$, $q=2$); every point lies on or above the diagonal, so the certificate is a valid upper bound and selects the truncation bandwidth from the target accuracy alone. All values are exact, deterministic dense-matrix computations.}
 \label{fig:spectral}
-\end{figure}
+\end{figure*}
 
 \input{tables/spectral_truncation_rate.tex}
 
@@ -197,12 +173,12 @@ We state the scope precisely. This is \emph{not} a uniform cost reduction: the c
 
 \input{tables/oracle_free_q4.tex}
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
 \includegraphics[width=0.86\linewidth]{fig7_frontier.pdf}
 \caption{\textbf{Residual correction enlarges the product-formula error--cost frontier} (open-boundary \tfim{}, $n=6$, $J=h=1$, $t=1$, $r=10$). Two-qubit-gate (CNOT) cost per Trotter step versus global spectral-norm error for standard Suzuki steps $S_q$ (blue, labelled by order) and for residual-corrected fourth-order steps with a compiled weight-$\leq w$ correction (orange diamonds). Open green circles mark Pareto-optimal points. The corrected $q=4$, $w=5$ step occupies the accuracy gap between standard $q=6$ and $q=8$ at $\approx1/4.6$ of the $q=8$ cost. Corrected second-order points (grey squares) are dominated and shown for completeness. All values are exact, deterministic dense-matrix computations.}
 \label{fig:frontier}
-\end{figure}
+\end{figure*}
 
 \input{tables/frontier.tex}
 
@@ -238,25 +214,25 @@ The locality theorem (Theorem~\ref{thm:tfim-support}) turns residual compilation
 
 Two scope statements are important and are revisited in the Discussion. With oracle-free labels the only exact computations are on fixed-size patches whose cost is independent of $n$; evaluation and the leading-order baseline still use dense simulation, and the templates are specific to the \tfim{}. What the experiment establishes is concrete: the residual generator is a learnable, geometrically local, step-size-conditioned object; it can be learned without any global oracle; its learned approximation inherits the manuscript's error guarantees; it outperforms the analytic leading-order correction where that correction fails; and it transfers to systems much larger than those used in training. It does \emph{not} establish that correcting a second-order step is competitive with simply using a higher-order product formula at the same step size, which Table~\ref{tab:error-summary} shows it is not.
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
 \includegraphics[width=\linewidth]{fig5_learned_transfer.pdf}
 \caption{\textbf{Learned residual generators on the disordered \tfim{}.} Shaded bands are one standard deviation over disordered realizations. \textbf{a}, Global spectral-norm error at $t=1$, $\dt=0.1$ versus chain length for the uncorrected Strang step, leading-order BCH, the prior-free learned ablation, the learned correction (analytic second-order Zassenhaus prior plus learned residual) trained on oracle labels and on oracle-free patch labels (overlapping), and the exact weight-$\leq3$ oracle; the shaded region marks lengths absent from training ($n>5$), extending to $n=10$. \textbf{b}, Per-step error versus step size $\dt$ at $n=6$; leading-order BCH approaches the uncorrected step as $\dt$ grows, while the learned correction tracks the oracle. \textbf{c}, Total error versus number of Trotter steps $r$ ($n=6$, $\dt=0.1$), growing linearly in $r$ as Theorem~\ref{thm:residual-stability} predicts (grey guide). \textbf{d}, Oracle-free predicted versus exact coefficients on held-out transfer sizes $n=6,\dots,10$ ($R^2=0.9999$). One per-site network, trained only on $n=4,5$, sees only local couplings at inference.}
 \label{fig:learned}
-\end{figure}
+\end{figure*}
 
 \input{tables/learned_residual_summary.tex}
 
 Figure~\ref{fig:headline} summarizes the headline comparison: at the largest held-out transfer size the learned correction is nearly two orders of magnitude below the uncorrected Strang step and roughly an order of magnitude below leading-order BCH, and its error-reduction factor over the uncorrected baseline holds across every chain length, including the held-out transfer sizes.
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
 \includegraphics[width=\linewidth]{fig6_headline_improvement.pdf}
 \caption{\textbf{Proposed learned correction versus all baselines.} \textbf{a}, Final global spectral-norm error at the largest held-out transfer size ($n=10$) for the uncorrected Strang step, leading-order BCH, the learned residual (ours), and the exact weight-$\leq3$ oracle; error bars show one standard deviation over disordered realizations. \textbf{b}, Error-reduction factor $\epsilon_{\mathrm{Strang}}/\epsilon_{\mathrm{learned}}$ of the learned correction over the uncorrected Strang baseline across all chain lengths, including the held-out transfer sizes $n\geq6$.}
 \label{fig:headline}
-\end{figure}
+\end{figure*}
 
-The per-step resource proxy separating baseline product-formula factors from dense oracle residual construction is given in Extended Data Table~\ref{tab:resources}. The residual matrix is not counted as a quantum gate; any practical implementation must replace dense residual construction by a compiled circuit, a local commutator formula, a learned generator, or another efficient representation.
+The per-step resource proxy separating baseline product-formula factors from dense oracle residual construction is given in Table~\ref{tab:resources}. The residual matrix is not counted as a quantum gate; any practical implementation must replace dense residual construction by a compiled circuit, a local commutator formula, a learned generator, or another efficient representation.
 
 % ============================================================
 % DISCUSSION
@@ -280,6 +256,414 @@ Four limitations bound the frontier claim, and we state each precisely. \emph{Fi
 % ============================================================
 % REFERENCES
 % ============================================================
+
+
+
+% ============================================================
+% METHODS
+% ============================================================
+
+\section{Methods}
+\label{sec:methods}
+
+\subsection{Trotter--Suzuki steps and residual construction}
+
+For $k\geq2$, higher even orders are generated by the Suzuki recursion
+\begin{widetext}
+\begin{equation}
+    S_{2k}(\dt)=S_{2k-2}(p_k\dt)^2S_{2k-2}((1-4p_k)\dt)S_{2k-2}(p_k\dt)^2,
+    \qquad
+    p_k=\left(4-4^{1/(2k-1)}\right)^{-1}.
+    \label{eq:suzuki-recursion}
+\end{equation}
+\end{widetext}
+For a fixed order $q$ and step size $\dt$, the residual factor is $R_q(\dt)=U(\dt)S_q(\dt)^\dagger$, the corrected one-step propagator is $G_q(\dt)=R_q(\dt)S_q(\dt)$, and the global approximation is $\widetilde U_{R,q}(t;r)=G_q(t/r)^r$. When $R_q$ is computed exactly, $G_q(\dt)=U(\dt)$. Because $R_q$ is unitary, it admits the representation $R_q(\dt)=e^{-iK_q(\dt)}$ with a Hermitian residual generator $K_q$. The generator is not unique globally because eigenphases are defined modulo $2\pi$; for small enough $\dt$ the residual lies close to the identity and the principal generator is well defined.
+
+A compressed residual generator is $\widehat K_q(\dt)\in\cB$, where $\cB\subseteq\mathsf{Herm}(d)$ is a real linear space of implementable Hermitian generators (Pauli strings of weight at most $w$, geometrically local Pauli strings of bounded diameter, commutator monomials up to a fixed degree, or generators representable by a fixed hardware ansatz), with $\widehat R_q(\dt)=e^{-i\widehat K_q(\dt)}$ and $\widehat G_q(\dt)=\widehat R_q(\dt)S_q(\dt)$. The most direct dense benchmark instantiation is Pauli projection. With $\cP_n=\{I,X,Y,Z\}^{\otimes n}$ and $\cB_w=\Span_\mathbb{R}\{P\in\cP_n:\operatorname{wt}(P)\leq w\}$, the projection is
+\begin{equation}
+    \Pi_wK_q=\sum_{\operatorname{wt}(P)\leq w}\frac{\Tr(PK_q)}{2^n}P.
+    \label{eq:pauli-proj}
+\end{equation}
+
+\subsection{Theory: proofs}
+\label{sec:theory}
+
+This section contains the main mathematical guarantees. All norms are spectral norms unless explicitly stated otherwise.
+
+\begin{lemma}[Unitarity of product-formula steps]
+\label{lem:Sq-unitary}
+Let $A$ and $B$ be Hermitian and let every Suzuki coefficient be real. Then $S_q(\dt)$ is unitary for every real $\dt$ and every $q\in\{1,2,4,6,8\}$ generated by the Strang step and Eq.~\eqref{eq:suzuki-recursion}.
+\end{lemma}
+
+\begin{proof}
+Each elementary factor has the form $e^{-iC\tau}$ with $C=C^\dagger$ and $\tau\in\mathbb{R}$. Such a factor is unitary because $(e^{-iC\tau})^\dagger=e^{iC\tau}=(e^{-iC\tau})^{-1}$. The product of finitely many unitary matrices is unitary. The recursive Suzuki construction only composes such factors with real rescaled times, including the negative coefficient $1-4p_k$, which still gives a unitary exponential.
+\end{proof}
+
+\begin{theorem}[Exact residual factorization and uniqueness]
+\label{thm:factorization}
+Let $H=H^\dagger$ and let $S_q(\dt)$ be any unitary product-formula step. The residual $R_q(\dt)=U(\dt)S_q(\dt)^\dagger$ is unitary and is the unique matrix $L$ satisfying $LS_q(\dt)=U(\dt)$. Consequently, $R_q(\dt)S_q(\dt)=U(\dt)$ and $[R_q(t/r)S_q(t/r)]^r=U(t)$ for time-independent $H$.
+\end{theorem}
+
+\begin{proof}
+Since $H$ is Hermitian, $U(\dt)$ is unitary. Lemma~\ref{lem:Sq-unitary} gives unitarity of $S_q$, hence $S_q^\dagger=S_q^{-1}$. Thus $R_q^\dagger R_q=S_qU^\dagger US_q^\dagger=S_qS_q^\dagger=\id$. Moreover, $R_qS_q=U S_q^\dagger S_q=U$. If $L S_q=U$, right multiplication by $S_q^\dagger$ gives $L=US_q^\dagger=R_q$. For $t=r\dt$, time independence gives $U(\dt)^r=U(r\dt)=U(t)$.
+\end{proof}
+
+\begin{theorem}[Optimality among all left corrections]
+\label{thm:optimality}
+Let $|||\cdot|||$ be any unitarily invariant norm. The residual $R_q$ is a global minimizer of $\mathcal{J}(L)=|||U(\dt)-LS_q(\dt)|||$. The minimum value is zero, and the minimizer is unique.
+\end{theorem}
+
+\begin{proof}
+Every norm is nonnegative, so $\mathcal{J}(L)\geq0$. Theorem~\ref{thm:factorization} gives $\mathcal{J}(R_q)=0$. If another $L'$ also gives zero, then $L'S_q=U$, and uniqueness in Theorem~\ref{thm:factorization} implies $L'=R_q$.
+\end{proof}
+
+\begin{remark}
+Theorem~\ref{thm:optimality} is an oracle statement, not a cost statement. It says that no exact left multiplier can beat $R_q$ in error because the error is already zero. It does not say that $R_q$ is cheap to implement.
+\end{remark}
+
+\begin{theorem}[Small-step residual-generator bound]
+\label{thm:small-step}
+Assume $S_q$ is order $q$ in the sense that there exist constants $C_q$ and $\dt_0$ such that $\norm{U(\dt)-S_q(\dt)}_2\leq C_q\abs{\dt}^{q+1}$ for $\abs{\dt}\leq\dt_0$. If $C_q\abs{\dt}^{q+1}\leq1$, then $R_q(\dt)$ has a Hermitian logarithm $K_q(\dt)$ with phases chosen in $[-\pi,\pi]$ and $\norm{K_q(\dt)}_2\leq 2C_q\abs{\dt}^{q+1}$.
+\end{theorem}
+
+\begin{proof}
+Because $S_q$ is unitary, $\norm{R_q-\id}_2=\norm{US_q^\dagger-\id}_2=\norm{U-S_q}_2\leq C_q\abs{\dt}^{q+1}$. Diagonalize $R_q=W\operatorname{diag}(e^{-i\theta_j})W^\dagger$ with $\theta_j\in[-\pi,\pi]$ and define $K_q=W\operatorname{diag}(\theta_j)W^\dagger$. For any eigenphase, $\abs{e^{-i\theta_j}-1}=2\abs{\sin(\theta_j/2)}$. If $\norm{R_q-\id}_2\leq1$, then $\abs{\theta_j}\leq2\arcsin(\norm{R_q-\id}_2/2)\leq2\norm{R_q-\id}_2$. Taking the maximum over $j$ proves the bound.
+\end{proof}
+
+\begin{theorem}[Multi-step stability for approximate residuals]
+\label{thm:residual-stability}
+Let $\widehat R_q$ be any approximate residual and define $\widehat G_q=\widehat R_qS_q$. If $\eta=\norm{\widehat R_q-R_q}_2$, then
+\begin{equation}
+    \norm{\widehat G_q^{\;r}-U(t)}_2
+    \leq \eta\sum_{j=0}^{r-1}(1+\eta)^j
+    \leq r\eta e^{(r-1)\eta}.
+    \label{eq:nonunitary-stability}
+\end{equation}
+If $\widehat R_q$ is unitary, then the sharper bound $\norm{\widehat G_q^{\;r}-U(t)}_2\leq r\eta$ holds.
+\end{theorem}
+
+\begin{proof}
+Since $S_q$ is unitary, $\norm{\widehat G_q-G_q}_2=\norm{(\widehat R_q-R_q)S_q}_2=\eta$. Also $G_q=U(\dt)$ and $\norm{G_q}_2=1$. The telescoping identity $\widehat G_q^{\;r}-G_q^r=\sum_{j=0}^{r-1}\widehat G_q^{\;r-1-j}(\widehat G_q-G_q)G_q^j$ combined with submultiplicativity gives Eq.~\eqref{eq:nonunitary-stability}, because $\norm{\widehat G_q}_2\leq\norm{G_q}_2+\eta=1+\eta$. If $\widehat R_q$ is unitary, then $\widehat G_q$ is unitary and every factor in the telescoping sum has norm one except $\widehat G_q-G_q$, giving the sharper bound.
+\end{proof}
+
+\begin{theorem}[Tightness of the multi-step stability bound]
+\label{thm:stability-tight}
+Let $\dt>0$, let $H=H^\dagger$, and let $S_q(\dt)$ be an order-$q$ step with exact residual $R_q$ and corrected step $G_q=R_qS_q=U(\dt)$. For every $\eta\in(0,\pi]$ there exists a \emph{unitary} approximate residual $\widehat R_q$ with $\norm{\widehat R_q-R_q}_2\leq\eta$ such that, with $\widehat G_q=\widehat R_qS_q$,
+\begin{widetext}
+\begin{equation}
+    \norm{\widehat G_q^{\;r}-U(r\dt)}_2\geq\tfrac{2}{\pi}\,r\eta
+    \qquad\text{for every integer } r \text{ with } r\eta\leq\pi.
+    \label{eq:stability-tight}
+\end{equation}
+\end{widetext}
+Hence the linear-in-$r$ estimate of Theorem~\ref{thm:residual-stability} is order-optimal: no bound of the form $o(r\eta)$ can hold uniformly in $r$.
+\end{theorem}
+
+\begin{proof}
+Let $P=P^\dagger$ be a spectral projector of $H$ onto a single eigenspace, so $\norm{P}_2=1$ and $[P,U(s)]=0$ for all real $s$. Set $\widehat R_q=e^{-i\eta P}R_q$, which is unitary. Since $R_q$ is unitary, $\norm{\widehat R_q-R_q}_2=\norm{e^{-i\eta P}-\id}_2=\max_{p\in\{0,1\}}\abs{e^{-i\eta p}-1}=2\sin(\eta/2)\leq\eta$. Because $R_qS_q=U(\dt)$ and $[P,U(\dt)]=0$,
+\begin{equation*}
+    \widehat G_q^{\;r}=\bigl(e^{-i\eta P}U(\dt)\bigr)^r=e^{-ir\eta P}U(\dt)^r=e^{-ir\eta P}U(r\dt).
+\end{equation*}
+Therefore $\norm{\widehat G_q^{\;r}-U(r\dt)}_2=\norm{e^{-ir\eta P}-\id}_2=2\sin(r\eta/2)$. For $r\eta\leq\pi$, Jordan's inequality $\sin x\geq\frac{2}{\pi}x$ on $[0,\pi/2]$ gives $2\sin(r\eta/2)\geq\frac{2}{\pi}r\eta$.
+\end{proof}
+
+\begin{theorem}[Duhamel bound for generator approximation]
+\label{thm:duhamel}
+Let $K$ and $\widehat K$ be Hermitian. Then $\norm{e^{-iK}-e^{-i\widehat K}}_2\leq \norm{K-\widehat K}_2$. Consequently, if $R_q=e^{-iK_q}$ and $\widehat R_q=e^{-i\widehat K_q}$, then $\norm{\widehat G_q^{\;r}-U(t)}_2\leq r\norm{K_q-\widehat K_q}_2$.
+\end{theorem}
+
+\begin{proof}
+Define $F(s)=e^{-i[(1-s)K+s\widehat K]}$. The derivative is represented by the standard Duhamel formula $\frac{dF}{ds}=-i\int_0^1 e^{-i(1-a)H_s}(\widehat K-K)e^{-iaH_s}\,da$, where $H_s=(1-s)K+s\widehat K$. Since $H_s$ is Hermitian, the exponentials in the integral are unitary, so $\norm{dF/ds}_2\leq\norm{\widehat K-K}_2$. Integrating from $s=0$ to $s=1$ proves the first bound. The global bound follows from Theorem~\ref{thm:residual-stability}, since both exponentials are unitary.
+\end{proof}
+
+\begin{definition}[Lie-algebraic spectral truncation]
+\label{def:spectral-truncation}
+The Pauli-weight subspaces $\cB_0\subseteq\cB_1\subseteq\cdots\subseteq\cB_n=\mathsf{Herm}(d)$ form a filtration of the Lie algebra of Hermitian operators by interaction range. We call the orthogonal projection $\Pi_w$ onto $\cB_w$ (Eq.~\eqref{eq:pauli-proj}) the \emph{spectral truncation at level $w$}, and $\widehat G_{q,w}=e^{-i\Pi_wK_q}S_q$ the level-$w$ truncated residual compilation. The level $w$ is a single tunable knob interpolating from the uncorrected step ($w=0$) to the exact correction ($w=n$); Theorem~\ref{thm:pauli-projection} and Corollary~\ref{cor:projected-certificate} show every level carries an \emph{a priori} simulation certificate.
+\end{definition}
+
+\begin{remark}
+This is the Hamiltonian-simulation counterpart of spectral-truncation constructions in operator-algebraic machine learning, where truncating a noncommutative algebra yields a tunable family interpolating between local and global models with provable approximation control~\cite{hashimoto2024spectral,hashimoto2023rkhm}. Here the algebra is the Lie algebra of generators, the truncation knob is interaction range, and the approximation control is the multi-step simulation certificate rather than a kernel-approximation bound. Two consequences distinguish the simulation setting: the truncation converges \emph{geometrically} in the level (Theorem~\ref{thm:spectral-rate}), and the certificate is a bound on a downstream dynamical quantity, so the level is selectable from the target accuracy alone (Corollary~\ref{cor:bandwidth}).
+\end{remark}
+
+\begin{theorem}[Frobenius-optimal Pauli compression]
+\label{thm:pauli-projection}
+Let $K=K^\dagger$ on $n$ qubits and let $\cB\subseteq\Span_\mathbb{R}(\cP_n)$ be any real Pauli subspace. The orthogonal projection $\Pi_\cB K=\sum_{P\in\cB}\frac{\Tr(PK)}{2^n}P$ uniquely minimizes $\norm{K-L}_F$ over $L\in\cB$. The corresponding unitary residual approximation satisfies $\norm{e^{-iK}-e^{-i\Pi_\cB K}}_2\leq\norm{K-\Pi_\cB K}_2\leq\norm{K-\Pi_\cB K}_F$.
+\end{theorem}
+
+\begin{proof}
+The normalized Pauli operators $P/\sqrt{2^n}$ form an orthonormal basis under the Hilbert--Schmidt inner product. Orthogonal projection onto a closed finite-dimensional subspace is the unique Frobenius-norm minimizer. The spectral norm is bounded by the Frobenius norm, and Theorem~\ref{thm:duhamel} supplies the unitary perturbation bound.
+\end{proof}
+
+\begin{corollary}[Projected residual simulation certificate]
+\label{cor:projected-certificate}
+For $K_{q,w}=\Pi_wK_q$ and $\widehat G_{q,w}=e^{-iK_{q,w}}S_q$, $\norm{\widehat G_{q,w}^{\;r}-U(t)}_2\leq r\norm{K_q-K_{q,w}}_2$. Thus a target global accuracy $\epsilon$ is guaranteed whenever $\norm{K_q-K_{q,w}}_2\leq\epsilon/r$.
+\end{corollary}
+
+\begin{proof}
+Both $K_q$ and $K_{q,w}=\Pi_wK_q$ are Hermitian, the latter because $\Pi_w$ is a real-linear projection onto a span of Hermitian Pauli strings (Theorem~\ref{thm:pauli-projection}); hence $R_q=e^{-iK_q}$ and $\widehat R_{q,w}=e^{-iK_{q,w}}$ are both unitary. The Duhamel bound (Theorem~\ref{thm:duhamel}) gives the per-step estimate $\norm{\widehat R_{q,w}-R_q}_2=\norm{e^{-iK_{q,w}}-e^{-iK_q}}_2\leq\norm{K_q-K_{q,w}}_2=:\eta$. Since $\widehat R_{q,w}$ is unitary, the sharp branch of Theorem~\ref{thm:residual-stability} applies to $\widehat G_{q,w}=\widehat R_{q,w}S_q$ and yields $\norm{\widehat G_{q,w}^{\;r}-U(t)}_2\leq r\eta=r\norm{K_q-K_{q,w}}_2$. Imposing $\eta\leq\epsilon/r$ makes the right-hand side at most $\epsilon$, which is the stated sufficient condition.
+\end{proof}
+
+\begin{corollary}[Certificate-driven bandwidth selection]
+\label{cor:bandwidth}
+Fix a target global accuracy $\epsilon>0$, step count $r$, and step $\dt$, and let $\tau_w:=\norm{K_q-\Pi_wK_q}_2$ be the truncation tail at level $w$. The quantities $\tau_0\geq\tau_1\geq\cdots\geq\tau_n=0$ are nonincreasing and computable from $K_q$ alone (no time evolution). The bandwidth
+\begin{equation}
+    w^\star(\epsilon)=\min\{\,w:\ r\,\tau_w\leq\epsilon\,\}
+\end{equation}
+is well defined and the level-$w^\star$ truncated compilation meets the target, $\norm{\widehat G_{q,w^\star}^{\,r}-U(t)}_2\leq\epsilon$. If, moreover, $\tau_w\leq C\rho^{\,w}$ with $\rho<1$ (the geometric regime of Theorem~\ref{thm:spectral-rate}), then $w^\star(\epsilon)\leq\log(rC/\epsilon)/\log(1/\rho)$ grows only logarithmically in $1/\epsilon$.
+\end{corollary}
+
+\begin{proof}
+Monotonicity of $\tau_w$ holds because $\cB_w\subseteq\cB_{w+1}$, so the orthogonal projection onto the larger subspace cannot increase the residual norm; $\tau_n=0$ because $\cB_n=\mathsf{Herm}(d)$ and $\Pi_nK_q=K_q$. Hence the set $\{w:r\tau_w\leq\epsilon\}$ contains $w=n$ and has a least element $w^\star$. The accuracy guarantee is Corollary~\ref{cor:projected-certificate} with $w=w^\star$, since $r\tau_{w^\star}\leq\epsilon$. For the logarithmic bound, $r\tau_w\leq rC\rho^{\,w}\leq\epsilon$ as soon as $w\geq\log(rC/\epsilon)/\log(1/\rho)$, and $w^\star$ is the least such integer.
+\end{proof}
+
+\begin{theorem}[Leading Strang residual support for the open-boundary TFIM]
+\label{thm:tfim-support}
+Let $A$ and $B$ be the \tfim{} splitting in Eq.~\eqref{eq:tfim}. For the Strang step $S_2(\dt)$, the degree-three homogeneous term in the residual generator $K_2(\dt)$ is a real linear combination of Pauli strings with weight at most three. Equivalently,
+\begin{equation}
+    K_2(\dt)=\dt^3K_2^{(3)}+O(\dt^5),
+    \qquad
+    K_2^{(3)}\in\cB_3.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+The symmetric BCH expansion of Strang splitting has no degree-two term; the first nonzero defect is a linear combination of double commutators $[A,[A,B]]$ and $[B,[A,B]]$~\cite{magnus1954,blanes2009}. The residual generator is the negative of this leading logarithmic defect up to the same order, so it is enough to bound the Pauli weight of these double commutators.
+
+Write $A=\sum_e A_e$ with $A_e=JZ_jZ_{j+1}$ for edges $e=(j,j+1)$ and $B=\sum_v B_v$ with $B_v=hX_v$. A commutator $[A_e,B_v]$ vanishes unless $v$ is incident to $e$. If it is nonzero, its support is contained in the two sites of $e$ and has Pauli weight two. In $[B,[A,B]]$, the second commutator adds at most one on-site term $B_{v'}$ whose support must overlap the existing support; therefore the support remains within the same edge and the Pauli weight is at most two. In $[A,[A,B]]$, the second edge term $A_{e'}$ must overlap the support of $[A_e,B_v]$. The union of two overlapping nearest-neighbor edges in a one-dimensional open chain contains at most three sites. Therefore every nonzero Pauli string in the double commutators has weight at most three. This proves $K_2^{(3)}\in\cB_3$.
+\end{proof}
+
+\begin{theorem}[Order generality of residual locality]
+\label{thm:order-locality}
+Let $A=J\sum_e Z_jZ_{j+1}$ and $B=h\sum_v X_v$ be the open-boundary \tfim{} splitting, and let $S_q$ be a symmetric product formula of order $q$. The leading term of its residual generator is geometrically local of bounded Pauli weight:
+\begin{equation}
+    K_q(\dt)=\dt^{q+1}K_q^{(q+1)}+O(\dt^{q+3}),
+    \qquad
+    K_q^{(q+1)}\in\cB_{q+2}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+The leading defect of a symmetric order-$q$ product formula is $O(\dt^{q+1})$, and by the symmetric Baker--Campbell--Hausdorff / Magnus structure its operator coefficient is a real linear combination of $(q{+}1)$-fold nested commutators of $A$ and $B$~\cite{magnus1954,blanes2009}; the residual generator cancels this leading logarithmic defect, so $K_q^{(q+1)}$ is itself such a linear combination. We bound the Pauli weight of any nonzero $m$-fold nested commutator of the \tfim{} local terms by induction on the number $m$ of local factors. A single factor $A_e=JZ_jZ_{j+1}$ or $B_v=hX_v$ has support of at most two sites, so weight $\le2=m+1$ at $m=1$. Assume an $(m{-}1)$-fold nested commutator $C$ has support on at most $m$ sites. A further commutator $[L,C]$ with a local factor $L$ of range at most two is nonzero only if $\supp(L)\cap\supp(C)\neq\emptyset$, and $\supp([L,C])\subseteq\supp(L)\cup\supp(C)$, a set of at most $\abs{\supp(C)}+2-1\le m+1$ sites. Hence every nonzero $m$-fold nested commutator has Pauli weight at most $m+1$, and the leading $(q{+}1)$-fold term has weight at most $q+2$, i.e.\ $K_q^{(q+1)}\in\cB_{q+2}$.
+\end{proof}
+
+\begin{remark}
+Theorem~\ref{thm:order-locality} is the worst-case algebraic bound; in the symmetric formula many maximal-weight strings cancel, so the \emph{effective} compression threshold is lower. Table~\ref{tab:order-generality} measures the dominant collapse at weight $3,4,5$ for $q=2,4,6$, i.e.\ $\approx\lceil q/2\rceil+2$, comfortably inside the proven $q+2$ envelope and tight at $q=2$, where Theorem~\ref{thm:tfim-support} gives the sharper bound three.
+\end{remark}
+
+\begin{theorem}[Geometric convergence rate of the spectral truncation]
+\label{thm:spectral-rate}
+Let $A,B$ be the open-boundary \tfim{} splitting and $S_q$ the symmetric order-$q$ step. There exist constants $C_q>0$, a ratio $\rho\in(0,1)$ with $\rho=O(\dt)$, and $\dt_0>0$ such that, for $\dt\leq\dt_0$ and every integer $w$ with $q+1\leq w\leq n$, the level-$w$ spectral-truncation tail $\tau_w=\norm{K_q-\Pi_wK_q}_2$ obeys the \emph{geometric envelope}
+\begin{equation}
+    \tau_w\leq C_q\,\rho^{\,w}.
+    \label{eq:spectral-rate}
+\end{equation}
+Consequently, by Corollary~\ref{cor:projected-certificate}, the certified global error $r\tau_w$ contracts by a factor $\rho=O(\dt)$ per added level, $\norm{\widehat G_{q,w}^{\,r}-U(t)}_2\leq r\,C_q\,\rho^{\,w}$.
+\end{theorem}
+
+\begin{proof}
+The residual factor $R_q(\dt)=U(\dt)S_q(\dt)^\dagger$ is real-analytic in $\dt$ and equals $\id$ at $\dt=0$, so for $\abs{\dt}$ below some radius $\dt_0>0$ it remains in the domain on which the principal logarithm is analytic; hence $K_q(\dt)=i\log R_q(\dt)$ is real-analytic near $0$ and its homogeneous expansion $K_q(\dt)=\sum_{d\geq q+1}\dt^{\,d}K_q^{(d)}$ converges absolutely for $\abs{\dt}\leq\dt_0$, with $M:=\sum_{d\geq q+1}\dt_0^{\,d}\norm{K_q^{(d)}}_2<\infty$. (Time-reversal symmetry of $S_q$ makes only the degrees $q+1,q+3,\dots$ appear~\cite{blanes2009}, which we do not need beyond convergence.) By the nested-commutator induction of Theorem~\ref{thm:order-locality}, $K_q^{(d)}\in\cB_{d+1}$, so any Pauli string of weight $\geq w+1$ first occurs at degree $d\geq w$; the part of $K_q$ outside $\cB_w$ is therefore a sum of homogeneous terms of degree $d\geq w$, and for $\dt\leq\dt_0$,
+\begin{widetext}
+\begin{equation*}
+    \tau_w=\Bigl\lVert\sum_{d\geq w}\dt^{\,d}\,\Pi_{>w}K_q^{(d)}\Bigr\rVert_2\leq\sum_{d\geq w}\dt^{\,d}\norm{K_q^{(d)}}_2=\Bigl(\tfrac{\dt}{\dt_0}\Bigr)^{\!w}\sum_{d\geq w}\Bigl(\tfrac{\dt}{\dt_0}\Bigr)^{\!d-w}\dt_0^{\,d}\norm{K_q^{(d)}}_2\leq M\,\Bigl(\tfrac{\dt}{\dt_0}\Bigr)^{\!w},
+\end{equation*}
+\end{widetext}
+using $(\dt/\dt_0)^{d-w}\leq1$ for $d\geq w$. This is Eq.~\eqref{eq:spectral-rate} with $C_q=M$ and $\rho=\dt/\dt_0=O(\dt)$. The global estimate follows from Corollary~\ref{cor:projected-certificate}.
+\end{proof}
+
+\begin{remark}
+Equation~\eqref{eq:spectral-rate} is a conservative provable envelope (per-level contraction $\rho=O(\dt)$, i.e.\ a factor $\gtrsim\dt^{-1}=10$). The measured per-level factors are far larger---$449\times$ for $q=2$ (least-squares fit over $w=3,4,5$) and $576\times$ for $q=4$ (the single resolvable pair $w=4,5$ before the round-off floor) at $\dt=0.1$ (Table~\ref{tab:spectral-rate})---because the symmetric cancellations that lower the effective locality threshold to $\approx\lceil q/2\rceil+2$ (Remark after Theorem~\ref{thm:order-locality}) also raise the degree at which each new weight level first appears, so empirically each retained level absorbs content roughly two powers of $\dt$ smaller, i.e.\ an effective ratio $\approx\dt^{2}$ further amplified by prefactors. The provable envelope already gives a geometric \emph{rate}, not merely convergence in a limit, which is what makes the level a usable accuracy dial (Corollary~\ref{cor:bandwidth}).
+\end{remark}
+
+\begin{theorem}[Faithful gate-level compilation of the correction]
+\label{thm:faithful-compilation}
+Let the compressed generator be partitioned into $m$ layers $\widehat K_q=\sum_{i=1}^{m}L_i$, where each $L_i$ is a real linear combination of \emph{mutually commuting} Pauli strings, and let $\widehat R_q^{\mathrm{c}}=\prod_{i=1}^{m}e^{-iL_i}$ be the first-order compiled correction. Then, with $\Lambda=\sum_{i=1}^{m}\norm{L_i}_2$,
+\begin{equation}
+    \norm{\widehat R_q^{\mathrm{c}}-e^{-i\widehat K_q}}_2\le\tfrac12\sum_{i<j}\norm{[L_i,L_j]}_2\le\tfrac12\Lambda^2 .
+\end{equation}
+Consequently $\widehat G_q^{\mathrm{c}}=\widehat R_q^{\mathrm{c}}S_q$ obeys, for $t=r\dt$,
+\begin{equation}
+    \norm{(\widehat G_q^{\mathrm{c}})^{r}-U(t)}_2\le r\,\norm{K_q-\widehat K_q}_2+\tfrac12\,r\,\Lambda^2 .
+\end{equation}
+Since every coefficient of $\widehat K_q$ is $O(\dt^{q+1})$ (Theorem~\ref{thm:small-step}), $\Lambda=O(\dt^{q+1})$ and the compilation term is $O(r\,\dt^{2(q+1)})$.
+\end{theorem}
+
+\begin{proof}
+The first inequality is the standard first-order Lie--Trotter estimate for the difference between the ordered product $\prod_i e^{-iL_i}$ and $e^{-i\sum_i L_i}$, bounded to second order by $\tfrac12\sum_{i<j}\norm{[L_i,L_j]}_2$; using $\norm{[L_i,L_j]}_2\le2\norm{L_i}_2\norm{L_j}_2$ and $\sum_{i<j}2\norm{L_i}_2\norm{L_j}_2\le(\sum_i\norm{L_i}_2)^2=\Lambda^2$ gives the $\tfrac12\Lambda^2$ bound. The global estimate follows by the triangle inequality $\norm{\widehat R_q^{\mathrm{c}}-R_q}_2\le\norm{\widehat R_q^{\mathrm{c}}-e^{-i\widehat K_q}}_2+\norm{e^{-i\widehat K_q}-e^{-iK_q}}_2$, the Duhamel bound (Theorem~\ref{thm:duhamel}) on the second term, and the unitary multi-step bound (Theorem~\ref{thm:residual-stability}) applied with both $\widehat R_q^{\mathrm{c}}$ and $R_q$ unitary. Finally each $\norm{L_i}_2\le\sum_{P\in L_i}\abs{c_P}$ with $c_P$ the Pauli coefficients of $\widehat K_q$, so $\Lambda\le\sum_P\abs{c_P}=O(\dt^{q+1})$.
+\end{proof}
+
+\begin{remark}
+Theorem~\ref{thm:faithful-compilation} is why the frontier advance is specific to $q\ge4$. The corrected step's intrinsic error after removing the leading defect is $O(\dt^{q+3})$, while the inner-compilation error is $O(\dt^{2(q+1)})$; the latter is asymptotically smaller exactly when $2(q+1)>q+3$, i.e.\ $q>1$, but the \emph{prefactors} matter at finite $\dt$: at $q=2$, $\dt=0.1$ the compilation term ($\sim\Lambda^2$ with $\Lambda\sim\norm{K_2}\sim10^{-3}$) caps the compiled $w\le4$ correction near $2\times10^{-5}$ (Table~\ref{tab:frontier}), whereas at $q=4$, $\Lambda\sim\norm{K_4}\sim10^{-6}$ and the compilation term is $\sim10^{-12}$, far below the corrected accuracy. The theory thus predicts, and the data confirm, that faithful compilation requires a sufficiently small base-step residual---i.e.\ a sufficiently high base order.
+\end{remark}
+
+\begin{theorem}[Symmetric faithful compilation]
+\label{thm:symmetric-compilation}
+With the layer partition $\widehat K_q=\sum_{i=1}^{m}L_i$ of Theorem~\ref{thm:faithful-compilation}, let the \emph{symmetric} compiled correction be the palindromic product
+\begin{equation}
+    \widehat R_q^{\mathrm{s}}=\Bigl(\prod_{i=1}^{m}e^{-iL_i/2}\Bigr)\Bigl(\prod_{i=m}^{1}e^{-iL_i/2}\Bigr).
+\end{equation}
+Then, with $\Lambda=\sum_i\norm{L_i}_2$ and a constant $c$ depending only on $m$,
+\begin{equation}
+    \norm{\widehat R_q^{\mathrm{s}}-e^{-i\widehat K_q}}_2\leq c\,\Lambda^3 ,
+\end{equation}
+and consequently $\widehat G_q^{\mathrm{s}}=\widehat R_q^{\mathrm{s}}S_q$ obeys $\norm{(\widehat G_q^{\mathrm{s}})^{r}-U(t)}_2\leq r\norm{K_q-\widehat K_q}_2+c\,r\,\Lambda^3$. Since $\Lambda=O(\dt^{q+1})$, the inner-compilation term is $O(r\,\dt^{3(q+1)})$---one order of $(q+1)$ smaller than the first-order bound $O(r\,\dt^{2(q+1)})$ of Theorem~\ref{thm:faithful-compilation}---at the cost of applying each layer twice, with the two central half-layers merging, so the correction's two-qubit-gate count rises from $\sum_i\mathrm{cost}(L_i)$ to $2\sum_i\mathrm{cost}(L_i)-\mathrm{cost}(L_m)$.
+\end{theorem}
+
+\begin{proof}
+$\widehat R_q^{\mathrm{s}}$ is the symmetric (Strang) composition of the one-parameter unitaries $e^{-isL_i}$, a time-symmetric second-order integrator for the flow of $-i\sum_iL_i=-i\widehat K_q$ over unit time. By the standard backward-error / symmetric-BCH analysis of such compositions~\cite{blanes2009}, the leading commutator defect of the first-order ordered product cancels by symmetry and the remaining error is third order in the generators, $\norm{\widehat R_q^{\mathrm{s}}-e^{-i\widehat K_q}}_2\leq c\sum_{i\leq j\leq k}\norm{[L_i,[L_j,L_k]]}_2\leq c'\Lambda^3$, absorbing $c'$ into $c$. The global estimate follows as in Theorem~\ref{thm:faithful-compilation}: triangle inequality through $e^{-i\widehat K_q}$, the Duhamel bound (Theorem~\ref{thm:duhamel}) on $\norm{e^{-i\widehat K_q}-e^{-iK_q}}_2$, and the unitary multi-step bound (Theorem~\ref{thm:residual-stability}). The gate count follows because each layer $L_i$ appears as two half-angle exponentials of identical CNOT cost to the full-angle one, except the central pair $e^{-iL_m/2}e^{-iL_m/2}=e^{-iL_m}$, which merges into a single layer.
+\end{proof}
+
+\begin{remark}
+Theorem~\ref{thm:symmetric-compilation} removes the structural floor that Theorem~\ref{thm:faithful-compilation} leaves at low base order. At $n=6$, $q=2$, $w\le4$ the first-order compile stalls at $2.18\times10^{-5}$ (Table~\ref{tab:frontier}) against the dense-oracle $3.65\times10^{-7}$ (Table~\ref{tab:faithful-compilation}); the symmetric compile reaches $3.76\times10^{-7}$, recovering the oracle, at roughly twice the correction's CNOT count (Table~\ref{tab:faithful-compilation}). This is the simulation counterpart of the smoothing that restores positive-definiteness in operator-algebraic spectral truncation~\cite{hashimoto2024spectral}: a symmetry-motivated modification of the naive realization that repairs the truncated object's structural defect. At $q=4$ the first-order compile is already faithful and cheaper, so the headline frontier advance (Sec.~\ref{sec:frontier}) does not need the symmetric compile; its role is to make the compress-then-compile pipeline faithful at \emph{every} base order.
+\end{remark}
+
+\begin{theorem}[Size-transfer error bound for learned local residual generators]
+\label{thm:size-transfer}
+Consider the disordered open-boundary \tfim{} on $n$ sites with couplings in a fixed compact set, and let $K_2^{(3)}(n)=\sum_{j=1}^{n} h_j$ be the degree-three Strang residual generator, where by Theorem~\ref{thm:tfim-support} each $h_j$ is a real linear combination of weight-$\le 3$ Pauli strings supported in the three-site window $\{j-1,j,j+1\}$ (truncated at the boundaries). Suppose a translation-invariant per-site predictor outputs $\widehat h_j$ from the couplings in that window with $\norm{\widehat h_j-h_j}_2\le\eta$ for every $j$, where $\eta$ depends only on the predictor and the coupling range, not on $n$. Then $\widehat K_2^{(3)}(n)=\sum_j\widehat h_j$ satisfies $\norm{\widehat K_2^{(3)}(n)-K_2^{(3)}(n)}_2\le n\,\eta$, and the corrected step $\widehat G(\dt)=\exp(-i\dt^3\widehat K_2^{(3)})\,S_2(\dt)$ obeys, for $t=r\dt$, $\norm{\widehat G(\dt)^r-U(t)}_2\le r\,\dt^3 n\,\eta + r\,O(\dt^5)$.
+\end{theorem}
+\begin{proof}
+The first bound is the triangle inequality over the $n$ site-anchored terms,
+\begin{equation*}
+    \norm{\textstyle\sum_j(\widehat h_j-h_j)}_2\le\sum_j\norm{\widehat h_j-h_j}_2\le n\eta;
+\end{equation*}
+translation invariance makes the per-site bound $\eta$ independent of~$n$. For the second, set $\widehat K=\dt^3\widehat K_2^{(3)}$. The BCH expansion in Appendix~\ref{app:bch} gives $K_2(\dt)=\dt^3K_2^{(3)}+O(\dt^5)$, so $\norm{\widehat K-K_2(\dt)}_2\le\dt^3 n\eta+O(\dt^5)$. The Duhamel bound (Theorem~\ref{thm:duhamel}) gives $\norm{e^{-i\widehat K}-R_2}_2\le\norm{\widehat K-K_2}_2$, and the multi-step stability bound of Theorem~\ref{thm:residual-stability} multiplies by~$r$, giving the stated estimate.
+\end{proof}
+
+\begin{theorem}[From per-site coefficient error to a global certificate]
+\label{thm:coeff-certificate}
+Adopt the setting of Theorem~\ref{thm:size-transfer} and expand each per-site generator in the fixed family of $T$ weight-$\leq3$ Pauli templates anchored at site $j$, $h_j=\sum_{\alpha=1}^{T}c_{j,\alpha}P_{j,\alpha}$ and $\widehat h_j=\sum_{\alpha=1}^{T}\widehat c_{j,\alpha}P_{j,\alpha}$, where each $P_{j,\alpha}$ is a Pauli string, so $\norm{P_{j,\alpha}}_2=1$. If the per-site coefficient error obeys $\norm{c_j-\widehat c_j}_2\leq\delta_c$ for every $j$, then the per-site operator error of Theorem~\ref{thm:size-transfer} satisfies $\eta\leq\sqrt{T}\,\delta_c$, and the learned corrected step $\widehat G(\dt)=\exp(-i\dt^3\widehat K_2^{(3)})\,S_2(\dt)$ obeys, for $t=r\dt$,
+\begin{equation}
+    \norm{\widehat G(\dt)^r-U(t)}_2\leq r\,\dt^3\,n\sqrt{T}\,\delta_c+r\,O(\dt^5).
+    \label{eq:coeff-certificate}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+By the triangle inequality and $\norm{P_{j,\alpha}}_2=1$,
+\begin{widetext}
+\begin{equation*}
+    \norm{\widehat h_j-h_j}_2=\norm{\sum_{\alpha=1}^{T}(\widehat c_{j,\alpha}-c_{j,\alpha})P_{j,\alpha}}_2\leq\sum_{\alpha=1}^{T}\abs{\widehat c_{j,\alpha}-c_{j,\alpha}}=\norm{c_j-\widehat c_j}_1\leq\sqrt{T}\,\norm{c_j-\widehat c_j}_2\leq\sqrt{T}\,\delta_c,
+\end{equation*}
+\end{widetext}
+where the last line uses the Cauchy--Schwarz inequality $\norm{x}_1\leq\sqrt{T}\,\norm{x}_2$ on $\mathbb{R}^T$. Taking the maximum over $j$ gives $\eta\leq\sqrt{T}\,\delta_c$; substituting this into the size-transfer bound of Theorem~\ref{thm:size-transfer} yields Eq.~\eqref{eq:coeff-certificate}.
+\end{proof}
+
+\begin{remark}
+With the $T=48$ contiguous weight-$\leq3$ templates per site used in Sec.~\ref{sec:learned} and the measured held-out coefficient accuracy (relative $\ell_2$ error $7.2\times10^{-3}$, $R^2=0.9999$), Theorem~\ref{thm:coeff-certificate} converts the learned-coefficient accuracy directly into the \emph{a priori} global error bound whose linear-in-$r$ growth Fig.~\ref{fig:learned}c verifies empirically.
+\end{remark}
+
+\begin{remark}
+Theorem~\ref{thm:tfim-support} does not say the full residual generator lies in $\cB_3$. Higher-order BCH terms can produce larger support. It predicts that $w\leq3$ projection should remove the dominant Strang defect at small step size, while $w\leq4$ and higher should capture additional subleading structure. This is consistent with the numerical results reported above.
+\end{remark}
+
+\begin{theorem}[A posteriori step certificate]
+\label{thm:posteriori}
+Let $\widehat G$ be any unitary approximate one-step propagator and let $\Delta=\norm{\widehat G-U(\dt)}_2$. Then $\norm{\widehat G^r-U(t)}_2\leq r\Delta$.
+\end{theorem}
+
+\begin{proof}
+Apply the telescoping identity to $\widehat G^r-U(\dt)^r$. Both $\widehat G$ and $U(\dt)$ are unitary, so each of the $r$ terms is bounded by $\Delta$.
+\end{proof}
+
+\subsection{Numerical methodology}
+\label{sec:numerics}
+
+All numerical results are generated by deterministic dense-matrix scripts that build the Pauli matrices, construct $A$, $B$, and $H$, evaluate matrix exponentials using dense linear algebra, compute spectral norms from singular values, and write the resulting CSV, JSON, PDF, and table files. The plotting pipeline contains no hand-coded performance numbers, and the deterministic studies use fixed grids with no stochastic sampling. The learned-residual experiment (Sec.~\ref{sec:learned}) does draw disordered couplings and train a network, but it is made reproducible by fixed random seeds for the sampler, the data split, and the network initialization; its training labels and all reported error metrics are computed by the same dense-matrix code, so rerunning the script reproduces every reported value. The benchmark design deliberately includes checks that would expose fabrication or implementation errors: unitarity checks for $S_q$, $R_q$, and corrected steps; same-order comparisons between $S_q$ and $R_qS_q$; exact dense recomputation of $U(t)$ rather than relying on repeated one-step products as the reference; saved raw data for every plotted point; and finite-precision reporting, including cases where round-off makes the high-order baseline comparable to the oracle residual.
+
+The Hilbert-space dimension is $d=2^n$. For the fixed-time study we use $J=h=1$, $t=1$, and $r=10$ steps. The exact total propagator $U(t)$ is computed as $\exp(-iHt)$ independently of the product-formula steps. For the projected residual study we compute the residual generator $K_q=i\log(R_q)$ using the dense matrix logarithm, symmetrize $K_q$ as $(K_q+K_q^\dagger)/2$ to remove round-off skew-Hermitian contamination, and project onto Pauli strings of weight at most $w$ using Eq.~\eqref{eq:pauli-proj}. The projected corrected propagator is $[e^{-i\Pi_wK_q}S_q]^r$. The learned-residual study additionally trains small multilayer perceptrons (on global-oracle and on oracle-free local-patch labels) with a standard automatic-differentiation library on disordered chains; all couplings, step sizes, and network weights are seeded from a single fixed seed, and every learned generator is scored only through the dense spectral-norm metrics above. Each network is trained for $4000$ full-batch Adam steps on $220$ disordered realizations at each of $n=4$ and $n=5$; reported transfer errors are averaged over independent held-out realizations at each size ($40$ realizations for $n=4$--$7$, $24$ for $n=8$, $16$ for $n=9$, $12$ for $n=10$), and the shaded bands in Fig.~\ref{fig:learned} report one standard deviation across these realizations. All plotted errors are spectral-norm errors. Where a plotted oracle residual appears around $10^{-14}$ to $10^{-13}$, that value is the observed double-precision floor, not a mathematical error in exact arithmetic.
+
+\paragraph{Two-qubit-gate cost model.} The error--cost frontier (Sec.~\ref{sec:frontier}, Fig.~\ref{fig:frontier}, Table~\ref{tab:frontier}) uses the standard textbook compilation of Pauli exponentials into Clifford-plus-rotation gates, accounting only two-qubit (CNOT) gates as is conventional in fault-tolerant and near-term resource estimates. For the \tfim{}, $e^{-iB\tau}$ is a layer of single-qubit $X$ rotations (no two-qubit gates), and $e^{-iA\tau}$ is a layer of $n-1$ nearest-neighbour $ZZ$ rotations, each costing two CNOTs, so an $A$-layer costs $2(n-1)$ CNOTs; a Suzuki step $S_q$ with $\#A_q$ elementary $A$-exponentials costs $2(n-1)\,\#A_q$ CNOTs, with $\#A_q=1,5,25,125$ for $q=2,4,6,8$. A weight-$w$ Pauli rotation $e^{-i\theta P}$ compiles by a CNOT ladder into $2(w-1)$ CNOTs. The compiled correction is partitioned into mutually-commuting layers by greedy colouring of the anticommutation graph (Theorem~\ref{thm:faithful-compilation}), and \emph{every reported corrected-step error is the error of this compiled correction}, not of the dense oracle; its CNOT cost is the sum of $2(w-1)$ over the retained Pauli terms. For the symmetric inner compilation (Theorem~\ref{thm:symmetric-compilation}, Table~\ref{tab:faithful-compilation}) each commuting layer is applied twice at half angle with the two central half-layers merged, so the correction cost rises to $2\sum_i\mathrm{cost}(L_i)-\mathrm{cost}(L_m)$ over the $m$ layers; we report both costs. Single-qubit gates are not counted; the classical cost of obtaining the generator is offline and, in the learned mode (Sec.~\ref{sec:learned}), amortized and free of any dense $2^n$ propagator.
+
+\subsection*{Data availability}
+
+All data supporting the numerical findings are generated by deterministic scripts from the Hamiltonian definition in Eq.~\eqref{eq:tfim}. The raw CSV and JSON files, figure-generation scripts, and table-generation scripts are included with the manuscript package. No experimental result is fabricated or manually inserted without a corresponding generated data record.
+
+\subsection*{Code availability}
+
+The accompanying code is a pip-installable package (\texttt{lieideal-hs}) that constructs Pauli operators, Trotter--Suzuki steps, exact propagators, residual generators, spectral truncations, the symmetric and first-order compilations, the certificate-driven bandwidth selection, the learned per-site model, and every table and figure from first principles. Installing it and running a single console entry point (\texttt{lieideal-reproduce}) deterministically regenerates every dataset, table, and figure of this manuscript; a companion entry point (\texttt{lieideal-verify}) reruns the pipeline and asserts byte-identical outputs. The spectral-truncation convergence rate, the certificate, and the symmetric-versus-first-order compilation are produced by the \texttt{spectral\_truncation} module. The code is intended as a reproducibility baseline and as a starting point for GPU-accelerated implementations.
+
+% ============================================================
+% END STATEMENTS
+% ============================================================
+
+\section*{Author contributions}
+
+M.H. conceived the residual-generator framework, developed and proved the theoretical results, designed and implemented the dense-matrix and operator-learning experiments, produced all figures and tables, and wrote the manuscript.
+
+\section*{Competing interests}
+
+The author declares no competing interests.
+
+\begin{acknowledgments}
+The author acknowledges the foundational literature on product formulas, Hamiltonian simulation, commutator error bounds, quantum dynamics algorithms, and quantum-circuit compilation that motivates this work.
+\end{acknowledgments}
+
+% ============================================================
+% EXTENDED DATA
+% ============================================================
+
+\appendix
+\section{Additional figures and tables}
+\label{app:extended-data}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\linewidth]{fig2_compressed_residual.pdf}
+\caption{Compressed-residual compilation for $n=5$, $q=2$ ($J=h=1$, $t=1$, $r=10$). \textbf{a}, Spectral-norm error versus maximum retained Pauli weight $w$, against the uncorrected baseline. \textbf{b}, Improvement factor over the baseline by weight. The sharp improvement at $w=3$ is predicted by the leading-support theorem for the Strang residual (Theorem~\ref{thm:tfim-support}). All values are exact, deterministic dense-matrix computations (no sampling, hence no error bars); the $w=5$ row sits at the double-precision floor.}
+\label{edfig:projected}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\linewidth]{fig3_time_sweep.pdf}
+\caption{Time-resolved correction hierarchy for $n=4$, $q=2$, $J=h=1$, and $r=10$, over $40$ total times $t\in[0.1,4.0]$. The $w\leq3$ projected residual uniformly improves the baseline in this sweep; $w\leq2$ is less reliable. Each curve is an exact, deterministic dense-matrix computation (no sampling, hence no error bars).}
+\label{edfig:timesweep}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\linewidth]{fig4_generator_structure.pdf}
+\caption{Structure of the residual generator. \textbf{a}, Cumulative squared Pauli coefficient mass for the $n=5$, $q=2$ residual generator at $\dt=0.1$; weight three captures the dominant leading structure, while higher weights capture subleading BCH terms. \textbf{b}, Residual-generator norm $\norm{K_q(\dt)}_2$ versus step size for $n=4$ and $q=1,2,4,6$; the norm decreases rapidly with order, consistent with product-formula order conditions and Theorem~\ref{thm:small-step}. Both panels are exact, deterministic dense-matrix computations (no sampling, hence no error bars).}
+\label{edfig:genstruct}
+\end{figure*}
+
+\input{tables/projected_summary.tex}
+
+\input{tables/resource_proxy.tex}
+
+\input{tables/generator_scaling.tex}
+
+\input{tables/learned_breakdown.tex}
+
+\input{tables/learned_dtsweep.tex}
+
+The per-size breakdown of every correction (Table~\ref{tab:learned-breakdown}) makes the overlap of the oracle-trained and oracle-free learned curves in Fig.~\ref{fig:learned}a quantitative: at every size the oracle-free network matches or slightly improves on the oracle-trained one and both sit about a factor of five below the analytic leading-order correction, while staying within a small constant factor of the exact weight-$\leq3$ oracle. The single-step step-size sweep at $n=6$ (Table~\ref{tab:learned-dtsweep}) tabulates the numbers behind Fig.~\ref{fig:learned}b: the analytic $\dt^3$ correction degrades from an $11\times$ improvement over the uncorrected step at $\dt=0.05$ to only $1.24\times$ at $\dt=0.30$, whereas the $\dt$-conditioned learned correction stays close to the exact oracle, closing from about a factor of twelve at $\dt=0.05$ to within roughly $30\%$ at $\dt=0.30$ and remaining far below the analytic baseline throughout. The residual-generator norms in Table~\ref{tab:generator-scaling} confirm the order scaling underlying Theorem~\ref{thm:small-step}: increasing the order from $q=1$ to $q=6$ shrinks $\norm{K_q(0.1)}_2$ from $4.44\times10^{-2}$ to $1.43\times10^{-9}$.
+
+\section{Detailed BCH support analysis for the TFIM}
+\label{app:bch}
+
+The main-text support theorem deliberately avoids exact BCH coefficients. Here we make the underlying structure explicit. For Strang splitting, $S_2(\dt)=e^{-iB\dt/2}e^{-iA\dt}e^{-iB\dt/2}$, the logarithm has the form $\log S_2(\dt)=-i(A+B)\dt+\dt^3\Gamma_3+O(\dt^5)$, where $\Gamma_3$ is a linear combination of $[A,[A,B]]$ and $[B,[A,B]]$. The absence of an even power follows from time-reversal symmetry of the Strang formula. The residual is $R_2(\dt)=e^{-i(A+B)\dt}S_2(\dt)^\dagger$, and the leading residual generator cancels the leading logarithmic defect, so $K_2(\dt)=\dt^3K_2^{(3)}+O(\dt^5)$, where $K_2^{(3)}$ is a real linear combination of $i[A,[A,B]]$ and $i[B,[A,B]]$ after accounting for the anti-Hermitian nature of commutators of Hermitian matrices.
+
+For the \tfim{}, write $A_e=JZ_jZ_{j+1}$ and $B_v=hX_v$. The elementary commutator is $[A_e,B_v]=0$ if $v\notin e$. If $v=j$, then $[Z_jZ_{j+1},X_j]=2iY_jZ_{j+1}$, and if $v=j+1$, then $[Z_jZ_{j+1},X_{j+1}]=2iZ_jY_{j+1}$. Thus $[A,B]$ is a sum of weight-two Pauli strings on nearest-neighbor edges. Next consider $[B,[A,B]]$: a term $[B_{v'},[A_e,B_v]]$ is nonzero only if $v'$ lies in the support of $[A_e,B_v]$, which is the same edge $e$; the resulting Pauli string remains supported on that edge and has weight at most two, for example $[X_j,Y_jZ_{j+1}]=2iZ_jZ_{j+1}$ and $[X_{j+1},Y_jZ_{j+1}]=-2iY_jY_{j+1}$. Now consider $[A,[A,B]]$: a term $[A_{e'},[A_e,B_v]]$ is nonzero only if $e'$ overlaps the support of $[A_e,B_v]$. In a one-dimensional nearest-neighbor chain, the union of two overlapping edges contains at most three sites, $(j-1,j,j+1)$ or $(j,j+1,j+2)$. Therefore every nonzero Pauli string in $[A,[A,B]]$ has weight at most three, proving that the leading Strang residual generator is contained in $\cB_3$. The same proof strategy extends to other local Hamiltonians: if the interaction hypergraph has local terms of diameter at most $r_0$, then an $m$-fold nested commutator can only grow along overlapping local supports, connecting residual-generator compression to locality bounds and Lieb--Robinson ideas~\cite{lieb1972,tran2020}.
+
+\section{Projection formulas and diagnostic quantities}
+\label{app:projection}
+
+For $n$ qubits, the Pauli group modulo phases gives $4^n$ Hermitian strings satisfying $\Tr(PQ)=2^n\delta_{P,Q}$. Every Hermitian matrix $K$ has an expansion $K=\sum_{P\in\cP_n} c_P P$ with $c_P=\Tr(PK)/2^n$, squared Frobenius norm $\norm{K}_F^2=2^n\sum_{P\in\cP_n}\abs{c_P}^2$, and cumulative coefficient mass (plotted in Fig.~\ref{edfig:genstruct}a) $M(w)=\sum_{\operatorname{wt}(P)\leq w}\abs{c_P}^2/\sum_{P\in\cP_n}\abs{c_P}^2$. For the $n=5$, $q=2$, $\dt=0.1$ run, the generated squared coefficient masses by weight are $M_0'=3.598\times10^{-33}$, $M_1'=1.466\times10^{-6}$, $M_2'=9.973\times10^{-7}$, $M_3'=1.262\times10^{-6}$, $M_4'=1.235\times10^{-10}$, and $M_5'=3.413\times10^{-16}$. Although the weight-four mass is small in Frobenius terms, it can still matter for spectral-norm accuracy after repeated steps, which is why Table~\ref{tab:projected-summary} shows a large improvement from $w=3$ to $w=4$.
+
+\section{Finite-precision interpretation}
+\label{app:finite-precision}
+
+The exact residual theorem is an algebraic identity. In floating-point arithmetic, the computed residual is $\widetilde R_q=\operatorname{fl}\{\widetilde U(\dt)\widetilde S_q(\dt)^\dagger\}$ and the computed corrected step is $\widetilde G_q=\operatorname{fl}\{\widetilde R_q\widetilde S_q\}$. Round-off enters through every matrix exponential and multiplication. This explains why the $q=8$ baseline, already extremely accurate at $\dt=0.1$, can appear slightly more accurate than the oracle residual in Table~\ref{tab:error-summary}: the theorem says the exact-arithmetic error is zero, while the table reports floating-point evaluations of different arithmetic circuits. For low and moderate order, the product-formula error dominates round-off and oracle \rgtc{} gives many orders of magnitude improvement; for very high order at small step size, product-formula error can be below or comparable to double-precision round-off, so differences at $10^{-13}$ are not physically meaningful; projected residual experiments should be judged at error levels well above round-off, such as the $w=3$ and $w=4$ results in Table~\ref{tab:projected-summary}.
+
+\section{Reproducibility checklist}
+\label{app:repro}
+
+A reproducible implementation should verify $\norm{S_q^\dagger S_q-\id}_2<10^{-12}$ for every tested $q$, $n$, and $\dt$; verify $\norm{R_q^\dagger R_q-\id}_2<10^{-12}$ for every oracle residual; verify $\norm{R_qS_q-U(\dt)}_2<10^{-12}$ for small and moderate orders; save raw CSV or JSON data before plotting; make plots only from saved raw data, not from hard-coded arrays; record package versions and BLAS backend information; use deterministic parameter grids or fixed random seeds; and include tests that fail if a citation key in \texttt{main.tex} is missing from \texttt{refs.bib}. These checks are especially important if the code is ported to GPU backends, where matrix-exponential implementations and floating-point accumulation order may differ from CPU reference values.
+
+\section{Possible extensions}
+\label{app:extensions}
+
+The residual-generator framework suggests several concrete research extensions. A \emph{BCH residual compiler} derives explicit nested-commutator formulas for $K_q$ through a target order and implements $e^{-iK_q^{\mathrm{BCH}}}$ as a short product formula; Theorems~\ref{thm:residual-stability} and~\ref{thm:duhamel} convert truncation error into global simulation error. A \emph{variational residual compiler} uses the oracle residual on small systems as a target for a parameterized local circuit $V(\theta)$, with loss $\norm{V(\theta)-R_q}_F^2$, local Pauli-shadow loss, or state-averaged infidelity, and the stability theorem provides the operator-norm target. An \emph{operator-learning residual compiler} is realized in Sec.~\ref{sec:learned} for the Strang \tfim{}, learning the step-size-conditioned local weight-$\leq3$ coefficients of $K_2$ with a single size-transferable network trained from oracle-free local patches; natural continuations extend the local templates to other lattices and higher orders, replace patch labels with classical-shadow or commutator estimates on hardware, and compile the learned generator $e^{-i\widehat K_q}$ into native gates using Theorems~\ref{thm:residual-stability} and~\ref{thm:duhamel} as the operator-norm target. A \emph{GPU-accelerated benchmark generator} uses CPU dense simulation as a correctness reference, then ports parameter sweeps and Pauli projections to batched GPU kernels, keeping output tolerance-comparable to the CPU reference and always regenerating raw data before producing figures.
 
 \begin{thebibliography}{10}
 \expandafter\ifx\csname url\endcsname\relax
@@ -869,400 +1253,5 @@ Four limitations bound the frontier claim, and we state each precisely. \emph{Fi
   (\bibinfo{year}{2023}).
 
 \end{thebibliography}
-
-% ============================================================
-% METHODS
-% ============================================================
-
-\section{Methods}
-\label{sec:methods}
-
-\subsection{Trotter--Suzuki steps and residual construction}
-
-For $k\geq2$, higher even orders are generated by the Suzuki recursion
-\begin{equation}
-    S_{2k}(\dt)=S_{2k-2}(p_k\dt)^2S_{2k-2}((1-4p_k)\dt)S_{2k-2}(p_k\dt)^2,
-    \qquad
-    p_k=\left(4-4^{1/(2k-1)}\right)^{-1}.
-    \label{eq:suzuki-recursion}
-\end{equation}
-For a fixed order $q$ and step size $\dt$, the residual factor is $R_q(\dt)=U(\dt)S_q(\dt)^\dagger$, the corrected one-step propagator is $G_q(\dt)=R_q(\dt)S_q(\dt)$, and the global approximation is $\widetilde U_{R,q}(t;r)=G_q(t/r)^r$. When $R_q$ is computed exactly, $G_q(\dt)=U(\dt)$. Because $R_q$ is unitary, it admits the representation $R_q(\dt)=e^{-iK_q(\dt)}$ with a Hermitian residual generator $K_q$. The generator is not unique globally because eigenphases are defined modulo $2\pi$; for small enough $\dt$ the residual lies close to the identity and the principal generator is well defined.
-
-A compressed residual generator is $\widehat K_q(\dt)\in\cB$, where $\cB\subseteq\mathsf{Herm}(d)$ is a real linear space of implementable Hermitian generators (Pauli strings of weight at most $w$, geometrically local Pauli strings of bounded diameter, commutator monomials up to a fixed degree, or generators representable by a fixed hardware ansatz), with $\widehat R_q(\dt)=e^{-i\widehat K_q(\dt)}$ and $\widehat G_q(\dt)=\widehat R_q(\dt)S_q(\dt)$. The most direct dense benchmark instantiation is Pauli projection. With $\cP_n=\{I,X,Y,Z\}^{\otimes n}$ and $\cB_w=\Span_\mathbb{R}\{P\in\cP_n:\operatorname{wt}(P)\leq w\}$, the projection is
-\begin{equation}
-    \Pi_wK_q=\sum_{\operatorname{wt}(P)\leq w}\frac{\Tr(PK_q)}{2^n}P.
-    \label{eq:pauli-proj}
-\end{equation}
-
-\subsection{Theory: proofs}
-\label{sec:theory}
-
-This section contains the main mathematical guarantees. All norms are spectral norms unless explicitly stated otherwise.
-
-\begin{lemma}[Unitarity of product-formula steps]
-\label{lem:Sq-unitary}
-Let $A$ and $B$ be Hermitian and let every Suzuki coefficient be real. Then $S_q(\dt)$ is unitary for every real $\dt$ and every $q\in\{1,2,4,6,8\}$ generated by the Strang step and Eq.~\eqref{eq:suzuki-recursion}.
-\end{lemma}
-
-\begin{proof}
-Each elementary factor has the form $e^{-iC\tau}$ with $C=C^\dagger$ and $\tau\in\mathbb{R}$. Such a factor is unitary because $(e^{-iC\tau})^\dagger=e^{iC\tau}=(e^{-iC\tau})^{-1}$. The product of finitely many unitary matrices is unitary. The recursive Suzuki construction only composes such factors with real rescaled times, including the negative coefficient $1-4p_k$, which still gives a unitary exponential.
-\end{proof}
-
-\begin{theorem}[Exact residual factorization and uniqueness]
-\label{thm:factorization}
-Let $H=H^\dagger$ and let $S_q(\dt)$ be any unitary product-formula step. The residual $R_q(\dt)=U(\dt)S_q(\dt)^\dagger$ is unitary and is the unique matrix $L$ satisfying $LS_q(\dt)=U(\dt)$. Consequently, $R_q(\dt)S_q(\dt)=U(\dt)$ and $[R_q(t/r)S_q(t/r)]^r=U(t)$ for time-independent $H$.
-\end{theorem}
-
-\begin{proof}
-Since $H$ is Hermitian, $U(\dt)$ is unitary. Lemma~\ref{lem:Sq-unitary} gives unitarity of $S_q$, hence $S_q^\dagger=S_q^{-1}$. Thus $R_q^\dagger R_q=S_qU^\dagger US_q^\dagger=S_qS_q^\dagger=\id$. Moreover, $R_qS_q=U S_q^\dagger S_q=U$. If $L S_q=U$, right multiplication by $S_q^\dagger$ gives $L=US_q^\dagger=R_q$. For $t=r\dt$, time independence gives $U(\dt)^r=U(r\dt)=U(t)$.
-\end{proof}
-
-\begin{theorem}[Optimality among all left corrections]
-\label{thm:optimality}
-Let $|||\cdot|||$ be any unitarily invariant norm. The residual $R_q$ is a global minimizer of $\mathcal{J}(L)=|||U(\dt)-LS_q(\dt)|||$. The minimum value is zero, and the minimizer is unique.
-\end{theorem}
-
-\begin{proof}
-Every norm is nonnegative, so $\mathcal{J}(L)\geq0$. Theorem~\ref{thm:factorization} gives $\mathcal{J}(R_q)=0$. If another $L'$ also gives zero, then $L'S_q=U$, and uniqueness in Theorem~\ref{thm:factorization} implies $L'=R_q$.
-\end{proof}
-
-\begin{remark}
-Theorem~\ref{thm:optimality} is an oracle statement, not a cost statement. It says that no exact left multiplier can beat $R_q$ in error because the error is already zero. It does not say that $R_q$ is cheap to implement.
-\end{remark}
-
-\begin{theorem}[Small-step residual-generator bound]
-\label{thm:small-step}
-Assume $S_q$ is order $q$ in the sense that there exist constants $C_q$ and $\dt_0$ such that $\norm{U(\dt)-S_q(\dt)}_2\leq C_q\abs{\dt}^{q+1}$ for $\abs{\dt}\leq\dt_0$. If $C_q\abs{\dt}^{q+1}\leq1$, then $R_q(\dt)$ has a Hermitian logarithm $K_q(\dt)$ with phases chosen in $[-\pi,\pi]$ and $\norm{K_q(\dt)}_2\leq 2C_q\abs{\dt}^{q+1}$.
-\end{theorem}
-
-\begin{proof}
-Because $S_q$ is unitary, $\norm{R_q-\id}_2=\norm{US_q^\dagger-\id}_2=\norm{U-S_q}_2\leq C_q\abs{\dt}^{q+1}$. Diagonalize $R_q=W\operatorname{diag}(e^{-i\theta_j})W^\dagger$ with $\theta_j\in[-\pi,\pi]$ and define $K_q=W\operatorname{diag}(\theta_j)W^\dagger$. For any eigenphase, $\abs{e^{-i\theta_j}-1}=2\abs{\sin(\theta_j/2)}$. If $\norm{R_q-\id}_2\leq1$, then $\abs{\theta_j}\leq2\arcsin(\norm{R_q-\id}_2/2)\leq2\norm{R_q-\id}_2$. Taking the maximum over $j$ proves the bound.
-\end{proof}
-
-\begin{theorem}[Multi-step stability for approximate residuals]
-\label{thm:residual-stability}
-Let $\widehat R_q$ be any approximate residual and define $\widehat G_q=\widehat R_qS_q$. If $\eta=\norm{\widehat R_q-R_q}_2$, then
-\begin{equation}
-    \norm{\widehat G_q^{\;r}-U(t)}_2
-    \leq \eta\sum_{j=0}^{r-1}(1+\eta)^j
-    \leq r\eta e^{(r-1)\eta}.
-    \label{eq:nonunitary-stability}
-\end{equation}
-If $\widehat R_q$ is unitary, then the sharper bound $\norm{\widehat G_q^{\;r}-U(t)}_2\leq r\eta$ holds.
-\end{theorem}
-
-\begin{proof}
-Since $S_q$ is unitary, $\norm{\widehat G_q-G_q}_2=\norm{(\widehat R_q-R_q)S_q}_2=\eta$. Also $G_q=U(\dt)$ and $\norm{G_q}_2=1$. The telescoping identity $\widehat G_q^{\;r}-G_q^r=\sum_{j=0}^{r-1}\widehat G_q^{\;r-1-j}(\widehat G_q-G_q)G_q^j$ combined with submultiplicativity gives Eq.~\eqref{eq:nonunitary-stability}, because $\norm{\widehat G_q}_2\leq\norm{G_q}_2+\eta=1+\eta$. If $\widehat R_q$ is unitary, then $\widehat G_q$ is unitary and every factor in the telescoping sum has norm one except $\widehat G_q-G_q$, giving the sharper bound.
-\end{proof}
-
-\begin{theorem}[Tightness of the multi-step stability bound]
-\label{thm:stability-tight}
-Let $\dt>0$, let $H=H^\dagger$, and let $S_q(\dt)$ be an order-$q$ step with exact residual $R_q$ and corrected step $G_q=R_qS_q=U(\dt)$. For every $\eta\in(0,\pi]$ there exists a \emph{unitary} approximate residual $\widehat R_q$ with $\norm{\widehat R_q-R_q}_2\leq\eta$ such that, with $\widehat G_q=\widehat R_qS_q$,
-\begin{equation}
-    \norm{\widehat G_q^{\;r}-U(r\dt)}_2\geq\tfrac{2}{\pi}\,r\eta
-    \qquad\text{for every integer } r \text{ with } r\eta\leq\pi.
-    \label{eq:stability-tight}
-\end{equation}
-Hence the linear-in-$r$ estimate of Theorem~\ref{thm:residual-stability} is order-optimal: no bound of the form $o(r\eta)$ can hold uniformly in $r$.
-\end{theorem}
-
-\begin{proof}
-Let $P=P^\dagger$ be a spectral projector of $H$ onto a single eigenspace, so $\norm{P}_2=1$ and $[P,U(s)]=0$ for all real $s$. Set $\widehat R_q=e^{-i\eta P}R_q$, which is unitary. Since $R_q$ is unitary, $\norm{\widehat R_q-R_q}_2=\norm{e^{-i\eta P}-\id}_2=\max_{p\in\{0,1\}}\abs{e^{-i\eta p}-1}=2\sin(\eta/2)\leq\eta$. Because $R_qS_q=U(\dt)$ and $[P,U(\dt)]=0$,
-\begin{equation*}
-    \widehat G_q^{\;r}=\bigl(e^{-i\eta P}U(\dt)\bigr)^r=e^{-ir\eta P}U(\dt)^r=e^{-ir\eta P}U(r\dt).
-\end{equation*}
-Therefore $\norm{\widehat G_q^{\;r}-U(r\dt)}_2=\norm{e^{-ir\eta P}-\id}_2=2\sin(r\eta/2)$. For $r\eta\leq\pi$, Jordan's inequality $\sin x\geq\frac{2}{\pi}x$ on $[0,\pi/2]$ gives $2\sin(r\eta/2)\geq\frac{2}{\pi}r\eta$.
-\end{proof}
-
-\begin{theorem}[Duhamel bound for generator approximation]
-\label{thm:duhamel}
-Let $K$ and $\widehat K$ be Hermitian. Then $\norm{e^{-iK}-e^{-i\widehat K}}_2\leq \norm{K-\widehat K}_2$. Consequently, if $R_q=e^{-iK_q}$ and $\widehat R_q=e^{-i\widehat K_q}$, then $\norm{\widehat G_q^{\;r}-U(t)}_2\leq r\norm{K_q-\widehat K_q}_2$.
-\end{theorem}
-
-\begin{proof}
-Define $F(s)=e^{-i[(1-s)K+s\widehat K]}$. The derivative is represented by the standard Duhamel formula $\frac{dF}{ds}=-i\int_0^1 e^{-i(1-a)H_s}(\widehat K-K)e^{-iaH_s}\,da$, where $H_s=(1-s)K+s\widehat K$. Since $H_s$ is Hermitian, the exponentials in the integral are unitary, so $\norm{dF/ds}_2\leq\norm{\widehat K-K}_2$. Integrating from $s=0$ to $s=1$ proves the first bound. The global bound follows from Theorem~\ref{thm:residual-stability}, since both exponentials are unitary.
-\end{proof}
-
-\begin{definition}[Lie-algebraic spectral truncation]
-\label{def:spectral-truncation}
-The Pauli-weight subspaces $\cB_0\subseteq\cB_1\subseteq\cdots\subseteq\cB_n=\mathsf{Herm}(d)$ form a filtration of the Lie algebra of Hermitian operators by interaction range. We call the orthogonal projection $\Pi_w$ onto $\cB_w$ (Eq.~\eqref{eq:pauli-proj}) the \emph{spectral truncation at level $w$}, and $\widehat G_{q,w}=e^{-i\Pi_wK_q}S_q$ the level-$w$ truncated residual compilation. The level $w$ is a single tunable knob interpolating from the uncorrected step ($w=0$) to the exact correction ($w=n$); Theorem~\ref{thm:pauli-projection} and Corollary~\ref{cor:projected-certificate} show every level carries an \emph{a priori} simulation certificate.
-\end{definition}
-
-\begin{remark}
-This is the Hamiltonian-simulation counterpart of spectral-truncation constructions in operator-algebraic machine learning, where truncating a noncommutative algebra yields a tunable family interpolating between local and global models with provable approximation control~\cite{hashimoto2024spectral,hashimoto2023rkhm}. Here the algebra is the Lie algebra of generators, the truncation knob is interaction range, and the approximation control is the multi-step simulation certificate rather than a kernel-approximation bound. Two consequences distinguish the simulation setting: the truncation converges \emph{geometrically} in the level (Theorem~\ref{thm:spectral-rate}), and the certificate is a bound on a downstream dynamical quantity, so the level is selectable from the target accuracy alone (Corollary~\ref{cor:bandwidth}).
-\end{remark}
-
-\begin{theorem}[Frobenius-optimal Pauli compression]
-\label{thm:pauli-projection}
-Let $K=K^\dagger$ on $n$ qubits and let $\cB\subseteq\Span_\mathbb{R}(\cP_n)$ be any real Pauli subspace. The orthogonal projection $\Pi_\cB K=\sum_{P\in\cB}\frac{\Tr(PK)}{2^n}P$ uniquely minimizes $\norm{K-L}_F$ over $L\in\cB$. The corresponding unitary residual approximation satisfies $\norm{e^{-iK}-e^{-i\Pi_\cB K}}_2\leq\norm{K-\Pi_\cB K}_2\leq\norm{K-\Pi_\cB K}_F$.
-\end{theorem}
-
-\begin{proof}
-The normalized Pauli operators $P/\sqrt{2^n}$ form an orthonormal basis under the Hilbert--Schmidt inner product. Orthogonal projection onto a closed finite-dimensional subspace is the unique Frobenius-norm minimizer. The spectral norm is bounded by the Frobenius norm, and Theorem~\ref{thm:duhamel} supplies the unitary perturbation bound.
-\end{proof}
-
-\begin{corollary}[Projected residual simulation certificate]
-\label{cor:projected-certificate}
-For $K_{q,w}=\Pi_wK_q$ and $\widehat G_{q,w}=e^{-iK_{q,w}}S_q$, $\norm{\widehat G_{q,w}^{\;r}-U(t)}_2\leq r\norm{K_q-K_{q,w}}_2$. Thus a target global accuracy $\epsilon$ is guaranteed whenever $\norm{K_q-K_{q,w}}_2\leq\epsilon/r$.
-\end{corollary}
-
-\begin{proof}
-Both $K_q$ and $K_{q,w}=\Pi_wK_q$ are Hermitian, the latter because $\Pi_w$ is a real-linear projection onto a span of Hermitian Pauli strings (Theorem~\ref{thm:pauli-projection}); hence $R_q=e^{-iK_q}$ and $\widehat R_{q,w}=e^{-iK_{q,w}}$ are both unitary. The Duhamel bound (Theorem~\ref{thm:duhamel}) gives the per-step estimate $\norm{\widehat R_{q,w}-R_q}_2=\norm{e^{-iK_{q,w}}-e^{-iK_q}}_2\leq\norm{K_q-K_{q,w}}_2=:\eta$. Since $\widehat R_{q,w}$ is unitary, the sharp branch of Theorem~\ref{thm:residual-stability} applies to $\widehat G_{q,w}=\widehat R_{q,w}S_q$ and yields $\norm{\widehat G_{q,w}^{\;r}-U(t)}_2\leq r\eta=r\norm{K_q-K_{q,w}}_2$. Imposing $\eta\leq\epsilon/r$ makes the right-hand side at most $\epsilon$, which is the stated sufficient condition.
-\end{proof}
-
-\begin{corollary}[Certificate-driven bandwidth selection]
-\label{cor:bandwidth}
-Fix a target global accuracy $\epsilon>0$, step count $r$, and step $\dt$, and let $\tau_w:=\norm{K_q-\Pi_wK_q}_2$ be the truncation tail at level $w$. The quantities $\tau_0\geq\tau_1\geq\cdots\geq\tau_n=0$ are nonincreasing and computable from $K_q$ alone (no time evolution). The bandwidth
-\begin{equation}
-    w^\star(\epsilon)=\min\{\,w:\ r\,\tau_w\leq\epsilon\,\}
-\end{equation}
-is well defined and the level-$w^\star$ truncated compilation meets the target, $\norm{\widehat G_{q,w^\star}^{\,r}-U(t)}_2\leq\epsilon$. If, moreover, $\tau_w\leq C\rho^{\,w}$ with $\rho<1$ (the geometric regime of Theorem~\ref{thm:spectral-rate}), then $w^\star(\epsilon)\leq\log(rC/\epsilon)/\log(1/\rho)$ grows only logarithmically in $1/\epsilon$.
-\end{corollary}
-
-\begin{proof}
-Monotonicity of $\tau_w$ holds because $\cB_w\subseteq\cB_{w+1}$, so the orthogonal projection onto the larger subspace cannot increase the residual norm; $\tau_n=0$ because $\cB_n=\mathsf{Herm}(d)$ and $\Pi_nK_q=K_q$. Hence the set $\{w:r\tau_w\leq\epsilon\}$ contains $w=n$ and has a least element $w^\star$. The accuracy guarantee is Corollary~\ref{cor:projected-certificate} with $w=w^\star$, since $r\tau_{w^\star}\leq\epsilon$. For the logarithmic bound, $r\tau_w\leq rC\rho^{\,w}\leq\epsilon$ as soon as $w\geq\log(rC/\epsilon)/\log(1/\rho)$, and $w^\star$ is the least such integer.
-\end{proof}
-
-\begin{theorem}[Leading Strang residual support for the open-boundary TFIM]
-\label{thm:tfim-support}
-Let $A$ and $B$ be the \tfim{} splitting in Eq.~\eqref{eq:tfim}. For the Strang step $S_2(\dt)$, the degree-three homogeneous term in the residual generator $K_2(\dt)$ is a real linear combination of Pauli strings with weight at most three. Equivalently,
-\begin{equation}
-    K_2(\dt)=\dt^3K_2^{(3)}+O(\dt^5),
-    \qquad
-    K_2^{(3)}\in\cB_3.
-\end{equation}
-\end{theorem}
-
-\begin{proof}
-The symmetric BCH expansion of Strang splitting has no degree-two term; the first nonzero defect is a linear combination of double commutators $[A,[A,B]]$ and $[B,[A,B]]$~\cite{magnus1954,blanes2009}. The residual generator is the negative of this leading logarithmic defect up to the same order, so it is enough to bound the Pauli weight of these double commutators.
-
-Write $A=\sum_e A_e$ with $A_e=JZ_jZ_{j+1}$ for edges $e=(j,j+1)$ and $B=\sum_v B_v$ with $B_v=hX_v$. A commutator $[A_e,B_v]$ vanishes unless $v$ is incident to $e$. If it is nonzero, its support is contained in the two sites of $e$ and has Pauli weight two. In $[B,[A,B]]$, the second commutator adds at most one on-site term $B_{v'}$ whose support must overlap the existing support; therefore the support remains within the same edge and the Pauli weight is at most two. In $[A,[A,B]]$, the second edge term $A_{e'}$ must overlap the support of $[A_e,B_v]$. The union of two overlapping nearest-neighbor edges in a one-dimensional open chain contains at most three sites. Therefore every nonzero Pauli string in the double commutators has weight at most three. This proves $K_2^{(3)}\in\cB_3$.
-\end{proof}
-
-\begin{theorem}[Order generality of residual locality]
-\label{thm:order-locality}
-Let $A=J\sum_e Z_jZ_{j+1}$ and $B=h\sum_v X_v$ be the open-boundary \tfim{} splitting, and let $S_q$ be a symmetric product formula of order $q$. The leading term of its residual generator is geometrically local of bounded Pauli weight:
-\begin{equation}
-    K_q(\dt)=\dt^{q+1}K_q^{(q+1)}+O(\dt^{q+3}),
-    \qquad
-    K_q^{(q+1)}\in\cB_{q+2}.
-\end{equation}
-\end{theorem}
-
-\begin{proof}
-The leading defect of a symmetric order-$q$ product formula is $O(\dt^{q+1})$, and by the symmetric Baker--Campbell--Hausdorff / Magnus structure its operator coefficient is a real linear combination of $(q{+}1)$-fold nested commutators of $A$ and $B$~\cite{magnus1954,blanes2009}; the residual generator cancels this leading logarithmic defect, so $K_q^{(q+1)}$ is itself such a linear combination. We bound the Pauli weight of any nonzero $m$-fold nested commutator of the \tfim{} local terms by induction on the number $m$ of local factors. A single factor $A_e=JZ_jZ_{j+1}$ or $B_v=hX_v$ has support of at most two sites, so weight $\le2=m+1$ at $m=1$. Assume an $(m{-}1)$-fold nested commutator $C$ has support on at most $m$ sites. A further commutator $[L,C]$ with a local factor $L$ of range at most two is nonzero only if $\supp(L)\cap\supp(C)\neq\emptyset$, and $\supp([L,C])\subseteq\supp(L)\cup\supp(C)$, a set of at most $\abs{\supp(C)}+2-1\le m+1$ sites. Hence every nonzero $m$-fold nested commutator has Pauli weight at most $m+1$, and the leading $(q{+}1)$-fold term has weight at most $q+2$, i.e.\ $K_q^{(q+1)}\in\cB_{q+2}$.
-\end{proof}
-
-\begin{remark}
-Theorem~\ref{thm:order-locality} is the worst-case algebraic bound; in the symmetric formula many maximal-weight strings cancel, so the \emph{effective} compression threshold is lower. Table~\ref{tab:order-generality} measures the dominant collapse at weight $3,4,5$ for $q=2,4,6$, i.e.\ $\approx\lceil q/2\rceil+2$, comfortably inside the proven $q+2$ envelope and tight at $q=2$, where Theorem~\ref{thm:tfim-support} gives the sharper bound three.
-\end{remark}
-
-\begin{theorem}[Geometric convergence rate of the spectral truncation]
-\label{thm:spectral-rate}
-Let $A,B$ be the open-boundary \tfim{} splitting and $S_q$ the symmetric order-$q$ step. There exist constants $C_q>0$, a ratio $\rho\in(0,1)$ with $\rho=O(\dt)$, and $\dt_0>0$ such that, for $\dt\leq\dt_0$ and every integer $w$ with $q+1\leq w\leq n$, the level-$w$ spectral-truncation tail $\tau_w=\norm{K_q-\Pi_wK_q}_2$ obeys the \emph{geometric envelope}
-\begin{equation}
-    \tau_w\leq C_q\,\rho^{\,w}.
-    \label{eq:spectral-rate}
-\end{equation}
-Consequently, by Corollary~\ref{cor:projected-certificate}, the certified global error $r\tau_w$ contracts by a factor $\rho=O(\dt)$ per added level, $\norm{\widehat G_{q,w}^{\,r}-U(t)}_2\leq r\,C_q\,\rho^{\,w}$.
-\end{theorem}
-
-\begin{proof}
-The residual factor $R_q(\dt)=U(\dt)S_q(\dt)^\dagger$ is real-analytic in $\dt$ and equals $\id$ at $\dt=0$, so for $\abs{\dt}$ below some radius $\dt_0>0$ it remains in the domain on which the principal logarithm is analytic; hence $K_q(\dt)=i\log R_q(\dt)$ is real-analytic near $0$ and its homogeneous expansion $K_q(\dt)=\sum_{d\geq q+1}\dt^{\,d}K_q^{(d)}$ converges absolutely for $\abs{\dt}\leq\dt_0$, with $M:=\sum_{d\geq q+1}\dt_0^{\,d}\norm{K_q^{(d)}}_2<\infty$. (Time-reversal symmetry of $S_q$ makes only the degrees $q+1,q+3,\dots$ appear~\cite{blanes2009}, which we do not need beyond convergence.) By the nested-commutator induction of Theorem~\ref{thm:order-locality}, $K_q^{(d)}\in\cB_{d+1}$, so any Pauli string of weight $\geq w+1$ first occurs at degree $d\geq w$; the part of $K_q$ outside $\cB_w$ is therefore a sum of homogeneous terms of degree $d\geq w$, and for $\dt\leq\dt_0$,
-\begin{equation*}
-    \tau_w=\Bigl\lVert\sum_{d\geq w}\dt^{\,d}\,\Pi_{>w}K_q^{(d)}\Bigr\rVert_2\leq\sum_{d\geq w}\dt^{\,d}\norm{K_q^{(d)}}_2=\Bigl(\tfrac{\dt}{\dt_0}\Bigr)^{\!w}\sum_{d\geq w}\Bigl(\tfrac{\dt}{\dt_0}\Bigr)^{\!d-w}\dt_0^{\,d}\norm{K_q^{(d)}}_2\leq M\,\Bigl(\tfrac{\dt}{\dt_0}\Bigr)^{\!w},
-\end{equation*}
-using $(\dt/\dt_0)^{d-w}\leq1$ for $d\geq w$. This is Eq.~\eqref{eq:spectral-rate} with $C_q=M$ and $\rho=\dt/\dt_0=O(\dt)$. The global estimate follows from Corollary~\ref{cor:projected-certificate}.
-\end{proof}
-
-\begin{remark}
-Equation~\eqref{eq:spectral-rate} is a conservative provable envelope (per-level contraction $\rho=O(\dt)$, i.e.\ a factor $\gtrsim\dt^{-1}=10$). The measured per-level factors are far larger---$449\times$ for $q=2$ (least-squares fit over $w=3,4,5$) and $576\times$ for $q=4$ (the single resolvable pair $w=4,5$ before the round-off floor) at $\dt=0.1$ (Table~\ref{tab:spectral-rate})---because the symmetric cancellations that lower the effective locality threshold to $\approx\lceil q/2\rceil+2$ (Remark after Theorem~\ref{thm:order-locality}) also raise the degree at which each new weight level first appears, so empirically each retained level absorbs content roughly two powers of $\dt$ smaller, i.e.\ an effective ratio $\approx\dt^{2}$ further amplified by prefactors. The provable envelope already gives a geometric \emph{rate}, not merely convergence in a limit, which is what makes the level a usable accuracy dial (Corollary~\ref{cor:bandwidth}).
-\end{remark}
-
-\begin{theorem}[Faithful gate-level compilation of the correction]
-\label{thm:faithful-compilation}
-Let the compressed generator be partitioned into $m$ layers $\widehat K_q=\sum_{i=1}^{m}L_i$, where each $L_i$ is a real linear combination of \emph{mutually commuting} Pauli strings, and let $\widehat R_q^{\mathrm{c}}=\prod_{i=1}^{m}e^{-iL_i}$ be the first-order compiled correction. Then, with $\Lambda=\sum_{i=1}^{m}\norm{L_i}_2$,
-\begin{equation}
-    \norm{\widehat R_q^{\mathrm{c}}-e^{-i\widehat K_q}}_2\le\tfrac12\sum_{i<j}\norm{[L_i,L_j]}_2\le\tfrac12\Lambda^2 .
-\end{equation}
-Consequently $\widehat G_q^{\mathrm{c}}=\widehat R_q^{\mathrm{c}}S_q$ obeys, for $t=r\dt$,
-\begin{equation}
-    \norm{(\widehat G_q^{\mathrm{c}})^{r}-U(t)}_2\le r\,\norm{K_q-\widehat K_q}_2+\tfrac12\,r\,\Lambda^2 .
-\end{equation}
-Since every coefficient of $\widehat K_q$ is $O(\dt^{q+1})$ (Theorem~\ref{thm:small-step}), $\Lambda=O(\dt^{q+1})$ and the compilation term is $O(r\,\dt^{2(q+1)})$.
-\end{theorem}
-
-\begin{proof}
-The first inequality is the standard first-order Lie--Trotter estimate for the difference between the ordered product $\prod_i e^{-iL_i}$ and $e^{-i\sum_i L_i}$, bounded to second order by $\tfrac12\sum_{i<j}\norm{[L_i,L_j]}_2$; using $\norm{[L_i,L_j]}_2\le2\norm{L_i}_2\norm{L_j}_2$ and $\sum_{i<j}2\norm{L_i}_2\norm{L_j}_2\le(\sum_i\norm{L_i}_2)^2=\Lambda^2$ gives the $\tfrac12\Lambda^2$ bound. The global estimate follows by the triangle inequality $\norm{\widehat R_q^{\mathrm{c}}-R_q}_2\le\norm{\widehat R_q^{\mathrm{c}}-e^{-i\widehat K_q}}_2+\norm{e^{-i\widehat K_q}-e^{-iK_q}}_2$, the Duhamel bound (Theorem~\ref{thm:duhamel}) on the second term, and the unitary multi-step bound (Theorem~\ref{thm:residual-stability}) applied with both $\widehat R_q^{\mathrm{c}}$ and $R_q$ unitary. Finally each $\norm{L_i}_2\le\sum_{P\in L_i}\abs{c_P}$ with $c_P$ the Pauli coefficients of $\widehat K_q$, so $\Lambda\le\sum_P\abs{c_P}=O(\dt^{q+1})$.
-\end{proof}
-
-\begin{remark}
-Theorem~\ref{thm:faithful-compilation} is why the frontier advance is specific to $q\ge4$. The corrected step's intrinsic error after removing the leading defect is $O(\dt^{q+3})$, while the inner-compilation error is $O(\dt^{2(q+1)})$; the latter is asymptotically smaller exactly when $2(q+1)>q+3$, i.e.\ $q>1$, but the \emph{prefactors} matter at finite $\dt$: at $q=2$, $\dt=0.1$ the compilation term ($\sim\Lambda^2$ with $\Lambda\sim\norm{K_2}\sim10^{-3}$) caps the compiled $w\le4$ correction near $2\times10^{-5}$ (Table~\ref{tab:frontier}), whereas at $q=4$, $\Lambda\sim\norm{K_4}\sim10^{-6}$ and the compilation term is $\sim10^{-12}$, far below the corrected accuracy. The theory thus predicts, and the data confirm, that faithful compilation requires a sufficiently small base-step residual---i.e.\ a sufficiently high base order.
-\end{remark}
-
-\begin{theorem}[Symmetric faithful compilation]
-\label{thm:symmetric-compilation}
-With the layer partition $\widehat K_q=\sum_{i=1}^{m}L_i$ of Theorem~\ref{thm:faithful-compilation}, let the \emph{symmetric} compiled correction be the palindromic product
-\begin{equation}
-    \widehat R_q^{\mathrm{s}}=\Bigl(\prod_{i=1}^{m}e^{-iL_i/2}\Bigr)\Bigl(\prod_{i=m}^{1}e^{-iL_i/2}\Bigr).
-\end{equation}
-Then, with $\Lambda=\sum_i\norm{L_i}_2$ and a constant $c$ depending only on $m$,
-\begin{equation}
-    \norm{\widehat R_q^{\mathrm{s}}-e^{-i\widehat K_q}}_2\leq c\,\Lambda^3 ,
-\end{equation}
-and consequently $\widehat G_q^{\mathrm{s}}=\widehat R_q^{\mathrm{s}}S_q$ obeys $\norm{(\widehat G_q^{\mathrm{s}})^{r}-U(t)}_2\leq r\norm{K_q-\widehat K_q}_2+c\,r\,\Lambda^3$. Since $\Lambda=O(\dt^{q+1})$, the inner-compilation term is $O(r\,\dt^{3(q+1)})$---one order of $(q+1)$ smaller than the first-order bound $O(r\,\dt^{2(q+1)})$ of Theorem~\ref{thm:faithful-compilation}---at the cost of applying each layer twice, with the two central half-layers merging, so the correction's two-qubit-gate count rises from $\sum_i\mathrm{cost}(L_i)$ to $2\sum_i\mathrm{cost}(L_i)-\mathrm{cost}(L_m)$.
-\end{theorem}
-
-\begin{proof}
-$\widehat R_q^{\mathrm{s}}$ is the symmetric (Strang) composition of the one-parameter unitaries $e^{-isL_i}$, a time-symmetric second-order integrator for the flow of $-i\sum_iL_i=-i\widehat K_q$ over unit time. By the standard backward-error / symmetric-BCH analysis of such compositions~\cite{blanes2009}, the leading commutator defect of the first-order ordered product cancels by symmetry and the remaining error is third order in the generators, $\norm{\widehat R_q^{\mathrm{s}}-e^{-i\widehat K_q}}_2\leq c\sum_{i\leq j\leq k}\norm{[L_i,[L_j,L_k]]}_2\leq c'\Lambda^3$, absorbing $c'$ into $c$. The global estimate follows as in Theorem~\ref{thm:faithful-compilation}: triangle inequality through $e^{-i\widehat K_q}$, the Duhamel bound (Theorem~\ref{thm:duhamel}) on $\norm{e^{-i\widehat K_q}-e^{-iK_q}}_2$, and the unitary multi-step bound (Theorem~\ref{thm:residual-stability}). The gate count follows because each layer $L_i$ appears as two half-angle exponentials of identical CNOT cost to the full-angle one, except the central pair $e^{-iL_m/2}e^{-iL_m/2}=e^{-iL_m}$, which merges into a single layer.
-\end{proof}
-
-\begin{remark}
-Theorem~\ref{thm:symmetric-compilation} removes the structural floor that Theorem~\ref{thm:faithful-compilation} leaves at low base order. At $n=6$, $q=2$, $w\le4$ the first-order compile stalls at $2.18\times10^{-5}$ (Table~\ref{tab:frontier}) against the dense-oracle $3.65\times10^{-7}$ (Table~\ref{tab:faithful-compilation}); the symmetric compile reaches $3.76\times10^{-7}$, recovering the oracle, at roughly twice the correction's CNOT count (Table~\ref{tab:faithful-compilation}). This is the simulation counterpart of the smoothing that restores positive-definiteness in operator-algebraic spectral truncation~\cite{hashimoto2024spectral}: a symmetry-motivated modification of the naive realization that repairs the truncated object's structural defect. At $q=4$ the first-order compile is already faithful and cheaper, so the headline frontier advance (Sec.~\ref{sec:frontier}) does not need the symmetric compile; its role is to make the compress-then-compile pipeline faithful at \emph{every} base order.
-\end{remark}
-
-\begin{theorem}[Size-transfer error bound for learned local residual generators]
-\label{thm:size-transfer}
-Consider the disordered open-boundary \tfim{} on $n$ sites with couplings in a fixed compact set, and let $K_2^{(3)}(n)=\sum_{j=1}^{n} h_j$ be the degree-three Strang residual generator, where by Theorem~\ref{thm:tfim-support} each $h_j$ is a real linear combination of weight-$\le 3$ Pauli strings supported in the three-site window $\{j-1,j,j+1\}$ (truncated at the boundaries). Suppose a translation-invariant per-site predictor outputs $\widehat h_j$ from the couplings in that window with $\norm{\widehat h_j-h_j}_2\le\eta$ for every $j$, where $\eta$ depends only on the predictor and the coupling range, not on $n$. Then $\widehat K_2^{(3)}(n)=\sum_j\widehat h_j$ satisfies $\norm{\widehat K_2^{(3)}(n)-K_2^{(3)}(n)}_2\le n\,\eta$, and the corrected step $\widehat G(\dt)=\exp(-i\dt^3\widehat K_2^{(3)})\,S_2(\dt)$ obeys, for $t=r\dt$, $\norm{\widehat G(\dt)^r-U(t)}_2\le r\,\dt^3 n\,\eta + r\,O(\dt^5)$.
-\end{theorem}
-\begin{proof}
-The first bound is the triangle inequality over the $n$ site-anchored terms,
-\begin{equation*}
-    \norm{\textstyle\sum_j(\widehat h_j-h_j)}_2\le\sum_j\norm{\widehat h_j-h_j}_2\le n\eta;
-\end{equation*}
-translation invariance makes the per-site bound $\eta$ independent of~$n$. For the second, set $\widehat K=\dt^3\widehat K_2^{(3)}$. The BCH expansion in the Extended Data (detailed \tfim{} support analysis) gives $K_2(\dt)=\dt^3K_2^{(3)}+O(\dt^5)$, so $\norm{\widehat K-K_2(\dt)}_2\le\dt^3 n\eta+O(\dt^5)$. The Duhamel bound (Theorem~\ref{thm:duhamel}) gives $\norm{e^{-i\widehat K}-R_2}_2\le\norm{\widehat K-K_2}_2$, and the multi-step stability bound of Theorem~\ref{thm:residual-stability} multiplies by~$r$, giving the stated estimate.
-\end{proof}
-
-\begin{theorem}[From per-site coefficient error to a global certificate]
-\label{thm:coeff-certificate}
-Adopt the setting of Theorem~\ref{thm:size-transfer} and expand each per-site generator in the fixed family of $T$ weight-$\leq3$ Pauli templates anchored at site $j$, $h_j=\sum_{\alpha=1}^{T}c_{j,\alpha}P_{j,\alpha}$ and $\widehat h_j=\sum_{\alpha=1}^{T}\widehat c_{j,\alpha}P_{j,\alpha}$, where each $P_{j,\alpha}$ is a Pauli string, so $\norm{P_{j,\alpha}}_2=1$. If the per-site coefficient error obeys $\norm{c_j-\widehat c_j}_2\leq\delta_c$ for every $j$, then the per-site operator error of Theorem~\ref{thm:size-transfer} satisfies $\eta\leq\sqrt{T}\,\delta_c$, and the learned corrected step $\widehat G(\dt)=\exp(-i\dt^3\widehat K_2^{(3)})\,S_2(\dt)$ obeys, for $t=r\dt$,
-\begin{equation}
-    \norm{\widehat G(\dt)^r-U(t)}_2\leq r\,\dt^3\,n\sqrt{T}\,\delta_c+r\,O(\dt^5).
-    \label{eq:coeff-certificate}
-\end{equation}
-\end{theorem}
-
-\begin{proof}
-By the triangle inequality and $\norm{P_{j,\alpha}}_2=1$,
-\begin{equation*}
-    \norm{\widehat h_j-h_j}_2=\norm{\sum_{\alpha=1}^{T}(\widehat c_{j,\alpha}-c_{j,\alpha})P_{j,\alpha}}_2\leq\sum_{\alpha=1}^{T}\abs{\widehat c_{j,\alpha}-c_{j,\alpha}}=\norm{c_j-\widehat c_j}_1\leq\sqrt{T}\,\norm{c_j-\widehat c_j}_2\leq\sqrt{T}\,\delta_c,
-\end{equation*}
-where the last line uses the Cauchy--Schwarz inequality $\norm{x}_1\leq\sqrt{T}\,\norm{x}_2$ on $\mathbb{R}^T$. Taking the maximum over $j$ gives $\eta\leq\sqrt{T}\,\delta_c$; substituting this into the size-transfer bound of Theorem~\ref{thm:size-transfer} yields Eq.~\eqref{eq:coeff-certificate}.
-\end{proof}
-
-\begin{remark}
-With the $T=48$ contiguous weight-$\leq3$ templates per site used in Sec.~\ref{sec:learned} and the measured held-out coefficient accuracy (relative $\ell_2$ error $7.2\times10^{-3}$, $R^2=0.9999$), Theorem~\ref{thm:coeff-certificate} converts the learned-coefficient accuracy directly into the \emph{a priori} global error bound whose linear-in-$r$ growth Fig.~\ref{fig:learned}c verifies empirically.
-\end{remark}
-
-\begin{remark}
-Theorem~\ref{thm:tfim-support} does not say the full residual generator lies in $\cB_3$. Higher-order BCH terms can produce larger support. It predicts that $w\leq3$ projection should remove the dominant Strang defect at small step size, while $w\leq4$ and higher should capture additional subleading structure. This is consistent with the numerical results reported above.
-\end{remark}
-
-\begin{theorem}[A posteriori step certificate]
-\label{thm:posteriori}
-Let $\widehat G$ be any unitary approximate one-step propagator and let $\Delta=\norm{\widehat G-U(\dt)}_2$. Then $\norm{\widehat G^r-U(t)}_2\leq r\Delta$.
-\end{theorem}
-
-\begin{proof}
-Apply the telescoping identity to $\widehat G^r-U(\dt)^r$. Both $\widehat G$ and $U(\dt)$ are unitary, so each of the $r$ terms is bounded by $\Delta$.
-\end{proof}
-
-\subsection{Numerical methodology}
-\label{sec:numerics}
-
-All numerical results are generated by deterministic dense-matrix scripts that build the Pauli matrices, construct $A$, $B$, and $H$, evaluate matrix exponentials using dense linear algebra, compute spectral norms from singular values, and write the resulting CSV, JSON, PDF, and table files. The plotting pipeline contains no hand-coded performance numbers, and the deterministic studies use fixed grids with no stochastic sampling. The learned-residual experiment (Sec.~\ref{sec:learned}) does draw disordered couplings and train a network, but it is made reproducible by fixed random seeds for the sampler, the data split, and the network initialization; its training labels and all reported error metrics are computed by the same dense-matrix code, so rerunning the script reproduces every reported value. The benchmark design deliberately includes checks that would expose fabrication or implementation errors: unitarity checks for $S_q$, $R_q$, and corrected steps; same-order comparisons between $S_q$ and $R_qS_q$; exact dense recomputation of $U(t)$ rather than relying on repeated one-step products as the reference; saved raw data for every plotted point; and finite-precision reporting, including cases where round-off makes the high-order baseline comparable to the oracle residual.
-
-The Hilbert-space dimension is $d=2^n$. For the fixed-time study we use $J=h=1$, $t=1$, and $r=10$ steps. The exact total propagator $U(t)$ is computed as $\exp(-iHt)$ independently of the product-formula steps. For the projected residual study we compute the residual generator $K_q=i\log(R_q)$ using the dense matrix logarithm, symmetrize $K_q$ as $(K_q+K_q^\dagger)/2$ to remove round-off skew-Hermitian contamination, and project onto Pauli strings of weight at most $w$ using Eq.~\eqref{eq:pauli-proj}. The projected corrected propagator is $[e^{-i\Pi_wK_q}S_q]^r$. The learned-residual study additionally trains small multilayer perceptrons (on global-oracle and on oracle-free local-patch labels) with a standard automatic-differentiation library on disordered chains; all couplings, step sizes, and network weights are seeded from a single fixed seed, and every learned generator is scored only through the dense spectral-norm metrics above. Each network is trained for $4000$ full-batch Adam steps on $220$ disordered realizations at each of $n=4$ and $n=5$; reported transfer errors are averaged over independent held-out realizations at each size ($40$ realizations for $n=4$--$7$, $24$ for $n=8$, $16$ for $n=9$, $12$ for $n=10$), and the shaded bands in Fig.~\ref{fig:learned} report one standard deviation across these realizations. All plotted errors are spectral-norm errors. Where a plotted oracle residual appears around $10^{-14}$ to $10^{-13}$, that value is the observed double-precision floor, not a mathematical error in exact arithmetic.
-
-\paragraph{Two-qubit-gate cost model.} The error--cost frontier (Sec.~\ref{sec:frontier}, Fig.~\ref{fig:frontier}, Table~\ref{tab:frontier}) uses the standard textbook compilation of Pauli exponentials into Clifford-plus-rotation gates, accounting only two-qubit (CNOT) gates as is conventional in fault-tolerant and near-term resource estimates. For the \tfim{}, $e^{-iB\tau}$ is a layer of single-qubit $X$ rotations (no two-qubit gates), and $e^{-iA\tau}$ is a layer of $n-1$ nearest-neighbour $ZZ$ rotations, each costing two CNOTs, so an $A$-layer costs $2(n-1)$ CNOTs; a Suzuki step $S_q$ with $\#A_q$ elementary $A$-exponentials costs $2(n-1)\,\#A_q$ CNOTs, with $\#A_q=1,5,25,125$ for $q=2,4,6,8$. A weight-$w$ Pauli rotation $e^{-i\theta P}$ compiles by a CNOT ladder into $2(w-1)$ CNOTs. The compiled correction is partitioned into mutually-commuting layers by greedy colouring of the anticommutation graph (Theorem~\ref{thm:faithful-compilation}), and \emph{every reported corrected-step error is the error of this compiled correction}, not of the dense oracle; its CNOT cost is the sum of $2(w-1)$ over the retained Pauli terms. For the symmetric inner compilation (Theorem~\ref{thm:symmetric-compilation}, Table~\ref{tab:faithful-compilation}) each commuting layer is applied twice at half angle with the two central half-layers merged, so the correction cost rises to $2\sum_i\mathrm{cost}(L_i)-\mathrm{cost}(L_m)$ over the $m$ layers; we report both costs. Single-qubit gates are not counted; the classical cost of obtaining the generator is offline and, in the learned mode (Sec.~\ref{sec:learned}), amortized and free of any dense $2^n$ propagator.
-
-\subsection*{Data availability}
-
-All data supporting the numerical findings are generated by deterministic scripts from the Hamiltonian definition in Eq.~\eqref{eq:tfim}. The raw CSV and JSON files, figure-generation scripts, and table-generation scripts are included with the manuscript package. No experimental result is fabricated or manually inserted without a corresponding generated data record.
-
-\subsection*{Code availability}
-
-The accompanying code is a pip-installable package (\texttt{lieideal-hs}) that constructs Pauli operators, Trotter--Suzuki steps, exact propagators, residual generators, spectral truncations, the symmetric and first-order compilations, the certificate-driven bandwidth selection, the learned per-site model, and every table and figure from first principles. Installing it and running a single console entry point (\texttt{lieideal-reproduce}) deterministically regenerates every dataset, table, and figure of this manuscript; a companion entry point (\texttt{lieideal-verify}) reruns the pipeline and asserts byte-identical outputs. The spectral-truncation convergence rate, the certificate, and the symmetric-versus-first-order compilation are produced by the \texttt{spectral\_truncation} module. The code is intended as a reproducibility baseline and as a starting point for GPU-accelerated implementations.
-
-% ============================================================
-% END STATEMENTS
-% ============================================================
-
-\section*{Author contributions}
-
-M.H. conceived the residual-generator framework, developed and proved the theoretical results, designed and implemented the dense-matrix and operator-learning experiments, produced all figures and tables, and wrote the manuscript.
-
-\section*{Competing interests}
-
-The author declares no competing interests.
-
-\section*{Acknowledgements}
-
-The author acknowledges the foundational literature on product formulas, Hamiltonian simulation, commutator error bounds, quantum dynamics algorithms, and quantum-circuit compilation that motivates this work.
-
-% ============================================================
-% EXTENDED DATA
-% ============================================================
-
-\clearpage
-\section*{Extended Data}
-\addcontentsline{toc}{section}{Extended Data}
-
-\begin{edfigure}
-\includegraphics[width=\linewidth]{fig2_compressed_residual.pdf}
-\edcaption{Compressed-residual compilation for $n=5$, $q=2$ ($J=h=1$, $t=1$, $r=10$). \textbf{a}, Spectral-norm error versus maximum retained Pauli weight $w$, against the uncorrected baseline. \textbf{b}, Improvement factor over the baseline by weight. The sharp improvement at $w=3$ is predicted by the leading-support theorem for the Strang residual (Theorem~\ref{thm:tfim-support}). All values are exact, deterministic dense-matrix computations (no sampling, hence no error bars); the $w=5$ row sits at the double-precision floor.}
-\label{edfig:projected}
-\end{edfigure}
-
-\begin{edfigure}
-\includegraphics[width=\linewidth]{fig3_time_sweep.pdf}
-\edcaption{Time-resolved correction hierarchy for $n=4$, $q=2$, $J=h=1$, and $r=10$, over $40$ total times $t\in[0.1,4.0]$. The $w\leq3$ projected residual uniformly improves the baseline in this sweep; $w\leq2$ is less reliable. Each curve is an exact, deterministic dense-matrix computation (no sampling, hence no error bars).}
-\label{edfig:timesweep}
-\end{edfigure}
-
-\begin{edfigure}
-\includegraphics[width=\linewidth]{fig4_generator_structure.pdf}
-\edcaption{Structure of the residual generator. \textbf{a}, Cumulative squared Pauli coefficient mass for the $n=5$, $q=2$ residual generator at $\dt=0.1$; weight three captures the dominant leading structure, while higher weights capture subleading BCH terms. \textbf{b}, Residual-generator norm $\norm{K_q(\dt)}_2$ versus step size for $n=4$ and $q=1,2,4,6$; the norm decreases rapidly with order, consistent with product-formula order conditions and Theorem~\ref{thm:small-step}. Both panels are exact, deterministic dense-matrix computations (no sampling, hence no error bars).}
-\label{edfig:genstruct}
-\end{edfigure}
-
-\input{tables/projected_summary.tex}
-
-\input{tables/resource_proxy.tex}
-
-\input{tables/generator_scaling.tex}
-
-\input{tables/learned_breakdown.tex}
-
-\input{tables/learned_dtsweep.tex}
-
-The per-size breakdown of every correction (Extended Data Table~\ref{tab:learned-breakdown}) makes the overlap of the oracle-trained and oracle-free learned curves in Fig.~\ref{fig:learned}a quantitative: at every size the oracle-free network matches or slightly improves on the oracle-trained one and both sit about a factor of five below the analytic leading-order correction, while staying within a small constant factor of the exact weight-$\leq3$ oracle. The single-step step-size sweep at $n=6$ (Extended Data Table~\ref{tab:learned-dtsweep}) tabulates the numbers behind Fig.~\ref{fig:learned}b: the analytic $\dt^3$ correction degrades from an $11\times$ improvement over the uncorrected step at $\dt=0.05$ to only $1.24\times$ at $\dt=0.30$, whereas the $\dt$-conditioned learned correction stays close to the exact oracle, closing from about a factor of twelve at $\dt=0.05$ to within roughly $30\%$ at $\dt=0.30$ and remaining far below the analytic baseline throughout. The residual-generator norms in Extended Data Table~\ref{tab:generator-scaling} confirm the order scaling underlying Theorem~\ref{thm:small-step}: increasing the order from $q=1$ to $q=6$ shrinks $\norm{K_q(0.1)}_2$ from $4.44\times10^{-2}$ to $1.43\times10^{-9}$.
-
-\subsection*{Supplementary theory: detailed BCH support analysis for the TFIM}
-\label{app:bch}
-
-The main-text support theorem deliberately avoids exact BCH coefficients. Here we make the underlying structure explicit. For Strang splitting, $S_2(\dt)=e^{-iB\dt/2}e^{-iA\dt}e^{-iB\dt/2}$, the logarithm has the form $\log S_2(\dt)=-i(A+B)\dt+\dt^3\Gamma_3+O(\dt^5)$, where $\Gamma_3$ is a linear combination of $[A,[A,B]]$ and $[B,[A,B]]$. The absence of an even power follows from time-reversal symmetry of the Strang formula. The residual is $R_2(\dt)=e^{-i(A+B)\dt}S_2(\dt)^\dagger$, and the leading residual generator cancels the leading logarithmic defect, so $K_2(\dt)=\dt^3K_2^{(3)}+O(\dt^5)$, where $K_2^{(3)}$ is a real linear combination of $i[A,[A,B]]$ and $i[B,[A,B]]$ after accounting for the anti-Hermitian nature of commutators of Hermitian matrices.
-
-For the \tfim{}, write $A_e=JZ_jZ_{j+1}$ and $B_v=hX_v$. The elementary commutator is $[A_e,B_v]=0$ if $v\notin e$. If $v=j$, then $[Z_jZ_{j+1},X_j]=2iY_jZ_{j+1}$, and if $v=j+1$, then $[Z_jZ_{j+1},X_{j+1}]=2iZ_jY_{j+1}$. Thus $[A,B]$ is a sum of weight-two Pauli strings on nearest-neighbor edges. Next consider $[B,[A,B]]$: a term $[B_{v'},[A_e,B_v]]$ is nonzero only if $v'$ lies in the support of $[A_e,B_v]$, which is the same edge $e$; the resulting Pauli string remains supported on that edge and has weight at most two, for example $[X_j,Y_jZ_{j+1}]=2iZ_jZ_{j+1}$ and $[X_{j+1},Y_jZ_{j+1}]=-2iY_jY_{j+1}$. Now consider $[A,[A,B]]$: a term $[A_{e'},[A_e,B_v]]$ is nonzero only if $e'$ overlaps the support of $[A_e,B_v]$. In a one-dimensional nearest-neighbor chain, the union of two overlapping edges contains at most three sites, $(j-1,j,j+1)$ or $(j,j+1,j+2)$. Therefore every nonzero Pauli string in $[A,[A,B]]$ has weight at most three, proving that the leading Strang residual generator is contained in $\cB_3$. The same proof strategy extends to other local Hamiltonians: if the interaction hypergraph has local terms of diameter at most $r_0$, then an $m$-fold nested commutator can only grow along overlapping local supports, connecting residual-generator compression to locality bounds and Lieb--Robinson ideas~\cite{lieb1972,tran2020}.
-
-\subsection*{Supplementary theory: projection formulas and diagnostic quantities}
-\label{app:projection}
-
-For $n$ qubits, the Pauli group modulo phases gives $4^n$ Hermitian strings satisfying $\Tr(PQ)=2^n\delta_{P,Q}$. Every Hermitian matrix $K$ has an expansion $K=\sum_{P\in\cP_n} c_P P$ with $c_P=\Tr(PK)/2^n$, squared Frobenius norm $\norm{K}_F^2=2^n\sum_{P\in\cP_n}\abs{c_P}^2$, and cumulative coefficient mass (plotted in Extended Data Fig.~\ref{edfig:genstruct}a) $M(w)=\sum_{\operatorname{wt}(P)\leq w}\abs{c_P}^2/\sum_{P\in\cP_n}\abs{c_P}^2$. For the $n=5$, $q=2$, $\dt=0.1$ run, the generated squared coefficient masses by weight are $M_0'=3.598\times10^{-33}$, $M_1'=1.466\times10^{-6}$, $M_2'=9.973\times10^{-7}$, $M_3'=1.262\times10^{-6}$, $M_4'=1.235\times10^{-10}$, and $M_5'=3.413\times10^{-16}$. Although the weight-four mass is small in Frobenius terms, it can still matter for spectral-norm accuracy after repeated steps, which is why Extended Data Table~\ref{tab:projected-summary} shows a large improvement from $w=3$ to $w=4$.
-
-\subsection*{Supplementary theory: finite-precision interpretation}
-\label{app:finite-precision}
-
-The exact residual theorem is an algebraic identity. In floating-point arithmetic, the computed residual is $\widetilde R_q=\operatorname{fl}\{\widetilde U(\dt)\widetilde S_q(\dt)^\dagger\}$ and the computed corrected step is $\widetilde G_q=\operatorname{fl}\{\widetilde R_q\widetilde S_q\}$. Round-off enters through every matrix exponential and multiplication. This explains why the $q=8$ baseline, already extremely accurate at $\dt=0.1$, can appear slightly more accurate than the oracle residual in Table~\ref{tab:error-summary}: the theorem says the exact-arithmetic error is zero, while the table reports floating-point evaluations of different arithmetic circuits. For low and moderate order, the product-formula error dominates round-off and oracle \rgtc{} gives many orders of magnitude improvement; for very high order at small step size, product-formula error can be below or comparable to double-precision round-off, so differences at $10^{-13}$ are not physically meaningful; projected residual experiments should be judged at error levels well above round-off, such as the $w=3$ and $w=4$ results in Extended Data Table~\ref{tab:projected-summary}.
-
-\subsection*{Supplementary: reproducibility checklist}
-\label{app:repro}
-
-A reproducible implementation should verify $\norm{S_q^\dagger S_q-\id}_2<10^{-12}$ for every tested $q$, $n$, and $\dt$; verify $\norm{R_q^\dagger R_q-\id}_2<10^{-12}$ for every oracle residual; verify $\norm{R_qS_q-U(\dt)}_2<10^{-12}$ for small and moderate orders; save raw CSV or JSON data before plotting; make plots only from saved raw data, not from hard-coded arrays; record package versions and BLAS backend information; use deterministic parameter grids or fixed random seeds; and include tests that fail if a citation key in \texttt{main.tex} is missing from \texttt{refs.bib}. These checks are especially important if the code is ported to GPU backends, where matrix-exponential implementations and floating-point accumulation order may differ from CPU reference values.
-
-\subsection*{Supplementary: possible extensions}
-\label{app:extensions}
-
-The residual-generator framework suggests several concrete research extensions. A \emph{BCH residual compiler} derives explicit nested-commutator formulas for $K_q$ through a target order and implements $e^{-iK_q^{\mathrm{BCH}}}$ as a short product formula; Theorems~\ref{thm:residual-stability} and~\ref{thm:duhamel} convert truncation error into global simulation error. A \emph{variational residual compiler} uses the oracle residual on small systems as a target for a parameterized local circuit $V(\theta)$, with loss $\norm{V(\theta)-R_q}_F^2$, local Pauli-shadow loss, or state-averaged infidelity, and the stability theorem provides the operator-norm target. An \emph{operator-learning residual compiler} is realized in Sec.~\ref{sec:learned} for the Strang \tfim{}, learning the step-size-conditioned local weight-$\leq3$ coefficients of $K_2$ with a single size-transferable network trained from oracle-free local patches; natural continuations extend the local templates to other lattices and higher orders, replace patch labels with classical-shadow or commutator estimates on hardware, and compile the learned generator $e^{-i\widehat K_q}$ into native gates using Theorems~\ref{thm:residual-stability} and~\ref{thm:duhamel} as the operator-norm target. A \emph{GPU-accelerated benchmark generator} uses CPU dense simulation as a correctness reference, then ports parameter sweeps and Pauli projections to batched GPU kernels, keeping output tolerance-comparable to the CPU reference and always regenerating raw data before producing figures.
 
 \end{document}

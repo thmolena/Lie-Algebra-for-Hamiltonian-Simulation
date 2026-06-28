@@ -1,4 +1,4 @@
-\begin{table}[t]
+\begin{table*}[t]
 \caption{Learned residual generator transferred across system size on the disordered open-boundary \tfim{} ($J_i,h_i\sim\mathcal{U}[0.5,1.5]$, $t=1$, $\delta t=0.1$). Errors are global spectral-norm errors reported as the mean $\pm$ one standard deviation over the disordered chains (count $n_{\mathrm c}$ in the last column); the same dispersion is shown as bands in Fig.~\ref{fig:learned}. The column $\epsilon^{\mathrm{no\,prior}}_{\mathrm{learned}}$ is the ablation that learns the full generator directly; $\epsilon_{\mathrm{learned}}$ adds the analytic second-order Zassenhaus prior and learns only the residual. The reduction factor is $\epsilon_{\mathrm{Strang}}/\epsilon_{\mathrm{learned}}$. The oracle-free network is trained only on $n=4,5$; sizes $n\geq6$ are absent from training. All values are recomputed from dense matrices.}
 \label{tab:learned-summary}
 \centering
@@ -17,4 +17,4 @@ $n$ & regime & $\epsilon_{\mathrm{Strang}}$ & $\epsilon^{\mathrm{no\,prior}}_{\m
 \bottomrule
 \end{tabular}%
 }
-\end{table}
+\end{table*}
