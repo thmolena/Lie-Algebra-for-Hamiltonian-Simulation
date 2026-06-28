@@ -99,6 +99,11 @@
   </div>
 </section>
 
+<div style="width:min(calc(100% - 32px),1080px);margin:26px auto 6px;padding:18px 20px;border:1px solid rgba(127,140,170,.32);border-left:4px solid var(--accent,#1f6feb);border-radius:8px;background:rgba(127,140,170,.06);">
+  <strong style="display:block;font-size:.74rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent,#1f6feb);margin-bottom:7px;">AI for quantum, at HPC scale</strong>
+  <p style="margin:0;font-size:1.02rem;line-height:1.6;">The finite-step error is compressed by a <em>spectral truncation</em> and the correction is <strong>learned</strong>: a translation-equivariant network maps local couplings to the truncated generator and transfers from four- and five-qubit chains to ten without ever forming the dense propagator. The payoff is counted in two-qubit gates (<strong>4.2&ndash;5.2&times; fewer</strong> at matched accuracy); the dense-matrix kernels behind every number map onto GPU linear algebra (CuPy / cuSOLVER) for scale-up, and one command reproduces the entire study.</p>
+</div>
+
 <section class="section" id="background">
   <span class="section-label">Background &amp; motivation</span>
   <h2>Simulating quantum dynamics is gated by gate count</h2>
