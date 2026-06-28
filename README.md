@@ -9,6 +9,8 @@ Manuscript: [`submission/main.pdf`](submission/main.pdf) ·
 LaTeX source [`submission/main.tex`](submission/main.tex). Reproducibility package
 (`lieideal-hs`): [`submission/code`](submission/code).
 
+> **AI for quantum, at HPC scale.** The truncated correction is *learned*: a single translation-equivariant network maps local couplings to the residual generator and transfers from four- and five-qubit chains to ten without ever forming the dense propagator — a learned quantum primitive that generalizes across system size. The payoff is measured in the resource that bounds fault-tolerant simulation, two-qubit gates (**4.2–5.2× fewer** at matched accuracy), and the dense-matrix kernels behind every number map directly onto GPU linear algebra (CuPy / cuSOLVER) for scale-up. CPU-only, deterministic, and reproducible from one command.
+
 ## The most novel contribution
 
 The finite-step error of an order-$q$ product-formula step $S_q(\delta t)$ is carried in
