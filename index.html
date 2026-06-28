@@ -67,10 +67,14 @@
   <div class="header-inner">
     <span class="brand-title">Spectral truncation of the Trotter residual</span>
     <nav class="nav">
+      <a href="#background">Background</a>
+      <a href="#method">Construction</a>
       <a href="#contribution">Contribution</a>
       <a href="#results">Results</a>
+      <a href="#frontier">Frontier</a>
       <a href="#demo">Demo</a>
       <a href="#theory">Theory</a>
+      <a href="#significance">Significance</a>
       <a href="submission/main.pdf">Manuscript</a>
     </nav>
   </div>
@@ -93,6 +97,32 @@
       <div class="stat"><span class="stat-value">$R^2=0.9999$</span><span class="stat-sub">size transfer of the learned truncated generator, trained on $n=4,5$ and evaluated to $n=10$.</span></div>
     </aside>
   </div>
+</section>
+
+<section class="section" id="background">
+  <span class="section-label">Background &amp; motivation</span>
+  <h2>Simulating quantum dynamics is gated by gate count</h2>
+  <p class="lede">Computing the time evolution $e^{-iHt}$ of a many-body Hamiltonian is one of the founding applications of quantum computers and a core subroutine of quantum phase estimation, chemistry and materials simulation, and Gibbs-state preparation. On hardware the binding cost is the number of two-qubit gates: it sets the circuit depth, and therefore how much physical error and decoherence accumulate before the answer can be read out.</p>
+  <p>The dominant primitive for assembling $e^{-iHt}$ from elementary gates is the <strong>Trotter&ndash;Suzuki product formula</strong>. Writing $H=\sum_j h_j$ as a sum of easily-exponentiated terms, an order-$q$ formula $S_q(\delta t)$ approximates one short step $e^{-iH\delta t}$, and $r$ repetitions approximate $e^{-iHt}$ with a per-step error of $O\!\big(\delta t^{\,q+1}\big)$. Raising the order $q$ buys accuracy, but at a steep price: the standard recursive Suzuki construction multiplies the gate count by a large constant at every order, so the most accurate formulas are also the most expensive. Every practical simulation therefore lives somewhere on an <strong>error&ndash;cost frontier</strong>, trading two-qubit gates against simulation error.</p>
+  <div class="note">
+    <h4>The question this work answers</h4>
+    <p>Can the <em>finite-step error itself</em> be treated as an object to be learned and compressed &mdash; cheaply correcting a low-order formula so it reaches high-order accuracy without paying the high-order gate cost? The answer is yes, and the right language for it is the spectral truncation of an operator algebra.</p>
+  </div>
+</section>
+
+<section class="section" id="method">
+  <span class="section-label">The construction</span>
+  <h2>The residual generator, and its spectral truncation</h2>
+  <p class="lede">The entire finite-step error of a product formula is carried by a single Hermitian operator. The method names that operator, projects it onto a filtration of the Lie algebra of Hermitian operators, and compiles the projection back into gates.</p>
+  <h3>1 &middot; The residual factor and its generator</h3>
+  <p>For an order-$q$ step $S_q(\delta t)$, define the <strong>residual factor</strong> as the unique unitary left correction that completes it to the exact evolution,</p>
+  <div class="math-block">$$R_q(\delta t)\;=\;U(\delta t)\,S_q(\delta t)^{\dagger},\qquad R_q\,S_q=U(\delta t)=e^{-iH\delta t}.$$</div>
+  <p>Because $R_q$ is unitary it has a Hermitian generator $K_q=i\log R_q$, and applying $e^{-iK_q}$ alongside the step recovers the dynamics exactly. $K_q$ is small &mdash; it is $O(\delta t^{\,q+1})$ &mdash; but dense; realizing it in full would cost as much as the problem we are trying to cheapen.</p>
+  <h3>2 &middot; The Pauli-weight filtration is a spectral truncation</h3>
+  <p>Expand $K_q$ in the Pauli basis. The <strong>weight</strong> of a Pauli string is the number of qubits it acts on non-trivially, and the weight-$\le w$ subspaces form an increasing <strong>filtration</strong> $\mathcal{V}_1\subset\mathcal{V}_2\subset\cdots\subset\mathcal{V}_n$ of the Lie algebra of Hermitian operators. Let $\Pi_w$ be the orthogonal projection onto $\mathcal{V}_w$. The truncated generator $\Pi_wK_q$ is a genuine <em>spectral truncation</em> of that algebra: one integer level $w$ interpolates from the uncorrected step ($w=0$) to the exact correction ($w=n$).</p>
+  <p>This is precisely the operator-algebraic spectral truncation of C$^\ast$-algebraic kernel learning (Hashimoto et&nbsp;al., 2024), carried from static kernels to a <em>dynamical</em> correction &mdash; with the decisive difference that here the truncation level controls a simulated dynamics, which is what supplies the rate, the certificate, and the repair below.</p>
+  <h3>3 &middot; Compiling the truncated correction into gates</h3>
+  <p>The truncated correction $e^{-i\Pi_wK_q}$ is exponentiated by an inner product formula over its commuting Pauli layers. A naive first-order inner compilation leaves an $O(\delta t^{\,2(q+1)})$ floor that spoils low base orders; a <strong>symmetric (palindromic) inner compilation</strong> lowers that floor to $O(\delta t^{\,3(q+1)})$ and recovers the exact-oracle accuracy at roughly twice the correction's gate count.</p>
 </section>
 
 <section class="section" id="contribution">
@@ -145,6 +175,39 @@
   <p class="caption">At $q=2$ the first-order inner compilation stalls two orders above the dense oracle; the symmetric compilation recovers it, at roughly twice the correction's two-qubit-gate count. At $q=4$ the first-order compilation is already faithful.</p>
 </section>
 
+<section class="section" id="frontier">
+  <span class="section-label">Downstream payoff</span>
+  <h2>New Pareto-optimal points on the error&ndash;cost frontier</h2>
+  <p class="lede">The truncation is only worthwhile if it buys accuracy more cheaply than simply raising the order. It does. On the open-boundary TFIM ($n=6$, $J=h=1$, $t=1$, $r=10$), a spectrally-truncated fourth-order correction reaches an accuracy <em>between</em> standard sixth- and eighth-order Suzuki formulas at a small fraction of the eighth-order gate cost.</p>
+  <table class="ev">
+    <thead><tr><th>method</th><th>CNOT / step</th><th>global error</th><th>Pareto</th></tr></thead>
+    <tbody>
+      <tr><td>standard $q=2$</td><td>10</td><td>$1.727\times10^{-2}$</td><td class="good">&#9733;</td></tr>
+      <tr><td>standard $q=4$</td><td>50</td><td>$2.064\times10^{-5}$</td><td class="good">&#9733;</td></tr>
+      <tr><td>corrected $q=2$, $w\le3$</td><td>114</td><td>$2.218\times10^{-4}$</td><td>&mdash;</td></tr>
+      <tr><td>corrected $q=2$, $w\le4$</td><td>186</td><td>$2.184\times10^{-5}$</td><td>&mdash;</td></tr>
+      <tr><td>standard $q=6$</td><td>250</td><td>$3.499\times10^{-9}$</td><td class="good">&#9733;</td></tr>
+      <tr class="hl"><td>corrected $q=4$, $w\le5$</td><td>274</td><td>$7.955\times10^{-10}$</td><td class="good">&#9733;</td></tr>
+      <tr><td>standard $q=8$</td><td>1250</td><td>$1.785\times10^{-13}$</td><td class="good">&#9733;</td></tr>
+    </tbody>
+  </table>
+  <p class="caption">Two-qubit-gate (CNOT) cost per Trotter step versus global spectral-norm error. The corrected $q=4$, $w\le5$ step (274 CNOT) is <em>more accurate than</em> standard $q=6$ (250 CNOT) and reaches a global error of $\sim\!8\times10^{-10}$ at <strong>4.6&times; fewer</strong> two-qubit gates than the standard $q=8$ formula of matching-or-better accuracy (1250 CNOT) &mdash; a 4.2&ndash;5.2&times; reduction across $n=5$&ndash;$7$. All values are exact, deterministic dense-matrix computations.</p>
+
+  <h3>The correction is learnable &mdash; without the dense propagator</h3>
+  <p>The truncated coefficients are a local function of the Hamiltonian's couplings, so they can be learned. A single translation-equivariant network, trained only on disordered four- and five-qubit chains, predicts the residual correction and <strong>transfers to chains it never saw</strong>, up to ten qubits, never forming the dense propagator at inference. Errors are global spectral-norm errors (mean&nbsp;$\pm$&nbsp;s.d. over disordered chains); $t=1$, $\delta t=0.1$, $J_i,h_i\sim\mathcal{U}[0.5,1.5]$.</p>
+  <table class="ev">
+    <thead><tr><th>$n$</th><th>regime</th><th>$\epsilon_{\mathrm{Strang}}$</th><th>$\epsilon_{\mathrm{learned}}$</th><th>reduction</th></tr></thead>
+    <tbody>
+      <tr><td>4</td><td>train</td><td>$1.05\times10^{-2}$</td><td>$1.23\times10^{-4}$</td><td class="good">$85.6\times$</td></tr>
+      <tr><td>5</td><td>train</td><td>$1.55\times10^{-2}$</td><td>$2.18\times10^{-4}$</td><td class="good">$71.1\times$</td></tr>
+      <tr class="hl"><td>6</td><td>transfer</td><td>$1.84\times10^{-2}$</td><td>$2.62\times10^{-4}$</td><td class="good">$70.5\times$</td></tr>
+      <tr class="hl"><td>8</td><td>transfer</td><td>$2.43\times10^{-2}$</td><td>$3.62\times10^{-4}$</td><td class="good">$67.2\times$</td></tr>
+      <tr class="hl"><td>10</td><td>transfer</td><td>$3.67\times10^{-2}$</td><td>$5.81\times10^{-4}$</td><td class="good">$63.1\times$</td></tr>
+    </tbody>
+  </table>
+  <p class="caption">The learned residual correction (analytic second-order prior + learned remainder) reduces the Strang infidelity by $63$&ndash;$86\times$, and the reduction is <em>sustained</em> on the $n=6$&ndash;$10$ chains that are absent from training &mdash; the size-transfer property that makes learning the correction worthwhile. All values recomputed from dense matrices.</p>
+</section>
+
 <section class="section" id="demo">
   <span class="section-label">Demonstration</span>
   <h2>Reproduce the headline numbers from the package</h2>
@@ -189,7 +252,30 @@ print(cert[["target_eps", "w_star", "certificate_bound", "achieved_error", "boun
     <p>The palindromic product $\widehat R_q^{\mathrm{s}}=\big(\prod_i e^{-iL_i/2}\big)\big(\prod_i e^{-iL_i/2}\big)^{\!\leftarrow}$ over the commuting layers obeys $\lVert\widehat R_q^{\mathrm{s}}-e^{-i\widehat K_q}\rVert_2\le c\,\Lambda^3$ with $\Lambda=O(\delta t^{q+1})$, an inner error of $O(\delta t^{3(q+1)})$&mdash;one order of $(q{+}1)$ below the first-order bound.</p>
     <p class="interp"><strong>Reading.</strong> The structural defect of the naive realization is removed by symmetry, the simulation analogue of the kernel construction's positivity-restoring smoothing.</p>
   </div>
-  <p class="footnote">Full statements, proofs, the error&ndash;cost frontier, the XXZ generalization, and the learned, size-transferable truncated generator are given in the manuscript: <a href="submission/main.pdf">main.pdf</a> &middot; <a href="submission/main.tex">main.tex</a>.</p>
+  <p class="footnote">Full statements, proofs, the error&ndash;cost frontier, the XXZ generalization, and the learned, size-transferable truncated generator are given in the manuscript: <a href="submission/main.pdf">main.pdf</a> &middot; <a href="submission/main.tex">LaTeX source</a>.</p>
+</section>
+
+<section class="section" id="significance">
+  <span class="section-label">Significance</span>
+  <h2>Why a rate, a certificate, and a repair matter</h2>
+  <div class="cards">
+    <div class="card">
+      <h3>Resource cost, directly</h3>
+      <p>Two-qubit gates are the binding resource of fault-tolerant simulation. Reaching eighth-order-class accuracy at $\sim\!5\times$ fewer gates is a direct reduction in circuit depth, distillation count, and accumulated error &mdash; on the axis hardware actually pays for.</p>
+    </div>
+    <div class="card">
+      <h3>Accuracy you can promise in advance</h3>
+      <p>The a priori certificate turns the truncation level into an accuracy dial set <em>before</em> any simulation, with bandwidth growing only as $\log(1/\varepsilon)$. Simulation budgets become predictable rather than discovered after the fact.</p>
+    </div>
+    <div class="card">
+      <h3>Amortized across a family</h3>
+      <p>Because the correction is a local, learnable function of the couplings and transfers across system size, the cost of finding it is paid once on small chains and reused on large ones &mdash; never forming the dense propagator at scale.</p>
+    </div>
+  </div>
+  <div class="note">
+    <h4>Honest scope</h4>
+    <p>All results are exact, deterministic dense-matrix computations on chains of $n\le10$ qubits, where an exact reference is tractable; the convergence-rate, certificate, and compilation arguments are themselves size-independent, but hardware validation is future work. The construction generalizes beyond the TFIM (an XXZ instance is given in the manuscript) and across base orders $q=2,4$.</p>
+  </div>
 </section>
 
 <footer class="site-footer">

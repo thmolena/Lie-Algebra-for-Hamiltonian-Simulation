@@ -5,8 +5,8 @@ finite-step error for Hamiltonian simulation.
 
 **Molena Huynh** · North Carolina State University · molena.huynh@jmp.com
 
-Manuscript: [`submission/main.tex`](submission/main.tex) ·
-[`submission/main.pdf`](submission/main.pdf). Reproducibility package
+Manuscript: [`submission/main.pdf`](submission/main.pdf) ·
+LaTeX source [`submission/main.tex`](submission/main.tex). Reproducibility package
 (`lieideal-hs`): [`submission/code`](submission/code).
 
 ## The most novel contribution
@@ -75,7 +75,7 @@ print(cert[["target_eps", "w_star", "certificate_bound", "achieved_error", "boun
 ```
 
 Every value printed is an exact, deterministic dense-matrix computation and matches the
-corresponding number in [`submission/main.tex`](submission/main.tex).
+corresponding number in [`submission/main.pdf`](submission/main.pdf).
 
 ## Full reproduction
 
