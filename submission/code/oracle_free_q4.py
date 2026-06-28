@@ -244,7 +244,9 @@ def write_table(frontier_df: pd.DataFrame, transfer_df: pd.DataFrame) -> None:
         r"($n=10$), reaching accuracies only standard eighth order matches, at the stated two-qubit-gate "
         r"saving. \emph{Bottom (honest limitation)}: tiling those local coefficients from a small fixed "
         r"patch ($n_{\mathrm{ref}}=8$) to a larger chain reaches only coarse accuracy "
-        r"(finite-patch non-convergence); frontier-accuracy oracle-free realization needs a larger "
+        rf"(at $n=10$, tiled ${scientific(float(transfer_df[transfer_df.n==10].tiled_error.iloc[0]))}$ "
+        rf"vs direct ${scientific(float(transfer_df[transfer_df.n==10].direct_error.iloc[0]))}$, "
+        r"finite-patch non-convergence); frontier-accuracy oracle-free realization needs a larger "
         r"size-independent patch or a learned per-site map. All values are exact dense-matrix computations.}",
         r"\label{tab:oracle-free-q4}",
         r"\centering",
@@ -259,12 +261,6 @@ def write_table(frontier_df: pd.DataFrame, transfer_df: pd.DataFrame) -> None:
             f"{int(row.n)} & ${scientific(row.corrected_error)}$ & {int(row.corrected_cnots)} & "
             f"$q=8$ ({int(row.std_q8_cnots)}) & {sv}\\\\"
         )
-    lines.append(r"\midrule")
-    lines.append(r"\multicolumn{5}{l}{\emph{Small-patch tiling (honest limitation):} "
-                 r"$n_{\mathrm{ref}}=8\!\to\!n=10$ gives tiled "
-                 rf"${scientific(float(transfer_df[transfer_df.n==10].tiled_error.iloc[0]))}$ vs direct "
-                 rf"${scientific(float(transfer_df[transfer_df.n==10].direct_error.iloc[0]))}$ "
-                 r"(finite-patch non-convergence).}\\")
     lines.extend([r"\bottomrule", r"\end{tabular}", r"\end{table}"])
     write_latex_table(TABLE_DIR / "oracle_free_q4.tex", lines)
 

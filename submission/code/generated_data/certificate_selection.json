@@ -1,0 +1,37 @@
+[
+  {
+    "target_eps": 0.001,
+    "w_star": 3,
+    "certificate_bound": 0.0002359388280604965,
+    "achieved_error": 0.00022266578695179841,
+    "bound_holds": true
+  },
+  {
+    "target_eps": 0.0001,
+    "w_star": 4,
+    "certificate_bound": 3.699238823601557e-07,
+    "achieved_error": 3.653386890407923e-07,
+    "bound_holds": true
+  },
+  {
+    "target_eps": 1e-06,
+    "w_star": 4,
+    "certificate_bound": 3.699238823601557e-07,
+    "achieved_error": 3.653386890407923e-07,
+    "bound_holds": true
+  },
+  {
+    "target_eps": 1e-08,
+    "w_star": 5,
+    "certificate_bound": 1.1053945218165456e-09,
+    "achieved_error": 1.1028020346219686e-09,
+    "bound_holds": true
+  },
+  {
+    "target_eps": 1e-10,
+    "w_star": 6,
+    "certificate_bound": 1.226077238570848e-17,
+    "achieved_error": 1.4446099894920688e-14,
+    "bound_holds": true
+  }
+]

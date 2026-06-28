@@ -319,7 +319,8 @@ def write_order_table(df: pd.DataFrame) -> None:
         r"Every entry is an exact, deterministic dense-matrix computation.}",
         r"\label{tab:order-generality}",
         r"\centering",
-        r"\begin{tabular}{cccccccc}",
+        r"\resizebox{\linewidth}{!}{%",
+        r"\begin{tabular}{ccccccc}",
         r"\toprule",
         r"$q$ & baseline & $w\le2$ & $w\le3$ & $w\le4$ & $w\le5$ & $w\le6$\\",
         r"\midrule",
@@ -335,7 +336,7 @@ def write_order_table(df: pd.DataFrame) -> None:
         lines.append(
             f"{q} & ${scientific(base)}$ & ${cell(2)}$ & ${cell(3)}$ & ${cell(4)}$ & ${cell(5)}$ & ${cell(6)}$\\\\"
         )
-    lines.extend([r"\bottomrule", r"\end{tabular}", r"\end{table}"])
+    lines.extend([r"\bottomrule", r"\end{tabular}%", r"}", r"\end{table}"])
     write_latex_table(TABLE_DIR / "order_generality.tex", lines)
 
 

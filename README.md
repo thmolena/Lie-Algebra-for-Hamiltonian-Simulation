@@ -1,179 +1,134 @@
-# Provable operator learning of size-transferable Trotter corrections for Hamiltonian simulation
+# Lie-algebraic spectral truncation of the product-formula residual
 
-The finite-step error of a Trotter–Suzuki product formula is the unique unitary
-residual $R_q = U S_q^{\dagger}$. Its Hermitian generator $K_q = i\log R_q$ is
-provably geometrically local for the transverse-field Ising model (TFIM), and a
-single translation-equivariant network learns it from local couplings alone,
-transferring from four- and five-qubit training chains to ten-qubit chains under
-a closed-form $r\eta$ stability bound. Product-formula compilation becomes a
-certified learning problem.
+A certified, geometrically convergent, learnable compression of the Trotter–Suzuki
+finite-step error for Hamiltonian simulation.
 
 **Molena Huynh** · North Carolina State University · molena.huynh@jmp.com
 
-## Summary
+Manuscript: [`submission/main.tex`](submission/main.tex) ·
+[`submission/main.pdf`](submission/main.pdf). Reproducibility package
+(`lieideal-hs`): [`submission/code`](submission/code).
 
-Digital Hamiltonian simulation realizes $U(t) = \exp(-iHt)$ by composing the
-order-$q$ product-formula steps $S_q(\delta t)$ of a splitting $H = A + B$. The
-implemented unitary never equals the target, and the entire defect is captured by
-one object: the residual factor $R_q = U S_q^{\dagger}$, the unique unitary left
-correction with $R_q S_q = U$. This work recasts the truncation error of the
-integrator — conventionally an analytic quantity to be bounded — as an operator
-to be learned under exact guarantees. The residual is proved optimal in every
-unitarily invariant norm; Pauli-subspace projection of its generator is the
-unique Frobenius-optimal compression; and approximate residuals convert per-step
-error into global error linearly. For the open-boundary TFIM the leading Strang
-generator is geometrically local of Pauli weight at most three, which reduces
-compilation to a per-site learning problem solvable without ever forming the
-dense $2^n$ propagator. Every reported number is recomputed from deterministic
-dense-matrix simulation.
+## The most novel contribution
 
-## Principal contributions
+The finite-step error of an order-$q$ product-formula step $S_q(\delta t)$ is carried in
+full by one object: the residual factor $R_q = U(\delta t)\,S_q(\delta t)^{\dagger}$, the
+unique unitary left correction with $R_q S_q = U(\delta t)$, whose Hermitian generator is
+$K_q = i\log R_q$. The central result of this work is that **projecting $K_q$ onto the
+Pauli-weight filtration of the Lie algebra of Hermitian operators is a genuine *spectral
+truncation*** of that algebra: a single level $w$ interpolates from the uncorrected step
+($w = 0$) to the exact correction ($w = n$). This is the Hamiltonian-simulation
+counterpart of the operator-algebraic spectral truncations recently introduced in
+C\*-algebraic kernel learning (Hashimoto et al., *Spectral Truncation Kernels*, 2024),
+and the simulation setting supplies three guarantees that construction does not provide.
 
-1. **An exact, optimal correction target.** $R_q = U S_q^{\dagger}$ is the unique
-   unitary left multiplier with $R_q S_q = U$ and the global minimizer of the
-   one-step error $|||U - L S_q|||$ in every unitarily invariant norm.
-2. **Stability under approximation.** With per-step residual error
-   $\eta = \lVert \widehat R_q - R_q \rVert_2$, the global error obeys
-   $\lVert \widehat G_q^{\,r} - U(t) \rVert_2 \le r\eta$ for unitary
-   $\widehat R_q$; a matching lower bound proves the linear-in-$r$ rate is
-   order-optimal.
-3. **Canonical, certified compression.** Pauli-subspace projection $\Pi_w K_q$ is
-   the unique Frobenius-optimal compressed generator, with the direct certificate
-   $\lVert e^{-iK} - e^{-i\Pi_w K} \rVert_2 \le \lVert K - \Pi_w K \rVert_F$.
-4. **Provable locality for the TFIM.**
-   $K_2(\delta t) = \delta t^3 K_2^{(3)} + O(\delta t^5)$ with the degree-three
-   term a real combination of Pauli strings of weight at most three.
-5. **A learned, size-transferable generator.** One translation-equivariant
-   network predicts the step-conditioned local weight-$\le 3$ coefficients of
-   $K_2$ from local couplings, trains without any dense $2^n$ oracle from
-   fixed-size local patches, and transfers from $n = 4, 5$ to $n = 10$.
-6. **Deterministic, falsifiable evidence.** Dense-matrix experiments, figures,
-   tables, and code recompute every reported number from first principles, with
-   unitarity and same-order consistency checks that expose any implementation
-   error.
+1. **A quantitative geometric convergence rate**, not merely convergence in a limit. The
+   truncated-correction error decays geometrically in the level — provably $\geq 10\times$
+   per level, and measured at $449\times$ ($q = 2$) and $576\times$ ($q = 4$) per level on
+   the transverse-field Ising chain (geometric-rate theorem, Methods; Fig. 8a).
+2. **An a priori dynamical certificate.** Every level carries the bound
+   $\lVert \widehat G_{q,w}^{\,r} - U(t)\rVert_2 \le r\lVert K_q - \Pi_w K_q\rVert_2$,
+   computable from $K_q$ without simulating the dynamics, so the truncation bandwidth is
+   selected directly from the target accuracy — a map the kernel construction lacks
+   (certificate corollary, Methods). The required bandwidth grows only logarithmically in $1/\varepsilon$.
+3. **A gate-level realization whose structural defect is repaired by symmetry.** The naive
+   first-order inner compilation of the truncated correction has an $O(\delta t^{2(q+1)})$
+   error floor that fails at low base order; a **symmetric inner compilation** lowers it to
+   $O(\delta t^{3(q+1)})$ and recovers the truncated-oracle accuracy at every order
+   (symmetric-compilation theorem, Methods) — the simulation analogue of the positivity-restoring smoothing that the
+   kernel construction needs.
 
-## Main results
+The downstream payoff, which the kernel setting has no analogue of, is a measurable
+advance of the product-formula **error–cost frontier**: a spectrally-truncated fourth-order
+correction reaches accuracies between standard sixth- and eighth-order Suzuki formulas at
+$4.2$–$5.2\times$ fewer two-qubit gates than the cheapest standard formula of matching
+accuracy ($n = 5$–$7$). The truncated generator is, moreover, **learnable without the dense
+propagator**: a single translation-equivariant network maps local couplings to the truncated
+coefficients and, trained only on four- and five-qubit chains, transfers to ten qubits
+($R^2 = 0.9999$).
 
-Transcribed from the manuscript ([`submission/main.tex`](submission/main.tex),
-[`submission/main.pdf`](submission/main.pdf)) and the deterministic data the code
-regenerates.
+## Demonstration
 
-**Learned residual transferred across system size** (disordered TFIM,
-$J_i, h_i \sim \mathcal{U}[0.5, 1.5]$, $t = 1$, $\delta t = 0.1$; trained only on
-$n = 4, 5$, every $n \ge 6$ held out). Taking the analytic second-order
-Zassenhaus generator as a prior and learning only the residual beyond it, the
-network transfers to ten-qubit chains at $R^2 = 0.9999$ on held-out coefficients
-(relative $\ell_2$ error $1.32 \times 10^{-2}$), cutting the uncorrected Strang
-error by **58–85×**.
-
-| $n$ | regime | $\epsilon_{\mathrm{Strang}}$ | $\epsilon_{\mathrm{learned}}$ | reduction | $n_{\mathrm c}$ |
-| --- | --- | --- | --- | --- | --- |
-| 4 | train | $1.049\times10^{-2}$ | $1.233\times10^{-4}$ | 85.1× | 40 |
-| 5 | train | $1.549\times10^{-2}$ | $2.176\times10^{-4}$ | 71.2× | 40 |
-| 6 | transfer | $1.844\times10^{-2}$ | $2.615\times10^{-4}$ | 70.5× | 40 |
-| 7 | transfer | $2.028\times10^{-2}$ | $3.075\times10^{-4}$ | 65.9× | 40 |
-| 8 | transfer | $2.433\times10^{-2}$ | $3.615\times10^{-4}$ | 67.3× | 24 |
-| 9 | transfer | $3.207\times10^{-2}$ | $5.560\times10^{-4}$ | 57.7× | 16 |
-| 10 | transfer | $3.668\times10^{-2}$ | $5.810\times10^{-4}$ | 63.1× | 12 |
-
-Errors are global spectral-norm errors; reduction is
-$\epsilon_{\mathrm{Strang}} / \epsilon_{\mathrm{learned}}$. The analytic prior
-contributes a further $1.5$–$1.8\times$ over learning the generator without it.
-
-**Fixed-time oracle benchmark** ($J = h = 1$, $t = 1$, $r = 10$). The oracle
-residual cancels the product-formula defect to the floating-point floor: at
-$n = 5$, $q = 2$ the baseline $1.384 \times 10^{-2}$ drops to
-$1.036 \times 10^{-14}$.
-
-**Projected (compressed) residual** ($n = 5$, $q = 2$). Weight $w \le 3$ reduces
-the baseline $1.384 \times 10^{-2}$ to $1.545 \times 10^{-4}$ (89.56×
-improvement); $w \le 4$ reaches $1.850 \times 10^{-7}$. Weight three is the first
-threshold that meaningfully reduces error, exactly as the leading-support theorem
-predicts.
-
-> **Scope, stated plainly.** The reduction is measured against the order-$1/2$
-> product-formula baseline; at this step size a standard higher-order Suzuki step
-> is more accurate than the learned correction at comparable factor count. The
-> oracle residual requires $U(\delta t)$ and is as costly as exact dense
-> simulation. The learned residual removes the dense $2^n$ oracle from training,
-> but evaluation here is dense (up to ten qubits), the local templates are
-> TFIM-specific and leading-order, and native-gate synthesis is not attempted.
-> The contribution is methodological: the integrator's truncation error is a
-> learnable, geometrically local, size-transferable operator with an a priori
-> stability certificate. Values near the double-precision floor ($\sim 10^{-13}$)
-> are round-off, not physical error.
-
-## Installation
+Install the package and reproduce the headline spectral-truncation results of the
+manuscript directly from the public API.
 
 ```bash
-pip install lieideal-hs
+pip install lieideal-hs            # or, from source:  cd submission/code && pip install -e .
 ```
 
-Or from source (Python ≥ 3.10):
+```python
+import spectral_truncation as st
+
+# (1) Geometric convergence rate of the Lie-algebraic spectral truncation (spectral-truncation rate table; Fig. 8a).
+rate, factors = st.truncation_rate()       # open-boundary TFIM, n = 6, t = 1, r = 10
+print(factors)                             # measured per-level reduction factors:
+# {'q2_factor_per_level': 449.3..., 'q4_factor_per_level': 576.4..., ...}
+
+# (2) Symmetric inner compilation repairs the first-order floor (faithful-compilation table; Fig. 8b).
+comp = st.faithful_compilation()
+print(comp[["n", "q", "w", "oracle_error", "first_order_error", "symmetric_error"]])
+# at n = 6, q = 2, w = 4:  oracle 3.65e-7,  first-order 2.18e-5 (fails),  symmetric 3.76e-7
+
+# (3) Certificate-driven bandwidth selection (certificate corollary, Methods; Fig. 8c).
+cert = st.certificate_selection()
+print(cert[["target_eps", "w_star", "certificate_bound", "achieved_error", "bound_holds"]])
+```
+
+Every value printed is an exact, deterministic dense-matrix computation and matches the
+corresponding number in [`submission/main.tex`](submission/main.tex).
+
+## Full reproduction
 
 ```bash
 cd submission/code
-pip install -e .
+lieideal-reproduce      # deterministically regenerates every figure, table and dataset of main.tex
+lieideal-verify         # reruns the pipeline and asserts byte-identical outputs
 ```
 
-## Reproduction
-
-```bash
-cd submission/code
-lieideal-reproduce      # deterministically regenerates every figure, table, and dataset
-lieideal-verify         # runs the pipeline twice and asserts byte-identical outputs
-```
-
-`lieideal-reproduce` (equivalently `python make_all.py`) seeds all RNGs, then
-runs the four dense-matrix experiments, the resource-proxy table, the learned
-residual operator-learning experiment, and the main figure. The run is
-deterministic: seed 42 for `random`/NumPy/PyTorch, `SEED = 20240517` inside
-`learned_residual.py` for the disorder sampler, train/test split, and network
-initialization; thread counts pinned to 1; and a fixed matplotlib PDF timestamp.
-CPU-only. See [`submission/code/README.md`](submission/code/README.md) for the
-full code-level reproduction guide.
+`lieideal-reproduce` (equivalently `python make_all.py`) seeds all generators, then runs the
+deterministic dense-matrix experiments (fixed-time oracle benchmark, projected/compressed
+residual, time sweep, generator structure, order generality, **spectral-truncation rate and
+faithful compilation**, the oracle-free fourth-order frontier, the resource proxy), followed
+by the learned residual operator-learning experiment and the headline figure. The run is
+deterministic (seed 42 for `random`/NumPy/PyTorch, `SEED = 20240517` for the disorder
+sampler and network initialization, single-threaded BLAS, fixed PDF timestamp); the learned
+experiment reproduces byte-for-byte across environments. CPU-only. Every figure and table in
+the manuscript is produced by this package and included by `\input`; no number is entered by
+hand. See [`submission/code/README.md`](submission/code/README.md) for the module-level guide.
 
 ## Repository layout
 
 ```text
 submission/
   main.tex, main.pdf          manuscript source and compiled PDF
-  figures/                    publication figures (PDF + PNG)
-  tables/                     LaTeX result tables
+  figures/                    publication figures (fig0–fig8, PDF)
+  tables/                     LaTeX result tables, all produced by the package
   code/                       lieideal-hs package (pyproject.toml, LICENSE, README.md)
-    make_all.py               regenerates every figure and table from first principles
-    cli.py                    console entry points (lieideal-reproduce, lieideal-verify)
     common.py                 Pauli operators, TFIM, Trotter–Suzuki steps, residual generator
-    fixed_time.py             exact-residual fixed-time benchmark
+    spectral_truncation.py    spectral-truncation rate, certificate, symmetric compilation (Fig. 8)
+    higher_order_frontier.py  order generality, error–cost frontier, XXZ generality
     projected_residual.py     Pauli-weight projection / compression
-    time_sweep.py             correction hierarchy versus time
-    generator_scaling.py      generator structure and norm scaling
+    oracle_free_q4.py         oracle-free, size-transferable fourth-order frontier correction
     learned_residual.py       translation-equivariant residual learner (size transfer, torch)
-    validate_submission.py    cross-checks the generated artifact set
-    determinism.py            seed_everything: deterministic execution harness
+    fixed_time.py, time_sweep.py, generator_scaling.py, headline.py, overview.py
+    make_all.py, cli.py       one-command reproduction and console entry points
+    validate_submission.py    cross-checks citations, figures, tables and datasets
     generated_data/           raw CSV/JSON with per-run metadata
-notebooks/                    rendered architecture, stability, robustness studies
-scripts/                      auxiliary experiment and plotting scripts
-src/lc_qaoa/                  propagators, metrics, models, experiments
-results/                      CSV result tables
-index.html                   project homepage and interactive demo
-website/index.html            condensed research brief
+index.html                    project page foregrounding the spectral-truncation result
 ```
 
 ## Citation
 
 ```bibtex
-@misc{huynh2025rgtc,
+@misc{huynh2025spectraltruncation,
   author = {Huynh, Molena},
-  title  = {Provable Operator Learning of Size-Transferable Trotter Corrections
-            for Hamiltonian Simulation},
+  title  = {Lie-algebraic Spectral Truncation of the Product-formula Residual:
+            Certified, Geometrically Convergent Corrections for Hamiltonian Simulation},
   year   = {2025},
   note   = {North Carolina State University},
   howpublished = {\url{https://github.com/thmolena/Lie-Algebra-for-Hamiltonian-Simulation}}
 }
 ```
-
-Molena Huynh, North Carolina State University, molena.huynh@jmp.com.
 
 ## License
 

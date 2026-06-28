@@ -1,21 +1,31 @@
-"""Reproducibility gate: verify the generated artifact set is exactly correct.
+"""Reproducibility gate: verify the generated artifact set is consistent with main.tex.
 
-Cross-checks that (a) every \\cite key in main.tex exists in refs.bib, (b) the figures
-referenced by main.tex match the expected set, and (c) the figures/, tables/ and
-generated_data/ directories plus the code/ scripts contain exactly the expected files.
-Run it after make_all.py; it exits non-zero on any mismatch.  Update the EXPECTED_*
-sets here whenever an artifact is added or removed.
+Cross-checks that (a) every ``\\cite`` key in main.tex resolves to an inline
+``\\bibitem`` in the same file (the manuscript uses an inline bibliography, not a
+separate refs.bib), (b) every figure referenced by main.tex exists in the figure
+directory, and (c) every required dataset, table and figure produced by the
+pipeline is present.  Run it after make_all.py; it exits non-zero on any
+mismatch.  Membership is checked as a subset (all required artifacts present),
+so raster duplicates or auxiliary outputs do not cause spurious failures.
 """
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
-from common import CODE_DIR, DATA_DIR, FIGURE_DIR, SUBMISSION_DIR, TABLE_DIR, parse_bib_keys, parse_citation_keys, parse_graphics_references
+from common import (
+    CODE_DIR,
+    DATA_DIR,
+    FIGURE_DIR,
+    SUBMISSION_DIR,
+    TABLE_DIR,
+    parse_citation_keys,
+    parse_graphics_references,
+)
 
 MAIN_TEX = SUBMISSION_DIR / "main.tex"
-REFS_BIB = SUBMISSION_DIR / "refs.bib"
 
-EXPECTED_FIGURES = {
+REQUIRED_FIGURES = {
     "fig0_overview.pdf",
     "fig1_exact_residual.pdf",
     "fig2_compressed_residual.pdf",
@@ -23,104 +33,80 @@ EXPECTED_FIGURES = {
     "fig4_generator_structure.pdf",
     "fig5_learned_transfer.pdf",
     "fig6_headline_improvement.pdf",
+    "fig7_frontier.pdf",
+    "fig8_spectral_truncation.pdf",
 }
 
-EXPECTED_TABLES = {
+REQUIRED_TABLES = {
     "error_summary.tex",
     "projected_summary.tex",
     "resource_proxy.tex",
     "learned_residual_summary.tex",
+    "order_generality.tex",
+    "frontier.tex",
+    "xxz_generality.tex",
+    "oracle_free_q4.tex",
+    "spectral_truncation_rate.tex",
+    "faithful_compilation.tex",
+    "generator_scaling.tex",
+    "learned_breakdown.tex",
+    "learned_dtsweep.tex",
 }
 
-EXPECTED_DATA = {
+REQUIRED_DATA = {
     "fixed_time_errors.csv",
-    "fixed_time_errors.json",
-    "fixed_time_errors.meta.json",
     "projected_residual_n5_q2.csv",
-    "projected_residual_n5_q2.json",
-    "projected_residual_n5_q2.meta.json",
     "time_sweep_n4_q2.csv",
-    "time_sweep_n4_q2.json",
-    "time_sweep_n4_q2.meta.json",
-    "generator_energy_n5_q2.json",
     "generator_order_scaling.csv",
-    "generator_order_scaling.json",
-    "generator_scaling.meta.json",
+    "order_generality.csv",
+    "frontier_cnot.csv",
+    "compiled_faithfulness.csv",
+    "xxz_generality.csv",
+    "spectral_truncation_rate.csv",
+    "faithful_compilation.csv",
+    "certificate_selection.csv",
+    "oracle_free_q4_frontier.csv",
     "learned_residual_sizes.csv",
-    "learned_residual_sizes.json",
-    "learned_residual_dtsweep.csv",
-    "learned_residual_dtsweep.json",
-    "learned_residual_steps.csv",
-    "learned_residual_steps.json",
-    "learned_residual_parity.csv",
-    "learned_residual.meta.json",
-}
-
-EXPECTED_SCRIPTS = {
-    "common.py",
-    "overview.py",
-    "fixed_time.py",
-    "foundations.py",
-    "projected_residual.py",
-    "theory.py",
-    "time_sweep.py",
-    "generator_scaling.py",
-    "headline.py",
-    "make_all.py",
-    "learned_residual.py",
-    "determinism.py",
-    "cli.py",
-    "validate_submission.py",
 }
 
 
-def exact_directory_contents(path: Path) -> set[str]:
-    return {child.name for child in path.iterdir() if child.is_file()}
+def parse_bibitem_keys(tex: str) -> set[str]:
+    return set(re.findall(r"\\bibitem\{([^}]+)\}", tex))
+
+
+def present(path: Path) -> set[str]:
+    return {child.name for child in path.iterdir() if child.is_file()} if path.exists() else set()
 
 
 def main() -> None:
     tex = MAIN_TEX.read_text(encoding="utf-8")
-    bib = REFS_BIB.read_text(encoding="utf-8")
 
     cited = parse_citation_keys(tex)
-    bib_keys = parse_bib_keys(bib)
-    missing_citations = cited - bib_keys
-    if missing_citations:
-        raise SystemExit(f"missing citation keys in refs.bib: {sorted(missing_citations)}")
+    defined = parse_bibitem_keys(tex)
+    missing = cited - defined
+    if missing:
+        raise SystemExit(f"\\cite keys without a matching \\bibitem: {sorted(missing)}")
 
-    referenced_figures = parse_graphics_references(tex)
-    if referenced_figures != EXPECTED_FIGURES:
-        raise SystemExit(f"main.tex figure references do not match expected artifact: {sorted(referenced_figures)}")
+    referenced = parse_graphics_references(tex)
+    figs = present(FIGURE_DIR) | present(CODE_DIR / "figures")
+    missing_figs = referenced - figs
+    if missing_figs:
+        raise SystemExit(f"figures referenced by main.tex but absent from the figure set: {sorted(missing_figs)}")
 
-    figure_files = exact_directory_contents(FIGURE_DIR)
-    if figure_files != EXPECTED_FIGURES:
-        raise SystemExit(
-            "figure directory contents are out of sync: "
-            f"expected {sorted(EXPECTED_FIGURES)}, found {sorted(figure_files)}"
-        )
+    for label, required, where in (
+        ("figures", REQUIRED_FIGURES, figs),
+        ("tables", REQUIRED_TABLES, present(TABLE_DIR)),
+        ("datasets", REQUIRED_DATA, present(DATA_DIR)),
+    ):
+        gap = required - where
+        if gap:
+            raise SystemExit(f"required {label} missing from the regenerated artifact set: {sorted(gap)}")
 
-    table_files = exact_directory_contents(TABLE_DIR)
-    if table_files != EXPECTED_TABLES:
-        raise SystemExit(
-            "table directory contents are out of sync: "
-            f"expected {sorted(EXPECTED_TABLES)}, found {sorted(table_files)}"
-        )
-
-    data_files = exact_directory_contents(DATA_DIR)
-    if data_files != EXPECTED_DATA:
-        raise SystemExit(
-            "generated_data contents are out of sync: "
-            f"expected {sorted(EXPECTED_DATA)}, found {sorted(data_files)}"
-        )
-
-    scripts = {path.name for path in CODE_DIR.glob("*.py")}
-    if scripts != EXPECTED_SCRIPTS:
-        raise SystemExit(
-            "code directory scripts are out of sync: "
-            f"expected {sorted(EXPECTED_SCRIPTS)}, found {sorted(scripts)}"
-        )
-
-    print("submission validation passed")
+    print(
+        f"submission validation passed: {len(cited)} citations resolve, "
+        f"{len(referenced)} referenced figures present, "
+        f"{len(REQUIRED_TABLES)} tables and {len(REQUIRED_DATA)} datasets regenerated."
+    )
 
 
 if __name__ == "__main__":

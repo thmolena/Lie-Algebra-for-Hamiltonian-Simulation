@@ -18,7 +18,39 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from common import COL_DOUBLE, DATA_DIR, PALETTE, apply_nmi_style, line_plot_style, panel_label, pauli_weight_energy, residual_factor, residual_generator, cumulative_weight_mass, save_dataframe, save_figure, save_metadata, tfim_terms, write_json
+from common import COL_DOUBLE, DATA_DIR, PALETTE, TABLE_DIR, apply_nmi_style, line_plot_style, panel_label, pauli_weight_energy, residual_factor, residual_generator, cumulative_weight_mass, save_dataframe, save_figure, save_metadata, scientific, tfim_terms, write_json, write_latex_table
+
+
+def write_scaling_table(df: pd.DataFrame) -> None:
+    """Extended Data: residual-generator norm versus step size and order (tab:generator-scaling)."""
+    orders = [1, 2, 4, 6]
+    dts = sorted(df["dt"].unique())
+    lines = [
+        r"\begin{table}[t]",
+        (
+            r"\caption{\textbf{Residual-generator spectral norm versus step size and "
+            r"product-formula order.} $\norm{K_q(\dt)}_2$ for the open-boundary \tfim{} at "
+            r"$n=4$, $J=h=1$, computed by dense matrix logarithm of the exact residual factor. "
+            r"The norm falls steeply with order $q$ and scales as $\dt^{q+1}$ at small $\dt$, the "
+            r"quantitative content of Theorem~\ref{thm:small-step} and Extended Data "
+            r"Fig.~\ref{edfig:genstruct}b. Each entry is a single exact, deterministic "
+            r"dense-matrix computation.}"
+        ),
+        r"\label{tab:generator-scaling}",
+        r"\centering",
+        r"\begin{tabular}{ccccc}",
+        r"\toprule",
+        r"$\dt$ & $\norm{K_1}_2$ & $\norm{K_2}_2$ & $\norm{K_4}_2$ & $\norm{K_6}_2$\\",
+        r"\midrule",
+    ]
+    for dt in dts:
+        cells = []
+        for q in orders:
+            sel = df[(df["dt"] == dt) & (df["order"] == q)]
+            cells.append(scientific(float(sel["generator_norm"].iloc[0])) if len(sel) else "--")
+        lines.append(f"${dt:.3f}$ & ${cells[0]}$ & ${cells[1]}$ & ${cells[2]}$ & ${cells[3]}$\\\\")
+    lines.extend([r"\bottomrule", r"\end{tabular}", r"\end{table}"])
+    write_latex_table(TABLE_DIR / "generator_scaling.tex", lines)
 
 OUT_FIGURE = "fig4_generator_structure.pdf"
 
@@ -91,6 +123,7 @@ def main(force: bool = False) -> tuple[list[dict[str, float]], pd.DataFrame]:
         },
     )
     make_structure_plot(energy_rows, scaling_df)
+    write_scaling_table(scaling_df)
     return energy_rows, scaling_df
 
 

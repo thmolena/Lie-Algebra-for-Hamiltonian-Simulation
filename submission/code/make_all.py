@@ -22,6 +22,7 @@ import higher_order_frontier
 import oracle_free_q4
 import overview
 import projected_residual
+import spectral_truncation
 import time_sweep
 
 
@@ -53,6 +54,7 @@ def main(force: bool = False) -> None:
     time_sweep.main(force=force)
     generator_scaling.main(force=force)
     higher_order_frontier.main(force=force)
+    spectral_truncation.main(force=force)
     oracle_free_q4.main(force=force)
     write_resource_table()
     # Learned-residual operator-learning experiment (requires torch).  Kept

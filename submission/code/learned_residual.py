@@ -624,6 +624,7 @@ def write_summary_table(sizes_df) -> None:
         ),
         r"\label{tab:learned-summary}",
         r"\centering",
+        r"\resizebox{\linewidth}{!}{%",
         r"\begin{tabular}{ccccccc}",
         r"\toprule",
         (
@@ -644,8 +645,97 @@ def write_summary_table(sizes_df) -> None:
             f"${reduction:.1f}\\times$ & "
             f"{int(row.n_realizations)}\\\\"
         )
-    lines.extend([r"\bottomrule", r"\end{tabular}", r"\end{table}"])
+    lines.extend([r"\bottomrule", r"\end{tabular}%", r"}", r"\end{table}"])
     write_latex_table(TABLE_DIR / "learned_residual_summary.tex", lines)
+
+
+def _pm(mean: float, std: float, bold: bool = False) -> str:
+    body = scientific(mean)
+    if bold:
+        body = r"\mathbf{" + body + "}"
+    return f"${body} \\pm {scientific(std)}$"
+
+
+def write_breakdown_table(sizes_df) -> None:
+    """Extended Data: per-size error breakdown of every correction (Table tab:learned-breakdown)."""
+    lines = [
+        r"\begin{table}[t]",
+        (
+            r"\caption{\textbf{Per-size error breakdown of every correction on the disordered "
+            r"\tfim{}.} Global spectral-norm error at $t=1$, $\dt=0.1$ "
+            r"($J_i,h_i\sim\mathcal{U}[0.5,1.5]$), mean $\pm$ one standard deviation over "
+            r"$n_{\mathrm c}$ disordered chains (sizes and $n_{\mathrm c}$ as in "
+            r"Table~\ref{tab:learned-summary}). $\epsilon_{w\leq3}$ is the exact weight-$\leq3$ "
+            r"oracle; $\epsilon_{\mathrm{learned}}^{\,\mathrm{oracle}}$ and "
+            r"$\epsilon_{\mathrm{learned}}^{\,\mathrm{free}}$ are the learned corrections trained "
+            r"on global-oracle and on oracle-free patch labels; $\epsilon_{\mathrm{BCH}}$ is the "
+            r"analytic leading-order correction. Best learned column in each row is bold; sizes "
+            r"$n\geq6$ are absent from training. All values recomputed from dense matrices.}"
+        ),
+        r"\label{tab:learned-breakdown}",
+        r"\centering",
+        r"\resizebox{\textwidth}{!}{%",
+        r"\begin{tabular}{cccccc}",
+        r"\toprule",
+        (
+            r"$n$ & regime & $\epsilon_{w\leq3}$ (oracle) & "
+            r"$\epsilon_{\mathrm{learned}}^{\,\mathrm{oracle}}$ & "
+            r"$\epsilon_{\mathrm{learned}}^{\,\mathrm{free}}$ & $\epsilon_{\mathrm{BCH}}$\\"
+        ),
+        r"\midrule",
+    ]
+    for row in sizes_df.itertuples(index=False):
+        regime = "train" if row.trained else "transfer"
+        free_best = row.learned_free_error_mean <= row.learned_oracle_error_mean
+        lines.append(
+            f"{int(row.n_qubits)} & {regime} & "
+            f"{_pm(row.oracle_local_error_mean, row.oracle_local_error_std)} & "
+            f"{_pm(row.learned_oracle_error_mean, row.learned_oracle_error_std, not free_best)} & "
+            f"{_pm(row.learned_free_error_mean, row.learned_free_error_std, free_best)} & "
+            f"{_pm(row.bch_leading_error_mean, row.bch_leading_error_std)}\\\\"
+        )
+    lines.extend([r"\bottomrule", r"\end{tabular}%", r"}", r"\end{table}"])
+    write_latex_table(TABLE_DIR / "learned_breakdown.tex", lines)
+
+
+def write_dtsweep_table(dt_df) -> None:
+    """Extended Data: single-step error versus step size (Table tab:learned-dtsweep)."""
+    nc = int(dt_df["n_realizations"].iloc[0]) if "n_realizations" in dt_df else 0
+    lines = [
+        r"\begin{table}[t]",
+        (
+            r"\caption{\textbf{Single-step error versus step size for the learned residual at "
+            r"$n=6$.} Disordered open-boundary \tfim{} with $J_i,h_i\sim\mathcal{U}[0.5,1.5]$; "
+            rf"each row is a mean $\pm$ one standard deviation over $n_{{\mathrm c}}={nc}$ "
+            r"disordered chains. $\epsilon_{\mathrm{Strang}}$ is the uncorrected per-step error; "
+            r"$\epsilon_{w\leq3}$ the exact weight-$\leq3$ oracle; $\epsilon_{\mathrm{learned}}$ "
+            r"the oracle-free learned correction; $\epsilon_{\mathrm{BCH}}$ the analytic "
+            r"leading-order ($\dt^3$) correction. As $\dt$ grows the analytic baseline degrades "
+            r"toward the uncorrected step while the $\dt$-conditioned learned correction tracks "
+            r"the oracle, quantifying Fig.~\ref{fig:learned}b. Best (smallest) correction in each "
+            r"row is bold; values recomputed from dense matrices.}"
+        ),
+        r"\label{tab:learned-dtsweep}",
+        r"\centering",
+        r"\resizebox{\textwidth}{!}{%",
+        r"\begin{tabular}{ccccc}",
+        r"\toprule",
+        (
+            r"$\dt$ & $\epsilon_{\mathrm{Strang}}$ & $\epsilon_{w\leq3}$ (oracle) & "
+            r"$\epsilon_{\mathrm{learned}}$ & $\epsilon_{\mathrm{BCH}}$\\"
+        ),
+        r"\midrule",
+    ]
+    for row in dt_df.itertuples(index=False):
+        lines.append(
+            f"${row.dt:.2f}$ & "
+            f"{_pm(row.baseline_error_mean, row.baseline_error_std)} & "
+            f"{_pm(row.oracle_local_error_mean, row.oracle_local_error_std, True)} & "
+            f"{_pm(row.learned_free_error_mean, row.learned_free_error_std)} & "
+            f"{_pm(row.bch_leading_error_mean, row.bch_leading_error_std)}\\\\"
+        )
+    lines.extend([r"\bottomrule", r"\end{tabular}%", r"}", r"\end{table}"])
+    write_latex_table(TABLE_DIR / "learned_dtsweep.tex", lines)
 
 
 # ---------------------------------------------------------------------------
@@ -696,6 +786,8 @@ def main(force: bool = False) -> None:
 
     make_figure(sizes_df, dt_df, steps_df, parity)
     write_summary_table(sizes_df)
+    write_breakdown_table(sizes_df)
+    write_dtsweep_table(dt_df)
 
     pd.set_option("display.width", 220)
     pd.set_option("display.max_columns", 30)

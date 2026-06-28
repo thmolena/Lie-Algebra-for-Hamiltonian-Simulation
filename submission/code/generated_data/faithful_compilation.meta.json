@@ -1,19 +1,20 @@
 {
-  "figure": "fig2_compressed_residual.pdf",
   "parameters": {
-    "n": 5,
-    "order": 2,
+    "ns": [
+      5,
+      6
+    ],
+    "orders": [
+      2,
+      4
+    ],
     "J": 1.0,
     "h": 1.0,
     "t": 1.0,
     "r": 10,
-    "weights": [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5
+    "inner_formulas": [
+      "first-order ordered product",
+      "symmetric Strang product"
     ]
   },
   "force": true,

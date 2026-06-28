@@ -1,20 +1,23 @@
 {
-  "figure": "fig2_compressed_residual.pdf",
   "parameters": {
-    "n": 5,
-    "order": 2,
+    "n": 6,
+    "orders": [
+      2,
+      4,
+      6
+    ],
     "J": 1.0,
     "h": 1.0,
     "t": 1.0,
-    "r": 10,
-    "weights": [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5
-    ]
+    "r": 10
+  },
+  "fitted_rates": {
+    "q2_log10_slope_per_level": -2.652577966623121,
+    "q2_factor_per_level": 449.34298563226065,
+    "q2_w0": 3,
+    "q4_log10_slope_per_level": -2.76074986386799,
+    "q4_factor_per_level": 576.4343647833159,
+    "q4_w0": 4
   },
   "force": true,
   "environment": {
