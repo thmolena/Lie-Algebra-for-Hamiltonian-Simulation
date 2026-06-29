@@ -75,6 +75,7 @@
       <a href="#demo">Demo</a>
       <a href="#theory">Theory</a>
       <a href="#significance">Significance</a>
+      <a href="#references">References</a>
       <a href="submission/main.pdf">Manuscript</a>
     </nav>
   </div>
@@ -109,6 +110,7 @@
   <h2>Simulating quantum dynamics is gated by gate count</h2>
   <p class="lede">Computing the time evolution $e^{-iHt}$ of a many-body Hamiltonian is one of the founding applications of quantum computers and a core subroutine of quantum phase estimation, chemistry and materials simulation, and Gibbs-state preparation. On hardware the binding cost is the number of two-qubit gates: it sets the circuit depth, and therefore how much physical error and decoherence accumulate before the answer can be read out.</p>
   <p>The dominant primitive for assembling $e^{-iHt}$ from elementary gates is the <strong>Trotter&ndash;Suzuki product formula</strong>. Writing $H=\sum_j h_j$ as a sum of easily-exponentiated terms, an order-$q$ formula $S_q(\delta t)$ approximates one short step $e^{-iH\delta t}$, and $r$ repetitions approximate $e^{-iHt}$ with a per-step error of $O\!\big(\delta t^{\,q+1}\big)$. Raising the order $q$ buys accuracy, but at a steep price: the standard recursive Suzuki construction multiplies the gate count by a large constant at every order, so the most accurate formulas are also the most expensive. Every practical simulation therefore lives somewhere on an <strong>error&ndash;cost frontier</strong>, trading two-qubit gates against simulation error.</p>
+  <p>The modern theory of product formulas is far sharper than the original asymptotic picture. Commutator-sensitive bounds explain when product formulas beat worst-case estimates, locality tightens lattice-simulation scaling, and the cost of implementing a single Trotter step has itself become an object of complexity analysis. Product formulas now compete with multi-product formulas, truncated Taylor methods, quantum signal processing and qubitization, randomized formulas, Magnus-expansion algorithms, variational fast-forwarding, and Lie-algebraic decomposition or compilation approaches. These methods are complementary, but they all confront the same conceptual object: the finite-step defect between the desired unitary and the implemented one. This work isolates that defect as an operator to be studied, bounded, compressed, and compiled, building most directly on the Hamiltonian-simulation neighborhood of the second-order Zassenhaus factorization and its root-activity complexity bounds, which supply the analytic prior the correction is learned on top of.</p>
   <div class="note">
     <h4>The question this work answers</h4>
     <p>Can the <em>finite-step error itself</em> be treated as an object to be learned and compressed &mdash; cheaply correcting a low-order formula so it reaches high-order accuracy without paying the high-order gate cost? The answer is yes, and the right language for it is the spectral truncation of an operator algebra.</p>
@@ -242,8 +244,8 @@ print(cert[["target_eps", "w_star", "certificate_bound", "achieved_error", "boun
   <div class="theorem">
     <span class="thm-label">Theorem &mdash; geometric convergence rate</span>
     <h4>The spectral truncation converges geometrically in the level.</h4>
-    <p>For the open-boundary TFIM and a symmetric order-$q$ step, the truncation tail $\tau_w=\lVert K_q-\Pi_wK_q\rVert_2$ obeys $\tau_w\le C_q\,\delta t^{\,w}$ for $q+1\le w<n$, so $\tau_w/\tau_{w-1}=O(\delta t)$ and the corrected error decays geometrically in the truncation level.</p>
-    <p class="interp"><strong>Reading.</strong> Each excluded weight level carries residual content of strictly higher order in $\delta t$; the measured per-level factor ($449$&ndash;$576\times$) is steeper still, from the symmetric cancellations that also lower the effective locality threshold.</p>
+    <p>For the open-boundary TFIM and a symmetric order-$q$ step, the truncation tail $\tau_w=\lVert K_q-\Pi_wK_q\rVert_2$ obeys the geometric envelope $\tau_w\le C_q\,\rho^{\,w}$ with $\rho\in(0,1)$, $\rho=O(\delta t)$, for $q+1\le w\le n$; hence the certified error $r\tau_w$ contracts by a factor $\rho$ per added level.</p>
+    <p class="interp"><strong>Reading.</strong> Proved from the analyticity of $K_q(\delta t)$ and the weight&ndash;degree bound: each excluded weight level carries residual content of strictly higher order in $\delta t$. The provable per-level contraction is $\gtrsim\delta t^{-1}=10$; the measured factors ($449$&ndash;$576\times$) are steeper still, from the symmetric cancellations that also lower the effective locality threshold.</p>
   </div>
   <div class="theorem">
     <span class="thm-label">Corollary &mdash; certificate-driven bandwidth</span>
@@ -281,6 +283,88 @@ print(cert[["target_eps", "w_star", "certificate_bound", "achieved_error", "boun
     <h4>Honest scope</h4>
     <p>All results are exact, deterministic dense-matrix computations on chains of $n\le10$ qubits, where an exact reference is tractable; the convergence-rate, certificate, and compilation arguments are themselves size-independent, but hardware validation is future work. The construction generalizes beyond the TFIM (an XXZ instance is given in the manuscript) and across base orders $q=2,4$.</p>
   </div>
+</section>
+
+<section class="section" id="references">
+  <span class="section-label">References</span>
+  <h2>References</h2>
+  <p class="lede"><strong>Related work.</strong> The recasting of Pauli-weight projection as an operator-algebraic spectral truncation follows the noncommutative C$^\ast$-algebraic kernels of Hashimoto et&nbsp;al. (<em>Spectral Truncation Kernels</em>, 2024 [73]; RKHM, 2023 [74]); the product-formula error theory rests on the commutator-scaling Trotter bounds of Childs et&nbsp;al. (2021 [25]) over Trotter's theorem [2] and the higher-order Suzuki splittings [3&ndash;5], with the analytic prior taken from the Zassenhaus factorization and complexity bounds of Nguyen &amp; Jing [71] and Jing &amp; Nguyen [72].</p>
+  <ol style="font-size:.85rem;line-height:1.6;color:var(--muted);padding-left:1.6em;">
+    <li>Lloyd, S. &ldquo;Universal quantum simulators&rdquo;. <em>Science</em> <strong>273</strong>, 1073&ndash;1078 (1996).</li>
+    <li>Trotter, H. F. &ldquo;On the product of semi-groups of operators&rdquo;. <em>Proceedings of the American Mathematical Society</em> <strong>10</strong>, 545&ndash;551 (1959).</li>
+    <li>Suzuki, M. &ldquo;Fractal decomposition of exponential operators with applications to many-body theories and Monte Carlo simulations&rdquo;. <em>Physics Letters A</em> <strong>146</strong>, 319&ndash;323 (1990).</li>
+    <li>Suzuki, M. &ldquo;General theory of fractal path integrals with applications to many-body theories and statistical physics&rdquo;. <em>Journal of Mathematical Physics</em> <strong>32</strong>, 400&ndash;407 (1991).</li>
+    <li>Suzuki, M. &ldquo;Improved Trotter-like formulae&rdquo;. <em>Journal of Physics A: Mathematical and General</em> <strong>26</strong>, L133&ndash;L137 (1993).</li>
+    <li>Yoshida, H. &ldquo;Construction of higher order symplectic integrators&rdquo;. <em>Physics Letters A</em> <strong>150</strong>, 262&ndash;268 (1990).</li>
+    <li>Forest, E. &amp; Ruth, R. D. &ldquo;Fourth-order symplectic integration&rdquo;. <em>Physica D: Nonlinear Phenomena</em> <strong>43</strong>, 105&ndash;117 (1990).</li>
+    <li>Chin, S. A. &ldquo;Symplectic integrators from composite operator factorizations&rdquo;. <em>Physics Letters A</em> <strong>226</strong>, 344&ndash;348 (1997).</li>
+    <li>Hatano, N. &amp; Suzuki, M. &ldquo;Finding exponential product formulas of higher orders&rdquo;. In Das, A. &amp; Chakrabarti, B. K. (eds.) <em>Quantum Annealing and Other Optimization Methods</em>, 37&ndash;68 (Springer, Berlin, 2005).</li>
+    <li>Wiebe, N., Berry, D., H&oslash;yer, P. &amp; Sanders, B. C. &ldquo;Higher order decompositions of ordered operator exponentials&rdquo;. <em>Journal of Physics A: Mathematical and Theoretical</em> <strong>43</strong>, 065203 (2010).</li>
+    <li>Abrams, D. S. &amp; Lloyd, S. &ldquo;Simulation of many-body Fermi systems on a universal quantum computer&rdquo;. <em>Physical Review Letters</em> <strong>79</strong>, 2586&ndash;2589 (1997).</li>
+    <li>Sornborger, A. T. &amp; Stewart, E. D. &ldquo;Higher-order methods for simulations on quantum computers&rdquo;. <em>Physical Review A</em> <strong>60</strong>, 1956&ndash;1965 (1999).</li>
+    <li>Ortiz, G., Gubernatis, J. E., Knill, E. &amp; Laflamme, R. &ldquo;Quantum algorithms for fermionic simulations&rdquo;. <em>Physical Review A</em> <strong>64</strong>, 022319 (2001).</li>
+    <li>Kitaev, A. Y. &ldquo;Quantum computations: algorithms and error correction&rdquo;. <em>Russian Mathematical Surveys</em> <strong>52</strong>, 1191&ndash;1249 (1997).</li>
+    <li>Kitaev, A. Y., Shen, A. H. &amp; Vyalyi, M. N. <em>Classical and Quantum Computation</em> (American Mathematical Society, Providence, Rhode Island, 2002).</li>
+    <li>Abrams, D. S. &amp; Lloyd, S. &ldquo;Quantum algorithm providing exponential speed increase for finding eigenvalues and eigenvectors&rdquo;. <em>Physical Review Letters</em> <strong>83</strong>, 5162&ndash;5165 (1999).</li>
+    <li>Cleve, R., Ekert, A., Macchiavello, C. &amp; Mosca, M. &ldquo;Quantum algorithms revisited&rdquo;. <em>Proceedings of the Royal Society of London, Series A</em> <strong>454</strong>, 339&ndash;354 (1998).</li>
+    <li>Aspuru-Guzik, A., Dutoi, A. D., Love, P. J. &amp; Head-Gordon, M. &ldquo;Simulated quantum computation of molecular energies&rdquo;. <em>Science</em> <strong>309</strong>, 1704&ndash;1707 (2005).</li>
+    <li>Wecker, D., Bauer, B., Clark, B. K., Hastings, M. B. &amp; Troyer, M. &ldquo;Gate-count estimates for performing quantum chemistry on small quantum computers&rdquo;. <em>Physical Review A</em> <strong>90</strong>, 022305 (2014).</li>
+    <li>Wecker, D., Bauer, B., Clark, B. K., Hastings, M. B. &amp; Troyer, M. &ldquo;Progress towards practical quantum advantage in quantum chemistry simulations&rdquo;. <em>Physical Review A</em> <strong>92</strong>, 042303 (2015).</li>
+    <li>Babbush, R., McClean, J., Wecker, D., Aspuru-Guzik, A. &amp; Wiebe, N. &ldquo;Chemical basis of Trotter-Suzuki errors in quantum chemistry simulations&rdquo;. <em>Physical Review A</em> <strong>91</strong>, 022311 (2015).</li>
+    <li>Reiher, M., Wiebe, N., Svore, K. M., Wecker, D. &amp; Troyer, M. &ldquo;Elucidating reaction mechanisms on quantum computers&rdquo;. <em>Proceedings of the National Academy of Sciences</em> <strong>114</strong>, 7555&ndash;7560 (2017).</li>
+    <li>Kivlichan, I. D. <em>et&nbsp;al.</em> &ldquo;Quantum simulation of electronic structure with linear depth and connectivity&rdquo;. <em>Physical Review Letters</em> <strong>120</strong>, 110501 (2018).</li>
+    <li>Haah, J., Hastings, M. B., Kothari, R. &amp; Low, G. H. &ldquo;Quantum algorithm for simulating real time dynamics of lattice Hamiltonians&rdquo;. <em>SIAM Journal on Computing</em> <strong>52</strong>, 1534&ndash;1565 (2021). <a href="https://arxiv.org/abs/1801.00862" target="_blank" rel="noreferrer">arXiv:1801.00862</a>.</li>
+    <li>Childs, A. M., Su, Y., Tran, M. C., Wiebe, N. &amp; Zhu, S. &ldquo;Theory of Trotter error with commutator scaling&rdquo;. <em>PRX Quantum</em> <strong>2</strong>, 010329 (2021).</li>
+    <li>Layden, D. &ldquo;First-order Trotter error from a second-order perspective&rdquo;. <em>Physical Review Letters</em> <strong>128</strong>, 210501 (2022).</li>
+    <li>Zhuk, S., Sun, N. F. &amp; Bravyi, S. &ldquo;Trotter error bounds and dynamic structure factors for quantum spin systems far from equilibrium&rdquo;. <em>PRX Quantum</em> <strong>4</strong>, 020345 (2023).</li>
+    <li>Childs, A. M. &amp; Su, Y. &ldquo;Nearly optimal lattice simulation by product formulas&rdquo;. <em>Physical Review Letters</em> <strong>123</strong>, 050503 (2019).</li>
+    <li>Lieb, E. H. &amp; Robinson, D. W. &ldquo;The finite group velocity of quantum spin systems&rdquo;. <em>Communications in Mathematical Physics</em> <strong>28</strong>, 251&ndash;257 (1972).</li>
+    <li>Tran, M. C. <em>et&nbsp;al.</em> &ldquo;Locality and digital quantum simulation of power-law interactions&rdquo;. <em>Physical Review X</em> <strong>9</strong>, 031006 (2019).</li>
+    <li>Low, G. H., Su, Y., Tong, Y. &amp; Tran, M. C. &ldquo;Complexity of implementing Trotter steps&rdquo;. <em>PRX Quantum</em> <strong>4</strong>, 020323 (2023).</li>
+    <li>Childs, A. M. &amp; Wiebe, N. &ldquo;Hamiltonian simulation using linear combinations of unitary operations&rdquo;. <em>Quantum Information &amp; Computation</em> <strong>12</strong>, 901&ndash;924 (2012). <a href="https://arxiv.org/abs/1202.5822" target="_blank" rel="noreferrer">arXiv:1202.5822</a>.</li>
+    <li>Berry, D. W., Childs, A. M., Cleve, R., Kothari, R. &amp; Somma, R. D. &ldquo;Simulating Hamiltonian dynamics with a truncated Taylor series&rdquo;. <em>Physical Review Letters</em> <strong>114</strong>, 090502 (2015).</li>
+    <li>Berry, D. W., Ahokas, G., Cleve, R. &amp; Sanders, B. C. &ldquo;Efficient quantum algorithms for simulating sparse Hamiltonians&rdquo;. <em>Communications in Mathematical Physics</em> <strong>270</strong>, 359&ndash;371 (2007).</li>
+    <li>Berry, D. W., Childs, A. M., Cleve, R., Kothari, R. &amp; Somma, R. D. &ldquo;Exponential improvement in precision for simulating sparse Hamiltonians via quantum walks&rdquo;. In <em>Proceedings of the 46th Annual ACM Symposium on Theory of Computing</em>, 283&ndash;292 (2014).</li>
+    <li>Low, G. H. &amp; Chuang, I. L. &ldquo;Optimal Hamiltonian simulation by quantum signal processing&rdquo;. <em>Physical Review Letters</em> <strong>118</strong>, 010501 (2017).</li>
+    <li>Low, G. H. &amp; Chuang, I. L. &ldquo;Hamiltonian simulation by qubitization&rdquo;. <em>Quantum</em> <strong>3</strong>, 163 (2019).</li>
+    <li>Campbell, E. T. &ldquo;Random compiler for fast Hamiltonian simulation&rdquo;. <em>Physical Review Letters</em> <strong>123</strong>, 070503 (2019).</li>
+    <li>Ouyang, Y., White, D. R. &amp; Campbell, E. T. &ldquo;Compilation by stochastic Hamiltonian sparsification&rdquo;. <em>Quantum</em> <strong>4</strong>, 235 (2020).</li>
+    <li>Childs, A. M., Ostrander, A. &amp; Su, Y. &ldquo;Faster quantum simulation by randomization&rdquo;. <em>Quantum</em> <strong>3</strong>, 182 (2019).</li>
+    <li>Chen, C.-F., Huang, H.-Y., Kueng, R. &amp; Tropp, J. A. &ldquo;Concentration for random product formulas&rdquo;. <em>PRX Quantum</em> <strong>2</strong>, 040305 (2021).</li>
+    <li>Magnus, W. &ldquo;On the exponential solution of differential equations for a linear operator&rdquo;. <em>Communications on Pure and Applied Mathematics</em> <strong>7</strong>, 649&ndash;673 (1954).</li>
+    <li>Blanes, S., Casas, F., Oteo, J. A. &amp; Ros, J. &ldquo;The Magnus expansion and some of its applications&rdquo;. <em>Physics Reports</em> <strong>470</strong>, 151&ndash;238 (2009).</li>
+    <li>Sharma, K. &amp; Tran, M. C. &ldquo;Hamiltonian simulation in the interaction picture using the Magnus expansion&rdquo;. <em>Physical Review Research</em> <strong>6</strong>, 033047 (2024).</li>
+    <li>Fang, D., Liu, D. &amp; Sarkar, R. &ldquo;Time-dependent Hamiltonian simulation via Magnus expansion: Algorithm and superconvergence&rdquo;. <em>Communications in Mathematical Physics</em> <strong>406</strong>, 128 (2025).</li>
+    <li>Cirstoiu, C. <em>et&nbsp;al.</em> &ldquo;Variational fast forwarding for quantum simulation beyond the coherence time&rdquo;. <em>npj Quantum Information</em> <strong>6</strong>, 82 (2020).</li>
+    <li>K&ouml;k&ccedil;&uuml;, E. <em>et&nbsp;al.</em> &ldquo;Fixed depth Hamiltonian simulation via Cartan decomposition&rdquo;. <em>Physical Review Letters</em> <strong>129</strong>, 070501 (2022).</li>
+    <li>Steckmann, T. <em>et&nbsp;al.</em> &ldquo;Simulating the Mott transition on a noisy digital quantum computer via Cartan-based fast-forwarding circuits&rdquo;. <em>PRX Quantum</em> <strong>4</strong>, 010308 (2023).</li>
+    <li>Wu, S.-X., Du, S.-W., Fang, D. &amp; Liu, D.-S. &ldquo;Randomized Hamiltonian simulation by magnetic groups&rdquo;. <em>Physical Review A</em> <strong>108</strong>, 022418 (2023).</li>
+    <li>Zeier, R. &amp; Schulte-Herbr&uuml;ggen, T. &ldquo;Symmetry principles in quantum systems theory&rdquo;. <em>Journal of Mathematical Physics</em> <strong>52</strong>, 113510 (2011).</li>
+    <li>Sachdev, S. <em>Quantum Phase Transitions</em> (Cambridge University Press, Cambridge, 2011), 2nd edn.</li>
+    <li>Cervera-Lierta, A. &ldquo;Exact Ising model simulation on a quantum computer&rdquo;. <em>Quantum</em> <strong>2</strong>, 114 (2018).</li>
+    <li>Bravyi, S. B. &amp; Kitaev, A. Y. &ldquo;Fermionic quantum computation&rdquo;. <em>Annals of Physics</em> <strong>298</strong>, 210&ndash;226 (2002).</li>
+    <li>Whitfield, J. D., Biamonte, J. &amp; Aspuru-Guzik, A. &ldquo;Simulation of electronic structure Hamiltonians using quantum computers&rdquo;. <em>Molecular Physics</em> <strong>109</strong>, 735&ndash;750 (2011).</li>
+    <li>Seeley, J. T., Richard, M. J. &amp; Love, P. J. &ldquo;The Bravyi-Kitaev transformation for quantum computation of electronic structure&rdquo;. <em>Journal of Chemical Physics</em> <strong>137</strong>, 224109 (2012).</li>
+    <li>Verstraete, F. &amp; Cirac, J. I. &ldquo;Mapping local Hamiltonians of fermions to local Hamiltonians of spins&rdquo;. <em>Journal of Statistical Mechanics: Theory and Experiment</em> <strong>2005</strong>, P09012 (2005).</li>
+    <li>Cade, C., Mineh, L., Montanaro, A. &amp; Sherborn, S. &ldquo;Strategies for solving the Fermi-Hubbard model on near-term quantum computers&rdquo;. <em>Physical Review B</em> <strong>102</strong>, 235122 (2020).</li>
+    <li>Jordan, S. P., Lee, K. S. M. &amp; Preskill, J. &ldquo;Quantum algorithms for quantum field theories&rdquo;. <em>Science</em> <strong>336</strong>, 1130&ndash;1133 (2012).</li>
+    <li>Babbush, R. <em>et&nbsp;al.</em> &ldquo;Encoding electronic spectra in quantum circuits with linear T complexity&rdquo;. <em>Physical Review X</em> <strong>8</strong>, 041015 (2018).</li>
+    <li>Babbush, R., Berry, D. W., McClean, J. R. &amp; Neven, H. &ldquo;Quantum simulation of chemistry with sublinear scaling in basis size&rdquo;. <em>npj Quantum Information</em> <strong>5</strong>, 92 (2019).</li>
+    <li>Peruzzo, A. <em>et&nbsp;al.</em> &ldquo;A variational eigenvalue solver on a photonic chip&rdquo;. <em>Nature Communications</em> <strong>5</strong>, 4213 (2014).</li>
+    <li>McClean, J. R., Romero, J., Babbush, R. &amp; Aspuru-Guzik, A. &ldquo;The theory of variational hybrid quantum-classical algorithms&rdquo;. <em>New Journal of Physics</em> <strong>18</strong>, 023023 (2016).</li>
+    <li>Farhi, E., Goldstone, J. &amp; Gutmann, S. &ldquo;A quantum approximate optimization algorithm&rdquo; (2014). <a href="https://arxiv.org/abs/1411.4028" target="_blank" rel="noreferrer">arXiv:1411.4028</a>.</li>
+    <li>Cerezo, M. <em>et&nbsp;al.</em> &ldquo;Variational quantum algorithms&rdquo;. <em>Nature Reviews Physics</em> <strong>3</strong>, 625&ndash;644 (2021).</li>
+    <li>Bharti, K. <em>et&nbsp;al.</em> &ldquo;Noisy intermediate-scale quantum algorithms&rdquo;. <em>Reviews of Modern Physics</em> <strong>94</strong>, 015004 (2022).</li>
+    <li>Endo, S., Cai, Z., Benjamin, S. C. &amp; Yuan, X. &ldquo;Hybrid quantum-classical algorithms and quantum error mitigation&rdquo;. <em>Journal of the Physical Society of Japan</em> <strong>90</strong>, 032001 (2021).</li>
+    <li>Preskill, J. &ldquo;Quantum computing in the NISQ era and beyond&rdquo;. <em>Quantum</em> <strong>2</strong>, 79 (2018).</li>
+    <li>Kandala, A. <em>et&nbsp;al.</em> &ldquo;Hardware-efficient variational quantum eigensolver for small molecules and quantum magnets&rdquo;. <em>Nature</em> <strong>549</strong>, 242&ndash;246 (2017).</li>
+    <li>Kim, Y. <em>et&nbsp;al.</em> &ldquo;Evidence for the utility of quantum computing before fault tolerance&rdquo;. <em>Nature</em> <strong>618</strong>, 500&ndash;505 (2023).</li>
+    <li>Huynh, M. &ldquo;Query-efficient quantum approximate optimization via graph-conditioned trust regions&rdquo;. <em>arXiv preprint</em> (2026). <a href="https://arxiv.org/abs/2604.24803" target="_blank" rel="noreferrer">arXiv:2604.24803</a>.</li>
+    <li>Nguyen, M. &amp; Jing, N. &ldquo;Zassenhaus expansion in solving the Schr&ouml;dinger equation&rdquo;. <em>arXiv preprint</em> (2025). <a href="https://arxiv.org/abs/2505.09441" target="_blank" rel="noreferrer">arXiv:2505.09441</a>.</li>
+    <li>Jing, N. &amp; Nguyen, M. &ldquo;Complexity bounds for Hamiltonian simulation in unitary representations&rdquo;. <em>arXiv preprint</em> (2026). <a href="https://arxiv.org/abs/2603.07231" target="_blank" rel="noreferrer">arXiv:2603.07231</a>.</li>
+    <li>Hashimoto, Y., Hafid, A., Ikeda, M. &amp; Kadri, H. &ldquo;Spectral truncation kernels: noncommutativity in $C^*$-algebraic kernel machines&rdquo;. <em>Journal of Machine Learning Research</em> (2024). <a href="https://arxiv.org/abs/2405.17823" target="_blank" rel="noreferrer">arXiv:2405.17823</a>.</li>
+    <li>Hashimoto, Y., Ikeda, M. &amp; Kadri, H. &ldquo;Learning in RKHM: a $C^*$-algebraic twist for kernel machines&rdquo;. In <em>Proceedings of the 26th International Conference on Artificial Intelligence and Statistics (AISTATS)</em> (2023).</li>
+  </ol>
 </section>
 
 <footer class="site-footer">

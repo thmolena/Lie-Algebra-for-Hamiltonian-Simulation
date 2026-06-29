@@ -89,7 +89,7 @@ Our contributions are as follows. (i) We formalize \rgtc{} and prove exact resid
 
 Beyond quantum simulation, the central finding is of methodological interest to machine learning for the physical sciences: the truncation error of a numerical integrator, usually treated as an analytic object to be bounded, is here a \emph{learnable} operator---geometrically local, conditioned on the discretization step, and transferable across system size---with its approximation quality controlled \emph{a priori} by a proven stability bound rather than validated only \emph{a posteriori}. The enabling compression is algebraic: the correction lives in the Lie algebra of Hermitian operators, and Pauli-weight projection is a \emph{spectral truncation} of that algebra to a finite-dimensional, symmetry-respecting hypothesis class indexed by an interaction-range knob, in direct analogy with the operator-algebraic spectral truncations that interpolate a locality knob in C$^\ast$-algebraic kernel learning~\cite{hashimoto2024spectral,hashimoto2023rkhm}. The analogy is exact at the level of the construction---a single parameter contracting a noncommutative algebra to a tractable, structure-respecting subspace---but the simulation setting supplies three guarantees the kernel construction does not: a quantitative \emph{geometric convergence rate} in the level rather than mere convergence (Theorem~\ref{thm:spectral-rate}); an \emph{a priori dynamical certificate} that turns the truncation level into a function of the target accuracy (Corollary~\ref{cor:bandwidth}), whose own gate-level realization we repair by a symmetric compilation (Theorem~\ref{thm:symmetric-compilation}), the analogue of the kernel construction's positivity-restoring smoothing; and a measurable downstream payoff---an advance of the algorithm's accuracy--cost frontier. This places the work within the broader programme of structure-preserving, physics-constrained operator learning, where a restricted, symmetry-respecting hypothesis class is what makes generalization both data-efficient and certifiable.
 
-This manuscript is the eleventh in a single-author programme on spectral truncation of operators for quantum algorithms, and it transfers a method developed for variational optimization to Hamiltonian simulation. The programme begins with graph-conditioned trust regions for query-efficient quantum approximate optimization~\cite{huynh2026gctr} and their uncertainty-calibrated extensions~\cite{huynh2026gctrcal,huynh2026gctrcalpro}, quantifies the measurement cost of warm-started low-depth schedules~\cite{huynh2026meascost}, and certifies the associated query budgets~\cite{huynh2026certqb}. It then establishes topology-conditioned parameter transfer for budgeted graph optimization~\cite{huynh2026paramxfer,huynh2026paramxferB}, identifies operator-spectral truncated priors as the object that makes such transfer query-efficient~\cite{huynh2026ostqaoa}, and extends the spectral-truncation graph kernels beyond depth one~\cite{huynh2026topoqaoa}. The most recent entry carries the truncation into product-formula dynamics, cancelling the leading Trotter error by commutator-graph scheduling at zero gate overhead~\cite{huynh2026topoham}. The present work completes that move: rather than scheduling away the leading error term, it treats the entire finite-step residual as the operator to be spectrally truncated, filtered by Pauli weight, and compiled, so the same locality-indexed contraction that selected variational templates now selects the simulation correction and, through the certificate of Corollary~\ref{cor:bandwidth}, fixes its bandwidth a priori. The same operator-spectral / spectral-truncation toolkit that the programme has built up across variational optimization and product-formula dynamics is what this manuscript carries into Hamiltonian simulation, connected throughout by its shared locality-indexed truncation.
+This manuscript is the eleventh in a single-author programme on spectral truncation of operators for quantum algorithms, and it transfers a method developed for variational optimization to Hamiltonian simulation. The programme begins with graph-conditioned trust regions for query-efficient quantum approximate optimization~\cite{huynh2026gctr} and their uncertainty-calibrated extensions~\cite{huynh2026gctrcal,huynh2026gctrcalpro}, quantifies the measurement cost of warm-started low-depth schedules~\cite{huynh2026meascost}, and certifies the associated query budgets~\cite{huynh2026certqb}. It then establishes topology-conditioned parameter transfer for budgeted graph optimization~\cite{huynh2026paramxfer,huynh2026paramxferB}, identifies operator-spectral truncated priors as the object that makes such transfer query-efficient~\cite{huynh2026ostqaoa}, and extends the spectral-truncation graph kernels beyond depth one~\cite{huynh2026topoqaoa}. The most recent entry carries the truncation into product-formula dynamics, cancelling the leading Trotter error by commutator-graph scheduling at zero gate overhead~\cite{huynh2026topoham}. The present work completes that move: rather than scheduling away the leading error term, it treats the entire finite-step residual as the operator to be spectrally truncated, filtered by Pauli weight, and compiled, so the same locality-indexed contraction that selected variational templates now selects the simulation correction and, through the certificate of Corollary~\ref{cor:bandwidth}, fixes its bandwidth a priori. The same operator-spectral / spectral-truncation toolkit recurs across the rest of the programme---structured neural and transfer-operator decoders for correlated quantum noise~\cite{huynh2026gnndec,huynh2026topoqec,huynh2026covdec,huynh2026fiber}, structure-preserving learning of open-system dynamics~\cite{huynh2026cptppinn}, inductive classification of quantum phases~\cite{huynh2026dsto}, and drift detection on quantum hardware~\cite{huynh2026drift}---which this manuscript connects to through its shared locality-indexed truncation.
 
 % ============================================================
 % RESULTS
@@ -1229,55 +1229,55 @@ The residual-generator framework suggests several concrete research extensions. 
 \bibitem{huynh2026gctrcal}
 \bibinfo{author}{Huynh, M.}
 \newblock \bibinfo{title}{Graph-conditioned trust regions for uncertainty-calibrated quantum approximate optimization}.
-\newblock \emph{\bibinfo{journal}{Manuscript in preparation}}
+\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:2026.XXXXX}}
   (\bibinfo{year}{2026}).
 
 \bibitem{huynh2026gctrcalpro}
 \bibinfo{author}{Huynh, M.}
 \newblock \bibinfo{title}{Graph-conditioned trust regions for uncertainty-calibrated quantum approximate optimization (extended)}.
-\newblock \emph{\bibinfo{journal}{Manuscript in preparation}}
+\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:2026.XXXXX}}
   (\bibinfo{year}{2026}).
 
 \bibitem{huynh2026meascost}
 \bibinfo{author}{Huynh, M.}
 \newblock \bibinfo{title}{The measurement cost of warm-started low-depth QAOA}.
-\newblock \emph{\bibinfo{journal}{Manuscript in preparation}}
+\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:2026.XXXXX}}
   (\bibinfo{year}{2026}).
 
 \bibitem{huynh2026certqb}
 \bibinfo{author}{Huynh, M.}
 \newblock \bibinfo{title}{Certified query budgets for the quantum approximate optimization algorithm}.
-\newblock \emph{\bibinfo{journal}{Manuscript in preparation}}
+\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:2026.XXXXX}}
   (\bibinfo{year}{2026}).
 
 \bibitem{huynh2026paramxfer}
 \bibinfo{author}{Huynh, M.}
 \newblock \bibinfo{title}{Topology-Conditioned QAOA Parameter Transfer for Budgeted Graph Optimization}.
-\newblock \emph{\bibinfo{journal}{Manuscript in preparation}}
+\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:2026.XXXXX}}
   (\bibinfo{year}{2026}).
 
 \bibitem{huynh2026paramxferB}
 \bibinfo{author}{Huynh, M.}
 \newblock \bibinfo{title}{Topology-Conditioned QAOA Parameter Transfer for Budgeted Graph Optimization (companion)}.
-\newblock \emph{\bibinfo{journal}{Manuscript in preparation}}
+\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:2026.XXXXX}}
   (\bibinfo{year}{2026}).
 
 \bibitem{huynh2026ostqaoa}
 \bibinfo{author}{Huynh, M.}
 \newblock \bibinfo{title}{Operator-Spectral Truncated Priors for Query-Efficient QAOA Parameter Search}.
-\newblock \emph{\bibinfo{journal}{Manuscript in preparation}}
+\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:2026.XXXXX}}
   (\bibinfo{year}{2026}).
 
 \bibitem{huynh2026topoqaoa}
 \bibinfo{author}{Huynh, M.}
 \newblock \bibinfo{title}{Spectral-truncation graph kernels for QAOA warm starts: topology-conditioned schedule transfer beyond depth one}.
-\newblock \emph{\bibinfo{journal}{Manuscript in preparation}}
+\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:2026.XXXXX}}
   (\bibinfo{year}{2026}).
 
 \bibitem{huynh2026topoham}
 \bibinfo{author}{Huynh, M.}
 \newblock \bibinfo{title}{Zero-Overhead Cancellation of the Leading Trotter Error via Commutator-Graph Scheduling}.
-\newblock \emph{\bibinfo{journal}{Manuscript in preparation}}
+\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:2026.XXXXX}}
   (\bibinfo{year}{2026}).
 
 \bibitem{nguyen2025zassenhaus}
@@ -1312,6 +1312,47 @@ The residual-generator framework suggests several concrete research extensions. 
   Conference on Artificial Intelligence and Statistics (AISTATS)}}
   (\bibinfo{year}{2023}).
 
+\bibitem{huynh2026gnndec}
+\bibinfo{author}{Huynh, M.}
+\newblock \bibinfo{title}{Learning to decode correlated quantum errors: a topological graph neural decoder that surpasses minimum-weight matching under structured circuit-level noise}.
+\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:2026.XXXXX}}
+  (\bibinfo{year}{2026}).
+
+\bibitem{huynh2026topoqec}
+\bibinfo{author}{Huynh, M.}
+\newblock \bibinfo{title}{Transfer-Operator Decoding of Structured Noise in Quantum Error Correction}.
+\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:2026.XXXXX}}
+  (\bibinfo{year}{2026}).
+
+\bibitem{huynh2026covdec}
+\bibinfo{author}{Huynh, M.}
+\newblock \bibinfo{title}{Covariance-aware hybrid decoding of surface codes under spatially and temporally correlated noise}.
+\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:2026.XXXXX}}
+  (\bibinfo{year}{2026}).
+
+\bibitem{huynh2026fiber}
+\bibinfo{author}{Huynh, M.}
+\newblock \bibinfo{title}{Syndrome fiber bundle: Gauge-equivariant neural decoding with calibrated uncertainty for correlated quantum noise}.
+\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:2026.XXXXX}}
+  (\bibinfo{year}{2026}).
+
+\bibitem{huynh2026cptppinn}
+\bibinfo{author}{Huynh, M.}
+\newblock \bibinfo{title}{Structure-preserving physics-informed learning of open quantum dynamics with spectral-frame encodings and operator-system truncation}.
+\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:2026.XXXXX}}
+  (\bibinfo{year}{2026}).
+
+\bibitem{huynh2026dsto}
+\bibinfo{author}{Huynh, M.}
+\newblock \bibinfo{title}{Directed spectral-truncated operators for inductive classification of quantum phases across a control-parameter sweep}.
+\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:2026.XXXXX}}
+  (\bibinfo{year}{2026}).
+
+\bibitem{huynh2026drift}
+\bibinfo{author}{Huynh, M.}
+\newblock \bibinfo{title}{Causal Spectral-Truncation Kernels: Noncommutativity Certifies Drift Detectability in Quantum Hardware}.
+\newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:2026.XXXXX}}
+  (\bibinfo{year}{2026}).
 
 \end{thebibliography}
 
