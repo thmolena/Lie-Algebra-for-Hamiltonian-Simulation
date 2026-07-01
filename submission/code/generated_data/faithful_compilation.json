@@ -5,13 +5,13 @@
     "w": 3,
     "n_terms": 33,
     "n_layers": 9,
-    "oracle_error": 0.00015454077329082462,
-    "first_order_error": 0.00015502824252205678,
-    "symmetric_error": 0.00015453268208240307,
+    "oracle_error": 0.00015454077329232614,
+    "first_order_error": 0.00015502824252287603,
+    "symmetric_error": 0.00015453268208301158,
     "first_order_cnots": 88,
     "symmetric_cnots": 160,
-    "first_order_overhead": 1.0031543082181607,
-    "symmetric_overhead": 0.9999476435360762
+    "first_order_overhead": 1.0031543082137153,
+    "symmetric_overhead": 0.9999476435302983
   },
   {
     "n": 5,
@@ -19,13 +19,13 @@
     "w": 4,
     "n_terms": 41,
     "n_layers": 13,
-    "oracle_error": 1.8496906028393458e-07,
-    "first_order_error": 1.709311382996482e-05,
-    "symmetric_error": 1.9485914425995055e-07,
+    "oracle_error": 1.8496906112760883e-07,
+    "first_order_error": 1.7093113830919687e-05,
+    "symmetric_error": 1.9485914335753645e-07,
     "first_order_cnots": 136,
     "symmetric_cnots": 260,
-    "first_order_overhead": 92.4106648091645,
-    "symmetric_overhead": 1.0534688556066314
+    "first_order_overhead": 92.41066439282659,
+    "symmetric_overhead": 1.053468845922857
   },
   {
     "n": 5,
@@ -33,13 +33,13 @@
     "w": 5,
     "n_terms": 44,
     "n_layers": 15,
-    "oracle_error": 1.2202843071988925e-14,
-    "first_order_error": 5.442030476660315e-10,
-    "symmetric_error": 4.991449458468237e-10,
+    "oracle_error": 1.1910794851143838e-14,
+    "first_order_error": 5.442024265115334e-10,
+    "symmetric_error": 4.991472770556794e-10,
     "first_order_cnots": 192,
     "symmetric_cnots": 342,
-    "first_order_overhead": 44596.414495833764,
-    "symmetric_overhead": 40903.98793971122
+    "first_order_overhead": 45689.84969624186,
+    "symmetric_overhead": 41907.1340992616
   },
   {
     "n": 5,
@@ -47,13 +47,13 @@
     "w": 6,
     "n_terms": 44,
     "n_layers": 15,
-    "oracle_error": 1.2202843071988925e-14,
-    "first_order_error": 5.442030476660315e-10,
-    "symmetric_error": 4.991449458468237e-10,
+    "oracle_error": 1.1910794851143838e-14,
+    "first_order_error": 5.442024265115334e-10,
+    "symmetric_error": 4.991472770556794e-10,
     "first_order_cnots": 192,
     "symmetric_cnots": 342,
-    "first_order_overhead": 44596.414495833764,
-    "symmetric_overhead": 40903.98793971122
+    "first_order_overhead": 45689.84969624186,
+    "symmetric_overhead": 41907.1340992616
   },
   {
     "n": 6,
@@ -61,13 +61,13 @@
     "w": 3,
     "n_terms": 42,
     "n_layers": 9,
-    "oracle_error": 0.00022266578695179841,
-    "first_order_error": 0.00022184096973813775,
-    "symmetric_error": 0.00022265609339644233,
+    "oracle_error": 0.00022266578695210196,
+    "first_order_error": 0.00022184096973825257,
+    "symmetric_error": 0.00022265609339662895,
     "first_order_cnots": 114,
     "symmetric_cnots": 202,
-    "first_order_overhead": 0.9962957164414342,
-    "symmetric_overhead": 0.9999564658967649
+    "first_order_overhead": 0.9962957164405917,
+    "symmetric_overhead": 0.9999564658962399
   },
   {
     "n": 6,
@@ -75,13 +75,13 @@
     "w": 4,
     "n_terms": 54,
     "n_layers": 13,
-    "oracle_error": 3.653386890407923e-07,
-    "first_order_error": 2.1838993357487158e-05,
-    "symmetric_error": 3.758146375631117e-07,
+    "oracle_error": 3.6533868844004015e-07,
+    "first_order_error": 2.183899335933799e-05,
+    "symmetric_error": 3.7581463704026314e-07,
     "first_order_cnots": 186,
     "symmetric_cnots": 358,
-    "first_order_overhead": 59.77739016589262,
-    "symmetric_overhead": 1.0286746212119617
+    "first_order_overhead": 59.77739026925486,
+    "symmetric_overhead": 1.0286746214723501
   },
   {
     "n": 6,
@@ -89,13 +89,13 @@
     "w": 5,
     "n_terms": 60,
     "n_layers": 15,
-    "oracle_error": 4.186219362114401e-10,
-    "first_order_error": 7.954500891933656e-10,
-    "symmetric_error": 7.537474110459141e-10,
+    "oracle_error": 4.1862339066156784e-10,
+    "first_order_error": 7.954498604706229e-10,
+    "symmetric_error": 7.537474338116361e-10,
     "first_order_cnots": 274,
     "symmetric_cnots": 496,
-    "first_order_overhead": 1.9001634180765787,
-    "symmetric_overhead": 1.80054446708499
+    "first_order_overhead": 1.9001562698480385,
+    "symmetric_overhead": 1.8005382657200732
   },
   {
     "n": 6,
@@ -103,12 +103,12 @@
     "w": 6,
     "n_terms": 60,
     "n_layers": 15,
-    "oracle_error": 3.1421846873200204e-14,
-    "first_order_error": 7.954500891933656e-10,
-    "symmetric_error": 7.537474110459141e-10,
+    "oracle_error": 3.1948321852334596e-14,
+    "first_order_error": 7.954498604706229e-10,
+    "symmetric_error": 7.537474338116361e-10,
     "first_order_cnots": 274,
     "symmetric_cnots": 496,
-    "first_order_overhead": 25315.192082862817,
-    "symmetric_overhead": 23988.00471810547
+    "first_order_overhead": 24898.01699592231,
+    "symmetric_overhead": 23592.708164624823
   }
 ]

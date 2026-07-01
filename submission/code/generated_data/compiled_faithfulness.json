@@ -7,9 +7,9 @@
     "n_layers": 9,
     "correction_cnots": 80,
     "total_cnots": 88,
-    "oracle_error": 0.00015454077329082462,
-    "compiled_error": 0.00015502824252205678,
-    "compile_overhead": 1.0031543082181607
+    "oracle_error": 0.00015454077329232614,
+    "compiled_error": 0.00015502824252287603,
+    "compile_overhead": 1.0031543082137153
   },
   {
     "n": 5,
@@ -19,9 +19,9 @@
     "n_layers": 13,
     "correction_cnots": 128,
     "total_cnots": 136,
-    "oracle_error": 1.8496906028393458e-07,
-    "compiled_error": 1.709311382996482e-05,
-    "compile_overhead": 92.4106648091645
+    "oracle_error": 1.8496906112760883e-07,
+    "compiled_error": 1.7093113830919687e-05,
+    "compile_overhead": 92.41066439282659
   },
   {
     "n": 5,
@@ -31,9 +31,9 @@
     "n_layers": 15,
     "correction_cnots": 152,
     "total_cnots": 192,
-    "oracle_error": 1.2202843071988925e-14,
-    "compiled_error": 5.442030476660315e-10,
-    "compile_overhead": 44596.414495833764
+    "oracle_error": 1.1910794851143838e-14,
+    "compiled_error": 5.442024265115334e-10,
+    "compile_overhead": 45689.84969624186
   },
   {
     "n": 5,
@@ -43,9 +43,9 @@
     "n_layers": 15,
     "correction_cnots": 152,
     "total_cnots": 192,
-    "oracle_error": 1.2202843071988925e-14,
-    "compiled_error": 5.442030476660315e-10,
-    "compile_overhead": 44596.414495833764
+    "oracle_error": 1.1910794851143838e-14,
+    "compiled_error": 5.442024265115334e-10,
+    "compile_overhead": 45689.84969624186
   },
   {
     "n": 6,
@@ -55,9 +55,9 @@
     "n_layers": 9,
     "correction_cnots": 104,
     "total_cnots": 114,
-    "oracle_error": 0.00022266578695179841,
-    "compiled_error": 0.00022184096973813775,
-    "compile_overhead": 0.9962957164414342
+    "oracle_error": 0.00022266578695210196,
+    "compiled_error": 0.00022184096973825257,
+    "compile_overhead": 0.9962957164405917
   },
   {
     "n": 6,
@@ -67,9 +67,9 @@
     "n_layers": 13,
     "correction_cnots": 176,
     "total_cnots": 186,
-    "oracle_error": 3.653386890407923e-07,
-    "compiled_error": 2.1838993357487158e-05,
-    "compile_overhead": 59.77739016589262
+    "oracle_error": 3.6533868844004015e-07,
+    "compiled_error": 2.183899335933799e-05,
+    "compile_overhead": 59.77739026925486
   },
   {
     "n": 6,
@@ -79,9 +79,9 @@
     "n_layers": 15,
     "correction_cnots": 224,
     "total_cnots": 274,
-    "oracle_error": 4.186219362114401e-10,
-    "compiled_error": 7.954500891933656e-10,
-    "compile_overhead": 1.9001634180765787
+    "oracle_error": 4.1862339066156784e-10,
+    "compiled_error": 7.954498604706229e-10,
+    "compile_overhead": 1.9001562698480385
   },
   {
     "n": 6,
@@ -91,9 +91,9 @@
     "n_layers": 15,
     "correction_cnots": 224,
     "total_cnots": 274,
-    "oracle_error": 3.1421846873200204e-14,
-    "compiled_error": 7.954500891933656e-10,
-    "compile_overhead": 25315.192082862817
+    "oracle_error": 3.1948321852334596e-14,
+    "compiled_error": 7.954498604706229e-10,
+    "compile_overhead": 24898.01699592231
   },
   {
     "n": 7,
@@ -103,9 +103,9 @@
     "n_layers": 9,
     "correction_cnots": 128,
     "total_cnots": 140,
-    "oracle_error": 0.0002660060929273851,
-    "compiled_error": 0.0002659120425404158,
-    "compile_overhead": 0.9996464352153205
+    "oracle_error": 0.0002660060929273869,
+    "compiled_error": 0.00026591204254058454,
+    "compile_overhead": 0.999646435215948
   },
   {
     "n": 7,
@@ -115,9 +115,9 @@
     "n_layers": 13,
     "correction_cnots": 224,
     "total_cnots": 236,
-    "oracle_error": 5.479410803140471e-07,
-    "compiled_error": 2.694975201382665e-05,
-    "compile_overhead": 49.18366770087883
+    "oracle_error": 5.47941079171455e-07,
+    "compiled_error": 2.6949752014144857e-05,
+    "compile_overhead": 49.18366780401961
   },
   {
     "n": 7,
@@ -127,9 +127,9 @@
     "n_layers": 15,
     "correction_cnots": 296,
     "total_cnots": 356,
-    "oracle_error": 8.279418595837367e-10,
-    "compiled_error": 1.1038377725924078e-09,
-    "compile_overhead": 1.333231023187284
+    "oracle_error": 8.279446185273096e-10,
+    "compiled_error": 1.1038381836731701e-09,
+    "compile_overhead": 1.3332270769953198
   },
   {
     "n": 7,
@@ -139,8 +139,8 @@
     "n_layers": 15,
     "correction_cnots": 296,
     "total_cnots": 356,
-    "oracle_error": 1.7697661038437543e-13,
-    "compiled_error": 1.1038377725924078e-09,
-    "compile_overhead": 6237.195809067554
+    "oracle_error": 1.753525211106283e-13,
+    "compiled_error": 1.1038381836731701e-09,
+    "compile_overhead": 6294.96614409535
   }
 ]

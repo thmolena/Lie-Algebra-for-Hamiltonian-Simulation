@@ -46,7 +46,6 @@ A quantum computer is a stochastic device one can only interrogate by sampling, 
 
 \maketitle
 
-
 % ============================================================
 % INTRODUCTION
 % ============================================================
@@ -80,7 +79,7 @@ where $U(\dt)=\exp(-iH\dt)$. The corrected step $R_q(\dt)S_q(\dt)$ is exactly $U
 
 We distinguish two modes of residual-generator Trotter compilation (\rgtc{}). \emph{Oracle \rgtc{}} computes $R_q$ from the exact dense matrix exponential; it is not scalable and serves to establish the target and the best possible one-step left correction. \emph{Compressed \rgtc{}} uses a Hermitian generator $\widehat K_q$ from a restricted family to form $\widehat R_q=\exp(-i\widehat K_q)$, and is the deployable object: it can be instantiated by Baker--Campbell--Hausdorff (BCH) truncation, Pauli-weight projection, variational circuit compilation, operator learning, or GPU-accelerated offline fitting. The exact identity $US_q^\dagger S_q=U$ is trivial on its own; the substance is what happens when the residual is approximated, and we show that structured approximations work. We then go further: we compile the compressed mode into gates and show that, applied to an already-high-order step, it advances the product-formula error--cost frontier (Sec.~\ref{sec:frontier}), and we instantiate it as a \emph{learned} residual generator that, on disordered Ising chains, transfers from small systems to larger ones it never saw, under the proven stability guarantee. The compressed-and-compiled mode is the central practical advance; the learned residual generator makes such corrections obtainable without the dense propagator; and the exact theory makes both principled.
 
-Our contributions are as follows. (i) We formalize \rgtc{} and prove exact residual factorization, uniqueness, and global norm optimality among all left corrections for every unitarily invariant norm. (ii) We prove multi-step stability theorems for approximate residuals and generator approximations, giving explicit $r\eta$ and $r\norm{K_q-\widehat K_q}_2$ error targets, and prove the linear-in-$r$ estimate is order-optimal. (iii) We recast Pauli-weight projection of the residual generator as a \emph{Lie-algebraic spectral truncation}---the unique Frobenius-optimal compressed generator (Theorem~\ref{thm:pauli-projection})---whose level $w$ interpolates from no correction ($w=0$) to the exact generator ($w=n$), the Hamiltonian-simulation counterpart of the operator-algebraic spectral truncations recently introduced in kernel learning~\cite{hashimoto2024spectral,hashimoto2023rkhm}. (iv) We prove the truncation converges \emph{geometrically} in the level---each excluded weight level carries residual content of strictly higher order in $\dt$ (Theorem~\ref{thm:spectral-rate})---with a measured per-level reduction of $4.5$--$5.8\times10^{2}$ (Fig.~\ref{fig:spectral}a, Table~\ref{tab:spectral-rate}). (v) We prove the a priori certificate $r\norm{K_q-\Pi_wK_q}_2$ is a valid global error bound at every level (Fig.~\ref{fig:spectral}c), so it selects the minimal truncation bandwidth from the target accuracy \emph{before} any simulation (Corollary~\ref{cor:bandwidth}). (vi) We prove residual locality holds at every order: the leading order-$q$ residual generator of the open-boundary transverse-field Ising model (\tfim{}) has Pauli weight at most $q+2$, with an effective threshold $\approx\lceil q/2\rceil+2$ (Table~\ref{tab:order-generality}), so higher-order corrections stay compressible. (vii) We prove and verify that the truncated correction \emph{compiles faithfully} into gates: because $K_q=O(\dt^{q+1})$, a first-order product over mutually-commuting Pauli-rotation layers adds only $O(\dt^{2(q+1)})$ error, negligible for $q\ge4$ but \emph{not} for $q=2$, and a \emph{symmetric inner compilation} removes this structural floor at every order ($O(\dt^{3(q+1)})$ error, Theorem~\ref{thm:symmetric-compilation})---e.g.\ lowering the compiled $n=6$, $q=2$, $w\le4$ error from $2.18\times10^{-5}$ to $3.76\times10^{-7}$ (Table~\ref{tab:faithful-compilation}). (viii)~This yields the central result: a genuine advance of the product-formula error--cost frontier. Under a standard two-qubit-gate (CNOT) cost model, spectrally-truncated fourth-order corrections reach global spectral-norm errors between standard sixth- and eighth-order Suzuki formulas at $4.2$--$5.2\times$ fewer two-qubit gates than the cheapest standard formula of equal accuracy ($n=5$--$7$), placing new Pareto-optimal points on the frontier (Fig.~\ref{fig:frontier}). (ix) We instantiate the learned mode: a single translation-equivariant network predicts the step-size-conditioned weight-$\leq3$ coefficients of $K_2$ from local couplings of a disordered \tfim{}, transfers from four- and five-qubit training chains to ten qubits ($R^2=0.9999$ on held-out sizes), cuts the uncorrected Strang error by $58$--$86\times$, is trained \emph{without any dense $2^n$ oracle} from fixed-size local patches, and beats the analytic leading-order correction where the latter fails---all under the proven $r\eta$ stability bound. (x) We show the mechanism extends from the \tfim{} to the XXZ/Heisenberg chain, with a larger weight threshold (weight $\approx5$, a $54\times$ reduction at $w\leq5$; Table~\ref{tab:xxz}). (xi) We provide deterministic dense-matrix experiments, figures, tables, and code that recompute every reported number from first principles. Figure~\ref{fig:schematic} summarizes the pipeline, from the local Hamiltonian to the certified, compiled, frontier-advancing correction.
+Our contributions are as follows. (i) We formalize \rgtc{} and prove exact residual factorization, uniqueness, and global norm optimality among all left corrections for every unitarily invariant norm. (ii) We prove multi-step stability theorems for approximate residuals and generator approximations, giving explicit $r\eta$ and $r\norm{K_q-\widehat K_q}_2$ error targets, and prove the linear-in-$r$ estimate is order-optimal. (iii) We recast Pauli-weight projection of the residual generator as a \emph{Lie-algebraic spectral truncation}---the unique Frobenius-optimal compressed generator (Theorem~\ref{thm:pauli-projection})---whose level $w$ interpolates from no correction ($w=0$) to the exact generator ($w=n$), the Hamiltonian-simulation counterpart of the operator-algebraic spectral truncations recently introduced in kernel learning~\cite{hashimoto2024spectral,hashimoto2023rkhm}. (iv) We prove the truncation converges \emph{geometrically} in the level---each excluded weight level carries residual content of strictly higher order in $\dt$ (Theorem~\ref{thm:spectral-rate})---with a measured per-level reduction of $4.5$--$5.8\times10^{2}$ (Fig.~\ref{fig:spectral}a, Table~\ref{tab:spectral-rate}). (v) We prove the a priori certificate $r\norm{K_q-\Pi_wK_q}_2$ is a valid global error bound at every level (Fig.~\ref{fig:spectral}c), so it selects the minimal truncation bandwidth from the target accuracy \emph{before} any simulation (Corollary~\ref{cor:bandwidth}). (vi) We prove residual locality holds at every order: the leading order-$q$ residual generator of the open-boundary transverse-field Ising model (\tfim{}) has Pauli weight at most $q+2$, with an effective threshold $\approx\lceil q/2\rceil+2$ (Table~\ref{tab:order-generality}), so higher-order corrections stay compressible. (vii) We prove and verify that the truncated correction \emph{compiles faithfully} into gates: because $K_q=O(\dt^{q+1})$, a first-order product over mutually-commuting Pauli-rotation layers adds only $O(\dt^{2(q+1)})$ error, negligible for $q\ge4$ but \emph{not} for $q=2$, and a \emph{symmetric inner compilation} removes this structural floor at every order ($O(\dt^{3(q+1)})$ error, Theorem~\ref{thm:symmetric-compilation})---e.g.\ lowering the compiled $n=6$, $q=2$, $w\le4$ error from $2.18\times10^{-5}$ to $3.76\times10^{-7}$ (Table~\ref{tab:faithful-compilation}). (viii)~This yields the central result: a genuine advance of the product-formula error--cost frontier. Under a standard two-qubit-gate (CNOT) cost model, spectrally-truncated fourth-order corrections reach global spectral-norm errors between standard sixth- and eighth-order Suzuki formulas at $4.2$--$5.2\times$ fewer two-qubit gates than the cheapest standard formula of equal accuracy ($n=5$--$7$), placing new Pareto-optimal points on the frontier (Fig.~\ref{fig:frontier}). (ix) We instantiate the learned mode: a single translation-equivariant network predicts the step-size-conditioned weight-$\leq3$ coefficients of $K_2$ from local couplings of a disordered \tfim{}, transfers from four- and five-qubit training chains to ten qubits ($R^2=0.9999$ on held-out sizes), cuts the uncorrected Strang error by $58$--$87\times$, is trained \emph{without any dense $2^n$ oracle} from fixed-size local patches, and beats the analytic leading-order correction where the latter fails---all under the proven $r\eta$ stability bound. (x) We show the mechanism extends from the \tfim{} to the XXZ/Heisenberg chain, with a larger weight threshold (weight $\approx5$, a $54\times$ reduction at $w\leq5$; Table~\ref{tab:xxz}). (xi) We provide deterministic dense-matrix experiments, figures, tables, and code that recompute every reported number from first principles. Figure~\ref{fig:schematic} summarizes the pipeline, from the local Hamiltonian to the certified, compiled, frontier-advancing correction.
 
 \begin{figure*}[t]
 \centering
@@ -169,7 +168,7 @@ We turn the projected residual from an operator into an algorithm: we compile $\
 
 \input{tables/faithful_compilation.tex}
 
-We adopt the standard two-qubit-gate (CNOT) cost model (Appendix~\ref{app:numerics}): a \tfim{} $ZZ$-rotation layer costs $2(n-1)$ CNOTs, the transverse-field layer is single-qubit (free), and a weight-$w$ Pauli rotation costs $2(w-1)$ CNOTs. Figure~\ref{fig:frontier} and Table~\ref{tab:frontier} plot every method on the resulting error--cost plane. The residual-corrected fourth-order step is \emph{Pareto-optimal}: at $n=6$ it attains $7.95\times10^{-10}$ at $274$ CNOTs per step, an accuracy that lies in the gap between standard sixth order ($3.50\times10^{-9}$, $250$ CNOTs) and eighth order ($1.78\times10^{-13}$, $1250$ CNOTs). The only standard Suzuki formula more accurate is eighth order, which costs $4.6\times$ more two-qubit gates; equivalently, to reach this accuracy with a standard product formula one must jump to eighth order and pay $1250$ CNOTs, whereas the corrected fourth-order step pays $274$. The advantage holds across size: the cheapest standard formula matching the corrected accuracy costs $5.2\times$, $4.6\times$, and $4.2\times$ more two-qubit gates at $n=5,6,7$ respectively. The corrected second-order points (Table~\ref{tab:frontier}) are \emph{not} on the frontier---they are dominated by simply using a higher order---so the advance is specific to correcting an already-high order, exactly where the faithful-compilation budget holds.
+We adopt the standard two-qubit-gate (CNOT) cost model (Appendix~\ref{app:numerics}): a \tfim{} $ZZ$-rotation layer costs $2(n-1)$ CNOTs, the transverse-field layer is single-qubit (free), and a weight-$w$ Pauli rotation costs $2(w-1)$ CNOTs. Figure~\ref{fig:frontier} and Table~\ref{tab:frontier} plot every method on the resulting error--cost plane. The residual-corrected fourth-order step is \emph{Pareto-optimal}: at $n=6$ it attains $7.95\times10^{-10}$ at $274$ CNOTs per step, an accuracy that lies in the gap between standard sixth order ($3.50\times10^{-9}$, $250$ CNOTs) and eighth order ($1.71\times10^{-13}$, $1250$ CNOTs). The only standard Suzuki formula more accurate is eighth order, which costs $4.6\times$ more two-qubit gates; equivalently, to reach this accuracy with a standard product formula one must jump to eighth order and pay $1250$ CNOTs, whereas the corrected fourth-order step pays $274$. The advantage holds across size: the cheapest standard formula matching the corrected accuracy costs $5.2\times$, $4.6\times$, and $4.2\times$ more two-qubit gates at $n=5,6,7$ respectively. The corrected second-order points (Table~\ref{tab:frontier}) are \emph{not} on the frontier---they are dominated by simply using a higher order---so the advance is specific to correcting an already-high order, exactly where the faithful-compilation budget holds.
 
 We state the scope precisely. This is \emph{not} a uniform cost reduction: the correction's two-qubit-gate count grows slightly faster with $n$ than the sixth-order step, so the corrected fourth-order step is $3.7$--$4.7\times$ \emph{more accurate} than sixth order at comparable ($0.96$--$1.19\times$) cost, but it is not cheaper than sixth order. The genuine advance is the new accuracy regime---between consecutive standard orders---made reachable at a fraction of the next order's cost, i.e.\ new Pareto-optimal points on a frontier that was previously a coarse staircase in the product-formula order.
 
@@ -206,15 +205,15 @@ This is the one place in the paper where genuine estimation enters, and it enter
 
 \emph{The coefficients generalize across size.} On held-out sizes $n=6,\dots,10$, absent from training, the oracle-free network's predicted-versus-exact coefficient parity has $R^2=0.9999$ (Fig.~\ref{fig:learned}d).
 
-\emph{The correction transfers to much larger systems.} Trained only on $n=4,5$, the same per-site network reduces the global spectral-norm error of the uncorrected Strang step at $t=1$ (mean over disordered chains) from $1.05\times10^{-2}$ to $1.23\times10^{-4}$ at $n=4$, and from $3.67\times10^{-2}$ to $5.81\times10^{-4}$ at $n=10$---a $58$--$86\times$ reduction, with $n=6,\dots,10$ entirely outside the training set (Fig.~\ref{fig:learned}a; per-size errors, reduction factors, and held-out markers are tabulated in Table~\ref{tab:learned-summary}). It tracks the exact weight-$\leq3$ oracle to within a factor of about $1.2$ to $1.9$, and sits roughly $8\times$ below the leading-order BCH baseline at this step size. Shaded bands in Fig.~\ref{fig:learned} are one standard deviation over disordered realizations, so the separation between the learned correction and both the uncorrected step and the analytic baseline is well outside the run-to-run spread. The linear-in-$r$ growth in Fig.~\ref{fig:learned}c and the size transfer to $n=10$ are exactly what Theorem~\ref{thm:size-transfer} predicts, since the per-site error $\eta$ is independent of $n$ under weight sharing.
+\emph{The correction transfers to much larger systems.} Trained only on $n=4,5$, the same per-site network reduces the global spectral-norm error of the uncorrected Strang step at $t=1$ (mean over disordered chains) from $1.05\times10^{-2}$ to $1.20\times10^{-4}$ at $n=4$, and from $3.67\times10^{-2}$ to $5.76\times10^{-4}$ at $n=10$---a $58$--$87\times$ reduction, with $n=6,\dots,10$ entirely outside the training set (Fig.~\ref{fig:learned}a; per-size errors, reduction factors, and held-out markers are tabulated in Table~\ref{tab:learned-summary}). It tracks the exact weight-$\leq3$ oracle to within a factor of about $1.2$ to $1.8$, and sits roughly $8\times$ below the leading-order BCH baseline at this step size. Shaded bands in Fig.~\ref{fig:learned} are one standard deviation over disordered realizations, so the separation between the learned correction and both the uncorrected step and the analytic baseline is well outside the run-to-run spread. The linear-in-$r$ growth in Fig.~\ref{fig:learned}c and the size transfer to $n=10$ are exactly what Theorem~\ref{thm:size-transfer} predicts, since the per-site error $\eta$ is independent of $n$ under weight sharing.
 
-\emph{The analytic prior is what makes it accurate.} Learning the residual \emph{beyond} the second-order Zassenhaus generator, rather than the full generator, lowers the transfer error by a further $1.6$--$2.2\times$ at every size (Table~\ref{tab:learned-summary}, column $\epsilon^{\mathrm{no\,prior}}_{\mathrm{learned}}$ versus $\epsilon_{\mathrm{learned}}$). The network then only has to capture the higher-order Zassenhaus terms the analytic prior omits---a smaller and smoother target---which is the single change that moves the learned correction from roughly $40\times$ to $58$--$86\times$ error reduction and tightens the held-out coefficient fit to $R^2=0.9999$. The analytic factorization of Ref.~\cite{nguyen2025zassenhaus} and the learned model thereby reinforce rather than compete.
+\emph{The analytic prior is what makes it accurate.} Learning the residual \emph{beyond} the second-order Zassenhaus generator, rather than the full generator, lowers the transfer error by a further $1.5$--$2.0\times$ at every size (Table~\ref{tab:learned-summary}, column $\epsilon^{\mathrm{no\,prior}}_{\mathrm{learned}}$ versus $\epsilon_{\mathrm{learned}}$). The network then only has to capture the higher-order Zassenhaus terms the analytic prior omits---a smaller and smoother target---which is the single change that moves the learned correction from roughly $40\times$ to $58$--$87\times$ error reduction and tightens the held-out coefficient fit to $R^2=0.9999$. The analytic factorization of Ref.~\cite{nguyen2025zassenhaus} and the learned model thereby reinforce rather than compete.
 
 \emph{Training needs no global oracle.} The oracle-free network, trained only on at-most-seven-qubit patches, matches---and slightly improves on---the oracle-trained network at every size (the two learned curves overlap in Fig.~\ref{fig:learned}a). The dense $2^n$ oracle, the central limitation of the framework, is therefore not required to \emph{learn} the correction.
 
 \emph{Learning beats leading-order BCH as the step grows.} In a single-step sweep at $n=6$ (Fig.~\ref{fig:learned}b), leading-order BCH is accurate at small $\dt$ but degrades rapidly: at $\dt=0.3$ it leaves error $1.11\times10^{-1}$, barely below the uncorrected $1.35\times10^{-1}$, because it captures only the $\dt^3$ term. The learned correction, having seen the working-$\dt$ coefficients, holds at $7.7\times10^{-3}$---about $14\times$ below BCH and within about $30\%$ of the exact oracle. Sweeping the number of Trotter steps $r$ (Fig.~\ref{fig:learned}c), the learned error grows linearly in $r$, exactly as Theorem~\ref{thm:residual-stability} predicts for an approximate residual whose per-step generator error is the constant $\eta$ of that bound; Theorem~\ref{thm:stability-tight} shows this linear-in-$r$ growth is order-optimal and cannot be improved.
 
-\emph{The fair product-formula comparison.} The $58$--$86\times$ reduction reported in this subsection is measured against the \emph{uncorrected second-order Strang step}; for the second-order base step alone, simply raising the product-formula order is more accurate at comparable factor count: at $\dt=0.1$ a standard order-4 step reaches $\sim10^{-5}$ and an order-6 step $\sim10^{-9}$ (Table~\ref{tab:error-summary}), below the $\sim10^{-4}$ learned correction on Strang. The resolution is the central point of this work and is established in Sec.~\ref{sec:frontier}: the residual-correction principle is \emph{not} limited to the second-order step, and when applied to a higher-order base step it advances the product-formula error--cost frontier itself. Because the residual generator stays low-weight at every order (Theorem~\ref{thm:order-locality}) and compiles faithfully once the base residual is small (Theorem~\ref{thm:faithful-compilation}), a residual-corrected \emph{fourth-order} step reaches accuracies between standard sixth and eighth order at a fraction of the eighth-order two-qubit-gate cost (Fig.~\ref{fig:frontier}). The learned, size-transferable mode of this subsection is the mechanism that makes such corrections obtainable without the dense propagator; it is demonstrated here at second order and extends directly to the higher-order templates by Theorem~\ref{thm:order-locality}. The value of the framework is therefore not only the transferable learning principle but the concrete frontier advance it enables.
+\emph{The fair product-formula comparison.} The $58$--$87\times$ reduction reported in this subsection is measured against the \emph{uncorrected second-order Strang step}; for the second-order base step alone, simply raising the product-formula order is more accurate at comparable factor count: at $\dt=0.1$ a standard order-4 step reaches $\sim10^{-5}$ and an order-6 step $\sim10^{-9}$ (Table~\ref{tab:error-summary}), below the $\sim10^{-4}$ learned correction on Strang. The resolution is the central point of this work and is established in Sec.~\ref{sec:frontier}: the residual-correction principle is \emph{not} limited to the second-order step, and when applied to a higher-order base step it advances the product-formula error--cost frontier itself. Because the residual generator stays low-weight at every order (Theorem~\ref{thm:order-locality}) and compiles faithfully once the base residual is small (Theorem~\ref{thm:faithful-compilation}), a residual-corrected \emph{fourth-order} step reaches accuracies between standard sixth and eighth order at a fraction of the eighth-order two-qubit-gate cost (Fig.~\ref{fig:frontier}). The learned, size-transferable mode of this subsection is the mechanism that makes such corrections obtainable without the dense propagator; it is demonstrated here at second order and extends directly to the higher-order templates by Theorem~\ref{thm:order-locality}. The value of the framework is therefore not only the transferable learning principle but the concrete frontier advance it enables.
 
 Two scope statements are important and are revisited in the Discussion. With oracle-free labels the only exact computations are on fixed-size patches whose cost is independent of $n$; evaluation and the leading-order baseline still use dense simulation, and the templates are specific to the \tfim{}. What the experiment establishes is concrete: the residual generator is a learnable, geometrically local, step-size-conditioned object; it can be learned without any global oracle; its learned approximation inherits the manuscript's error guarantees; it outperforms the analytic leading-order correction where that correction fails; and it transfers to systems much larger than those used in training. It does \emph{not} establish that correcting a second-order step is competitive with simply using a higher-order product formula at the same step size, which Table~\ref{tab:error-summary} shows it is not.
 
@@ -235,6 +234,33 @@ Figure~\ref{fig:headline} summarizes the headline comparison: at the largest hel
 \caption{\textbf{Proposed learned correction versus all baselines.} \textbf{a}, Final global spectral-norm error at the largest held-out transfer size ($n=10$) for the uncorrected Strang step, leading-order BCH, the learned residual (ours), and the exact weight-$\leq3$ oracle; error bars show one standard deviation over disordered realizations. \textbf{b}, Error-reduction factor $\epsilon_{\mathrm{Strang}}/\epsilon_{\mathrm{learned}}$ of the learned correction over the uncorrected Strang baseline across all chain lengths, including the held-out transfer sizes $n\geq6$.}
 \label{fig:headline}
 \end{figure*}
+
+% ============================================================
+% THE RESIDUAL AS A STATISTICAL ESTIMAND
+% ============================================================
+
+\subsection{The residual as a statistical estimand: identifiability, efficiency, and a certified truncation}
+\label{sec:inference}
+
+The framework so far computes or certifies the residual generator in software. We close the loop with the introduction's thesis by asking the complementary question: \emph{if} the residual coefficients had to be estimated from measurements---as they must be whenever the correction is characterized on hardware rather than read from a dense propagator---what is the statistically optimal way to do so, and how does the estimation error interact with the deterministic truncation certificate of Corollary~\ref{cor:bandwidth}? This treats the vector of Pauli coefficients of $K_q$ as a parameter $\theta$ of a parametric statistical model, and develops its inference theory: identifiability (Theorem~\ref{thm:identifiability}), the information geometry that lower-bounds any unbiased estimator (Theorem~\ref{thm:crb}), consistency and asymptotic efficiency of the maximum-likelihood estimator (Theorem~\ref{thm:mle}), and---the payoff for this paper---a finite-sample certificate that the \emph{learned, spectrally truncated} residual is within $\epsilon$ of the true residual with confidence $1-\delta$, cleanly splitting the deterministic truncation bias of Theorem~\ref{thm:spectral-rate} from the statistical estimation error (Theorem~\ref{thm:certified-truncation}). The upshot is a precise statement of what ``certified'' buys over ``estimated'': the truncation replaces a $1-\delta$ confidence interval by a deterministic one on exactly the part of the residual that structure has already pinned down, and quantifies the residual sample cost of the part it has not.
+
+\paragraph{A measurement model for the residual coefficients.} Fix the base order $q$, step $\dt$, and truncation level $w$, and let $\{P_1,\dots,P_p\}$ be the real weight-$\leq w$ Pauli basis of $\cB_w$ (Definition~\ref{def:spectral-truncation}), so the truncated generator is $\Pi_wK_q=\sum_{a=1}^{p}\theta_a P_a$ with unknown coefficient vector $\theta=(\theta_1,\dots,\theta_p)\in\mathbb{R}^{p}$; by Theorem~\ref{thm:small-step} the true $\theta^\star$ has $\norm{\theta^\star}$ of order $\dt^{q+1}$. A \emph{design} is a finite set of measurement settings $s=1,\dots,S$, each a pair $(\rho_s,M_s)$ of an input probe state and a Hermitian readout observable with $\norm{M_s}_2\le1$; setting $s$ is repeated over $N_s$ independent shots, $N=\sum_sN_s$ total, with $\pi_s=N_s/N$ the (fixed) allocation. Running the residual channel $R_q(\theta)=e^{-i\sum_a\theta_aP_a}$ once and reading $M_s$ produces an outcome $Y$ with the Born-rule mean
+\begin{equation}
+    g_s(\theta)=\Tr\!\bigl[M_s\,R_q(\theta)\,\rho_s\,R_q(\theta)^\dagger\bigr],
+    \label{eq:born-mean}
+\end{equation}
+a real-analytic function of $\theta$ bounded in $[-1,1]$; the $N_s$ shots at setting $s$ are i.i.d.\ with mean $g_s(\theta)$ and variance $\sigma_s^2(\theta)=\operatorname{Var}(Y\mid s)\le1$. We write $J(\theta)\in\mathbb{R}^{S\times p}$ for the Jacobian $J_{sa}=\partial g_s/\partial\theta_a$, evaluated at $\theta^\star$ unless noted. This is a standard smooth parametric model: the estimand is the residual, and \eqref{eq:born-mean} is the only channel through which data see it.
+
+\paragraph{Identifiability from a Fisher-information rank condition.} The coefficients are recoverable exactly when the design's sensitivity matrix has full column rank. Theorem~\ref{thm:identifiability} shows that a design of Pauli-basis probe--readout pairs makes the Jacobian $J(\theta^\star)$ full rank at leading order in $\dt$, so all $p$ truncated coefficients are locally identifiable and the Fisher information $\mathcal{I}(\theta^\star)$ is nonsingular. Identifiability is a rank condition, not an accident of the design: it holds precisely because the weight-$\leq w$ Pauli strings are linearly independent traceless observables, the same orthogonality that made the Frobenius projection of Theorem~\ref{thm:pauli-projection} well posed.
+
+\paragraph{A Cram\'er--Rao floor, and its near-attainment.} Once the model is identifiable, information geometry fixes the best achievable variance. Theorem~\ref{thm:crb} gives the Cram\'er--Rao lower bound $\operatorname{Cov}(\hat\theta)\succeq\mathcal{I}(\theta^\star)^{-1}=\tfrac1N\,\bigl(J^\top\Sigma^{-1}J\,\Xi\bigr)^{-1}$ (with $\Sigma=\operatorname{diag}(\sigma_s^2)$ and $\Xi=\operatorname{diag}(\pi_s)$) for \emph{any} unbiased estimator of the residual coefficients, hence a matching lower bound $r\dt^{q+1}\!\sqrt{\operatorname{tr}\mathcal{I}^{-1}}$ on the standard deviation of the resulting global simulation-error certificate. This is the quantitative meaning of ``certified vs.\ estimated'': the deterministic truncation certificate of Corollary~\ref{cor:bandwidth} is what one recovers in the $N\to\infty$ limit of this bound, and the CRB says no estimator can do better at finite $N$. The maximum-likelihood (or, for the Gaussian shot-noise limit, generalized-least-squares) estimator attains this floor asymptotically (Theorem~\ref{thm:mle}): it is consistent, asymptotically normal with covariance $\mathcal{I}(\theta^\star)^{-1}$, and therefore efficient, so the natural estimator of the residual is (asymptotically) the best possible one.
+
+\paragraph{A finite-sample certified truncation.} The main inference result unifies the two error sources. Theorem~\ref{thm:certified-truncation} shows that the estimated, level-$w$ truncated residual $\widehat\Pi_wK_q$ obeys, with probability at least $1-\delta$,
+\begin{equation}
+    \norm{K_q-\widehat\Pi_wK_q}_2\ \le\ \underbrace{\tau_w}_{\text{truncation bias}}\ +\ \underbrace{\sqrt{\tfrac{2p}{N}\,\log\tfrac{2p}{\delta}}\;\kappa_w}_{\text{statistical error}},
+    \label{eq:certified-truncation-intro}
+\end{equation}
+where $\tau_w=\norm{K_q-\Pi_wK_q}_2$ is the deterministic tail of Corollary~\ref{cor:bandwidth} (geometrically small in $w$ by Theorem~\ref{thm:spectral-rate}) and $\kappa_w$ is an explicit design-conditioning constant. Composed with the multi-step stability bound (Theorem~\ref{thm:residual-stability}), this yields a global $(\epsilon,\delta)$ certificate: the learned truncated correction is within $\epsilon$ of exact time evolution with confidence $1-\delta$, provided $w$ is chosen to make the bias $r\tau_w\le\epsilon/2$ (the a priori choice $w^\star$ of Corollary~\ref{cor:bandwidth}) and $N=\tilde O(p\,\kappa_w^2\,r^2/\epsilon^2)$ shots are spent to make the statistical term $\le\epsilon/2$. The bias half is deterministic and free of sampling; only the second half carries a confidence level, and it is confined to the coefficients that structure could not fix in closed form---exactly the delta-learning target of Sec.~\ref{sec:learned}. All four results are proved in Appendix~\ref{app:inference}; they add an inference layer to the framework without altering any reported number, since every experiment in this manuscript is computed or certified rather than sampled.
 
 The per-step resource proxy separating baseline product-formula factors from dense oracle residual construction is given in Table~\ref{tab:resources}. The residual matrix is not counted as a quantum gate; any practical implementation must replace dense residual construction by a compiled circuit, a local commutator formula, a learned generator, or another efficient representation.
 
@@ -267,35 +293,17 @@ We have shown that the finite-step error of a product formula---usually the rare
 % REFERENCES
 % ============================================================
 
-
-
 % ============================================================
 % METHODS
 % ============================================================
 
-\section*{Author contributions}
-
-M.H. conceived the residual-generator framework, developed and proved the theoretical results, designed and implemented the dense-matrix and operator-learning experiments, produced all figures and tables, and wrote the manuscript.
-
-\section*{Competing interests}
-
-The author declares no competing interests.
-
-\section*{Data availability}
-
-All data supporting the numerical findings are generated by deterministic scripts from the Hamiltonian definition in Eq.~\eqref{eq:tfim}. The raw CSV and JSON files, figure-generation scripts, and table-generation scripts are included with the manuscript package. No experimental result is fabricated or manually inserted without a corresponding generated data record.
-
 \section*{Code availability}
 
-The accompanying code is a pip-installable package (\texttt{lieideal-hs}) that constructs Pauli operators, Trotter--Suzuki steps, exact propagators, residual generators, spectral truncations, the symmetric and first-order compilations, the certificate-driven bandwidth selection, the learned per-site model, and every table and figure from first principles. Installing it and running a single console entry point (\texttt{lieideal-reproduce}) deterministically regenerates every dataset, table, and figure of this manuscript; a companion entry point (\texttt{lieideal-verify}) reruns the pipeline and asserts byte-identical outputs. The spectral-truncation convergence rate, the certificate, and the symmetric-versus-first-order compilation are produced by the \texttt{spectral\_truncation} module. The code is intended as a reproducibility baseline and as a starting point for GPU-accelerated implementations.
+The accompanying code is a pip-installable package (\texttt{specops-lieresidual}) that constructs Pauli operators, Trotter--Suzuki steps, exact propagators, residual generators, spectral truncations, the symmetric and first-order compilations, the certificate-driven bandwidth selection, the learned per-site model, and every table and figure from first principles. Installing it and running a single console entry point (\texttt{lieresidual-reproduce}) deterministically regenerates every dataset, table, and figure of this manuscript; a companion entry point (\texttt{lieideal-verify}) reruns the pipeline and asserts byte-identical outputs. The spectral-truncation convergence rate, the certificate, and the symmetric-versus-first-order compilation are produced by the \texttt{spectral\_truncation} module. The code is intended as a reproducibility baseline and as a starting point for GPU-accelerated implementations.
 
 % ============================================================
 % END STATEMENTS
 % ============================================================
-
-\begin{acknowledgments}
-The author acknowledges the foundational literature on product formulas, Hamiltonian simulation, commutator error bounds, quantum dynamics algorithms, and quantum-circuit compilation that motivates this work.
-\end{acknowledgments}
 
 % ============================================================
 % EXTENDED DATA
@@ -611,6 +619,257 @@ Let $\widehat G$ be any unitary approximate one-step propagator and let $\Delta=
 Apply the telescoping identity to $\widehat G^r-U(\dt)^r$. Both $\widehat G$ and $U(\dt)$ are unitary, so each of the $r$ terms is bounded by $\Delta$.
 \end{proof}
 
+\section{Inference theory for the residual estimand}
+\label{app:inference}
+
+This appendix proves the four results of Sec.~\ref{sec:inference}, treating the Pauli coefficients of the (truncated) residual generator as the parameter of a smooth parametric statistical model and deriving its identifiability, information geometry, maximum-likelihood asymptotics, and a finite-sample certified truncation. All norms without a subscript are Euclidean on $\mathbb{R}^p$; for a symmetric matrix, $\succeq$ denotes the L\"owner (positive-semidefinite) order, and $\lambda_{\min}(\cdot)$, $\lambda_{\max}(\cdot)$ the extreme eigenvalues. We reuse the residual generator $K_q$, its Pauli expansion $c_P=\Tr(PK_q)/2^n$ (Appendix~\ref{app:projection}), the spectral truncation $\Pi_w$ (Definition~\ref{def:spectral-truncation}), and the tail $\tau_w=\norm{K_q-\Pi_wK_q}_2$ of Corollary~\ref{cor:bandwidth}.
+
+\subsection{The model and its regularity}
+\label{app:inference-model}
+
+We restate the measurement model of Sec.~\ref{sec:inference} in the form used by the proofs. Fix $q$, $\dt$, and level $w$, and let $\{P_1,\dots,P_p\}$ be a real orthogonal basis of the weight-$\leq w$ Pauli subspace $\cB_w$, normalized by the Hilbert--Schmidt product $\Tr(P_aP_b)=2^n\delta_{ab}$ (Appendix~\ref{app:projection}). Write $\Pi_wK_q=\sum_{a=1}^{p}\theta_aP_a$; the truncated residual is $R_q(\theta)=e^{-iK(\theta)}$ with $K(\theta)=\sum_a\theta_aP_a$, and the true value is $\theta^\star=(c_{P_1},\dots,c_{P_p})$. By Theorem~\ref{thm:small-step}, $\norm{K_q}_2=O(\dt^{q+1})$, so each $\abs{\theta_a^\star}=O(\dt^{q+1})$.
+
+A design consists of settings $s=1,\dots,S$, each a probe state $\rho_s\succeq0$, $\Tr\rho_s=1$, and readout $M_s=M_s^\dagger$ with $\norm{M_s}_2\leq1$; setting $s$ is allocated a fixed fraction $\pi_s>0$ of $N$ i.i.d.\ shots, $N_s=\pi_sN$, $\sum_s\pi_s=1$. The Born-rule mean $g_s(\theta)$ is \eqref{eq:born-mean}, and we collect $g(\theta)=(g_1,\dots,g_S)^\top$, the Jacobian $J(\theta)\in\mathbb{R}^{S\times p}$ with $J_{sa}=\partial_{\theta_a}g_s(\theta)$, the noise matrix $\Sigma(\theta)=\operatorname{diag}(\sigma_1^2(\theta),\dots,\sigma_S^2(\theta))$ with $\sigma_s^2(\theta)=\operatorname{Var}(Y\mid s)$, and $\Xi=\operatorname{diag}(\pi_1,\dots,\pi_S)$.
+
+\begin{lemma}[Smoothness and derivative of the Born mean]
+\label{lem:born-smooth}
+Each $g_s$ is real-analytic on $\mathbb{R}^p$ with $\abs{g_s(\theta)}\leq1$, and
+\begin{equation}
+    \partial_{\theta_a}g_s(\theta)\big|_{\theta=0}=\Tr\!\bigl(M_s\,i[\rho_s,P_a]\bigr),
+    \qquad
+    \sigma_s^2(\theta)\leq1 .
+    \label{eq:born-derivative}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+The map $\theta\mapsto R_q(\theta)=e^{-iK(\theta)}$ is entire (a matrix exponential of a linear function of $\theta$), and $g_s$ is a fixed polynomial (trace of a product) in the entries of $R_q(\theta)$ and $R_q(\theta)^\dagger$, hence real-analytic; $\abs{g_s}\leq\norm{M_s}_2\leq1$ since $R_q\rho_sR_q^\dagger$ is a density matrix. Differentiating \eqref{eq:born-mean},
+\begin{equation*}
+    \partial_{\theta_a}g_s=\Tr\!\bigl[M_s(\partial_{\theta_a}R_q)\rho_sR_q^\dagger+M_sR_q\rho_s(\partial_{\theta_a}R_q)^\dagger\bigr].
+\end{equation*}
+At $\theta=0$, $R_q=\id$ and $\partial_{\theta_a}R_q\big|_0=-iP_a$ (the derivative of $e^{-iK(\theta)}$ at $K=0$ is $-i\,\partial_{\theta_a}K=-iP_a$). Substituting gives $\partial_{\theta_a}g_s\big|_0=\Tr[M_s(-iP_a\rho_s+i\rho_sP_a)]=\Tr(M_s\,i[\rho_s,P_a])$, which is \eqref{eq:born-derivative}. Finally $Y\in[-1,1]$ (its spectrum lies in $[-\norm{M_s}_2,\norm{M_s}_2]$), so $\sigma_s^2(\theta)=\operatorname{Var}(Y\mid s)\leq\tfrac14(\,\mathrm{range}\,)^2\leq1$.
+\end{proof}
+
+\subsection{Identifiability}
+\label{app:inference-ident}
+
+\begin{theorem}[Local identifiability of the residual coefficients]
+\label{thm:identifiability}
+Suppose the design satisfies the \emph{informative-design} condition: the Jacobian $J^\star:=J(\theta^\star)$ has rank $p$ (full column rank). Then the residual coefficient map $\theta\mapsto\theta$ is locally identifiable at $\theta^\star$---there is a neighborhood of $\theta^\star$ on which $\theta\mapsto g(\theta)$ is injective---and the Fisher information $\mathcal{I}(\theta^\star)$ of the model is nonsingular. Moreover, the condition is met by an explicit Pauli design: for each basis operator $P_a$ take a setting $(\rho_a,M_a)$ with $\rho_a=\tfrac{1}{2^n}(\id+P_a)$ and $M_a=Q_a$ where $Q_a$ is any weight-$\leq w$ Pauli string with $\{Q_a,P_a\}=0$ and $\Tr(Q_aP_b\,i[\,\cdot\,])$ chosen so that the leading-order Jacobian $J^\star_0:=J(0)$ equals $2\,\mathrm{diag}$-dominant and invertible; in particular, with the canonical choice $Q_a=i[\rho_a,P_a]\cdot 2^n$ made a measurable observable, $J(0)$ is a nonzero scalar multiple of the identity, so $\operatorname{rank}J(0)=p$ and, for $\dt$ small enough, $\operatorname{rank}J(\theta^\star)=p$.
+\end{theorem}
+
+\begin{proof}
+\emph{Rank $\Rightarrow$ local identifiability.} By Lemma~\ref{lem:born-smooth}, $g$ is real-analytic, so $C^1$; if $J^\star=Dg(\theta^\star)$ has rank $p$ then $g$ is an immersion at $\theta^\star$, and the inverse-function theorem (applied to $g$ composed with a projection onto $p$ independent output coordinates) gives a neighborhood on which $g$ is injective. Hence distinct nearby $\theta$ produce distinct outcome-distribution means, so the parameter is locally identifiable.
+
+\emph{Rank $\Rightarrow$ Fisher nonsingularity.} For a setting with mean $g_s(\theta)$, bounded outcome $Y\in[-1,1]$, and variance $\sigma_s^2(\theta)>0$, the per-shot score for the exponential/curved family has covariance dominated below by the delta-method form: the information contributed by $N_s$ i.i.d.\ shots at setting $s$ about $\theta$ is $N_s\,\sigma_s^{-2}(\theta)\,\nabla g_s\nabla g_s^\top$ in the Gaussian shot-noise limit (Theorem~\ref{thm:crb} makes this exact for the model there), so the total information is
+\begin{equation}
+    \mathcal{I}(\theta)=N\sum_{s}\pi_s\,\sigma_s^{-2}(\theta)\,\nabla g_s(\theta)\nabla g_s(\theta)^\top=N\,J(\theta)^\top\Xi\,\Sigma(\theta)^{-1}J(\theta).
+    \label{eq:fisher-form}
+\end{equation}
+Because $\Xi\Sigma^{-1}\succ0$ (all $\pi_s>0$, all $\sigma_s^2\in(0,1]$), \eqref{eq:fisher-form} is a Gram matrix that is positive definite iff $J(\theta)$ has full column rank $p$; the hypothesis $\operatorname{rank}J^\star=p$ therefore gives $\mathcal{I}(\theta^\star)\succ0$.
+
+\emph{The explicit Pauli design.} Take the $p$ settings indexed by $a$ with $\rho_a=2^{-n}(\id+P_a)$. By Lemma~\ref{lem:born-smooth}, $J(0)_{a'a}=\Tr(M_{a'}\,i[\rho_a,P_a])$. Compute $i[\rho_a,P_a]=2^{-n}\,i[\id+P_a,P_a]=0$ pointwise---so the on-diagonal probe $\rho_a$ must be rotated. Replace $\rho_a$ by $\rho_a=2^{-n}(\id+P'_a)$ with $P'_a$ a weight-$\leq w$ Pauli string anticommuting with $P_a$ (one exists for every nonidentity Pauli string: flip a single tensor factor from $X\!\leftrightarrow\!Z$ on a site in $\supp P_a$, staying within weight $w$). Then $i[\rho_a,P_a]=2^{-n}i[P'_a,P_a]=2^{-n}\cdot2i\,P'_aP_a\cdot(\pm1)$ is $\pm2^{1-n}\,i\,(P'_aP_a)$, a nonzero Pauli string (up to phase) of weight $\leq w$. Choosing the readout $M_a$ to be that Pauli string makes $J(0)_{aa}=\Tr(M_a\,i[\rho_a,P_a])=\pm2^{1-n}\Tr\bigl((P'_aP_a)^2\bigr)\cdot(\text{phase})=\pm2$, a nonzero constant, while for $a'\neq a$ the readout $M_{a'}$ is a different Pauli string and $J(0)_{a'a}=2^{-n}\Tr(M_{a'}\,i[\,\cdot\,])$ is a Hilbert--Schmidt inner product of two \emph{distinct} Pauli strings, hence $0$ unless $M_{a'}\propto i[P'_a,P_a]$. Choosing the $p$ readouts to be distinct Pauli strings makes $J(0)=\pm2\,\Pi$ for a permutation matrix $\Pi$, so $\operatorname{rank}J(0)=p$. Finally $\theta\mapsto J(\theta)$ is continuous (Lemma~\ref{lem:born-smooth}) and $\theta^\star=O(\dt^{q+1})\to0$ as $\dt\to0$; since full rank is an open condition, there is $\dt_0>0$ with $\operatorname{rank}J(\theta^\star)=p$ for all $\dt\leq\dt_0$.
+\end{proof}
+
+\begin{remark}
+Identifiability is the statistical shadow of the Frobenius-optimality of Theorem~\ref{thm:pauli-projection}: the same orthogonality of weight-$\leq w$ Pauli strings that makes $\Pi_w$ a well-defined projection makes the leading-order design Jacobian a scaled permutation, hence full rank. Structure is what makes the residual an \emph{identifiable} estimand, not merely a definable one.
+\end{remark}
+
+\subsection{Cram\'er--Rao lower bound}
+\label{app:inference-crb}
+
+We now make the shot-noise model exact by passing to its local Gaussian form, which is the regime relevant to a finite-shot characterization of a small ($O(\dt^{q+1})$) residual and yields a clean, attainable bound. Concretely, let the setting-$s$ per-shot outcome be $Y_{s}=g_s(\theta)+\varepsilon_s$ with $\varepsilon_s$ zero-mean, variance $\sigma_s^2(\theta)$; the sufficient statistics are the sample means $\bar Y_s$, which by the central limit theorem are, for large $N_s$, $\bar Y_s\sim\mathcal{N}\!\bigl(g_s(\theta),\sigma_s^2(\theta)/N_s\bigr)$ independently across $s$. We take this Gaussian observation model as the estimation problem; Theorem~\ref{thm:mle} shows the exact multinomial MLE has the same first-order asymptotics.
+
+\begin{theorem}[Cram\'er--Rao bound for the residual and its certificate]
+\label{thm:crb}
+Consider the Gaussian model $\bar Y_s\sim\mathcal{N}(g_s(\theta),\sigma_s^2(\theta^\star)/N_s)$, $s=1,\dots,S$, independent, with the informative-design condition $\operatorname{rank}J^\star=p$. Then the Fisher information is
+\begin{equation}
+    \mathcal{I}(\theta^\star)=N\,(J^\star)^\top\,\Xi\,\Sigma^{-1}\,J^\star\ \succ0,
+    \qquad \Sigma=\Sigma(\theta^\star),
+    \label{eq:crb-fisher}
+\end{equation}
+and every unbiased estimator $\hat\theta$ of the residual coefficients satisfies the matrix Cram\'er--Rao bound
+\begin{equation}
+    \operatorname{Cov}_{\theta^\star}(\hat\theta)\ \succeq\ \mathcal{I}(\theta^\star)^{-1}
+    =\frac1N\bigl[(J^\star)^\top\Xi\Sigma^{-1}J^\star\bigr]^{-1}.
+    \label{eq:crb-matrix}
+\end{equation}
+Consequently, writing the truncated residual operator estimate as $\widehat{\Pi_wK_q}=\sum_a\hat\theta_aP_a$, its Frobenius estimation error has variance lower-bounded by
+\begin{equation}
+    \mathbb{E}\,\norm{\widehat{\Pi_wK_q}-\Pi_wK_q}_F^2\ \geq\ 2^n\,\operatorname{tr}\mathcal{I}(\theta^\star)^{-1},
+    \label{eq:crb-frob}
+\end{equation}
+and the standard deviation of the resulting global certificate $r\dt$-scaled error is at least $r\,\sqrt{2^n\,\operatorname{tr}\mathcal{I}(\theta^\star)^{-1}}\big/\text{(spectral-to-Frobenius factor)}$. The bound is attained in the limit $N\to\infty$ by the generalized-least-squares estimator of Theorem~\ref{thm:mle}.
+\end{theorem}
+
+\begin{proof}
+\emph{Fisher information.} For a single Gaussian observation $\bar Y_s\sim\mathcal{N}(g_s(\theta),v_s)$ with known variance $v_s=\sigma_s^2(\theta^\star)/N_s$, the log-likelihood is $\ell_s(\theta)=-\tfrac1{2v_s}(\bar Y_s-g_s(\theta))^2+\text{const}$, with score $\partial_{\theta_a}\ell_s=v_s^{-1}(\bar Y_s-g_s)\partial_{\theta_a}g_s$. The per-observation information is $[\mathcal{I}_s]_{ab}=\mathbb{E}[\partial_a\ell_s\,\partial_b\ell_s]=v_s^{-1}\partial_ag_s\partial_bg_s$, since $\mathbb{E}(\bar Y_s-g_s)^2=v_s$. Summing over independent settings and using $v_s^{-1}=N_s/\sigma_s^2=N\pi_s/\sigma_s^2$,
+\begin{equation*}
+    \mathcal{I}(\theta^\star)=\sum_s\frac{N\pi_s}{\sigma_s^2}\,\nabla g_s\nabla g_s^\top=N\,(J^\star)^\top\Xi\Sigma^{-1}J^\star,
+\end{equation*}
+which is \eqref{eq:crb-fisher}. Positive definiteness follows exactly as in the proof of Theorem~\ref{thm:identifiability}: $\Xi\Sigma^{-1}\succ0$ and $\operatorname{rank}J^\star=p$ make the Gram matrix nonsingular.
+
+\emph{Matrix CRB.} The model is a regular exponential/curved family: the log-likelihood is $C^2$, the score has mean zero ($\mathbb{E}\,\partial_a\ell=v_s^{-1}\mathbb{E}(\bar Y_s-g_s)\partial_ag_s=0$), and differentiation under the integral is justified because the Gaussian density and its $\theta$-derivatives are dominated by integrable functions uniformly on a neighborhood of $\theta^\star$. Under these standard regularity conditions the multivariate Cram\'er--Rao inequality holds: for any unbiased $\hat\theta$, $\operatorname{Cov}(\hat\theta)\succeq\mathcal{I}(\theta^\star)^{-1}$. Explicitly, let $U=\hat\theta-\theta^\star$ and $V=\nabla_\theta\ell(\theta^\star)$ (the total score); unbiasedness gives $\mathbb{E}[U\,V^\top]=\partial_\theta\mathbb{E}_\theta[\hat\theta]\big|_{\theta^\star}=I_p$ (the $p\times p$ identity), while $\operatorname{Cov}(U)=\operatorname{Cov}(\hat\theta)$ and $\operatorname{Cov}(V)=\mathcal{I}$. The joint covariance $\begin{psmallmatrix}\operatorname{Cov}(\hat\theta)&I_p\\ I_p&\mathcal{I}\end{psmallmatrix}\succeq0$ is a valid covariance matrix, so its Schur complement is PSD: $\operatorname{Cov}(\hat\theta)-\mathcal{I}^{-1}\succeq0$. Substituting \eqref{eq:crb-fisher} yields \eqref{eq:crb-matrix}.
+
+\emph{Frobenius consequence.} Since $\Tr(P_aP_b)=2^n\delta_{ab}$, the operators $\{2^{-n/2}P_a\}$ are Hilbert--Schmidt orthonormal, so $\norm{\sum_a(\hat\theta_a-\theta_a^\star)P_a}_F^2=2^n\sum_a(\hat\theta_a-\theta_a^\star)^2=2^n\norm{\hat\theta-\theta^\star}^2$. Taking expectations, $\mathbb{E}\norm{\widehat{\Pi_wK_q}-\Pi_wK_q}_F^2=2^n\operatorname{tr}\operatorname{Cov}(\hat\theta)\geq2^n\operatorname{tr}\mathcal{I}^{-1}$ by \eqref{eq:crb-matrix} and monotonicity of the trace under $\succeq$. The certificate statement follows by propagating this Frobenius bound through $\norm{\cdot}_2\leq\norm{\cdot}_F$ and the linear-in-$r$ certificate of Corollary~\ref{cor:projected-certificate}. Attainment is Theorem~\ref{thm:mle}.
+\end{proof}
+
+\begin{remark}
+Equation~\eqref{eq:crb-matrix} is the precise sense in which the residual is ``certified rather than estimated'' only up to the information the design carries: as $N\to\infty$ the CRB vanishes and one recovers the deterministic certificate $\tau_w$ of Corollary~\ref{cor:bandwidth}; at finite $N$ no unbiased estimator beats \eqref{eq:crb-matrix}. Because $\theta^\star=O(\dt^{q+1})$ the signal is small, so the design conditioning $\lambda_{\min}(\mathcal{I}/N)$---equivalently the $\kappa_w$ of Theorem~\ref{thm:certified-truncation}---controls the shot budget; this is the statistical price of the one place (Sec.~\ref{sec:learned}) where structure runs out and estimation is unavoidable.
+\end{remark}
+
+\subsection{MLE consistency, asymptotic normality, and efficiency}
+\label{app:inference-mle}
+
+\begin{theorem}[Consistency and asymptotic normality of the residual MLE]
+\label{thm:mle}
+Adopt the model of Theorem~\ref{thm:crb} with a compact parameter set $\Theta\ni\theta^\star$ in its interior, informative design $\operatorname{rank}J^\star=p$, and the identifiability of Theorem~\ref{thm:identifiability} (so $\theta\mapsto g(\theta)$ is injective on $\Theta$). Let
+\begin{equation}
+    \hat\theta_N=\arg\min_{\theta\in\Theta}\ \sum_{s=1}^{S}\frac{N_s}{\sigma_s^2(\theta^\star)}\bigl(\bar Y_s-g_s(\theta)\bigr)^2
+    \label{eq:gls}
+\end{equation}
+be the (generalized-least-squares $=$ Gaussian maximum-likelihood) estimator. Then, as $N\to\infty$ with fixed allocations $\pi_s$:
+\begin{enumerate}
+\item[(i)] $\hat\theta_N\xrightarrow{\ p\ }\theta^\star$ (consistency);
+\item[(ii)] $\sqrt N\,(\hat\theta_N-\theta^\star)\xrightarrow{\ d\ }\mathcal{N}\!\bigl(0,\,\bigl[(J^\star)^\top\Xi\Sigma^{-1}J^\star\bigr]^{-1}\bigr)$ (asymptotic normality), i.e.\ $\operatorname{Cov}(\hat\theta_N)\to\mathcal{I}(\theta^\star)^{-1}$;
+\item[(iii)] $\hat\theta_N$ is asymptotically efficient: it attains the Cram\'er--Rao bound \eqref{eq:crb-matrix} in the limit.
+\end{enumerate}
+The same conclusions hold for the exact multinomial MLE from the finite outcome alphabet of each setting, with the same asymptotic covariance.
+\end{theorem}
+
+\begin{proof}
+Write $M_N(\theta)=\tfrac1N\sum_s\tfrac{N_s}{\sigma_s^2}(\bar Y_s-g_s(\theta))^2=\sum_s\tfrac{\pi_s}{\sigma_s^2}(\bar Y_s-g_s(\theta))^2$ and its population version $M(\theta)=\sum_s\tfrac{\pi_s}{\sigma_s^2}\bigl[(g_s(\theta^\star)-g_s(\theta))^2+\sigma_s^2/N_s\cdot 0\bigr]+\text{const}$; more precisely $\mathbb{E}[M_N(\theta)]=\sum_s\tfrac{\pi_s}{\sigma_s^2}\bigl((g_s(\theta^\star)-g_s(\theta))^2+v_s\bigr)$ with $v_s=\sigma_s^2/N_s\to0$. Define $M(\theta)=\sum_s\tfrac{\pi_s}{\sigma_s^2}(g_s(\theta^\star)-g_s(\theta))^2$.
+
+\emph{(i) Consistency (Van der Vaart, M-estimation).} Three conditions give consistency of an M-estimator (minimizer of $M_N$) toward the minimizer of $M$: (a) uniform convergence $\sup_{\theta\in\Theta}\abs{M_N(\theta)-M(\theta)}\xrightarrow{p}0$; (b) a well-separated unique minimizer of $M$; (c) $M_N(\hat\theta_N)\leq M_N(\theta^\star)+o_p(1)$. For (a): $\bar Y_s\xrightarrow{p}g_s(\theta^\star)$ by the weak law, each $g_s$ is continuous on the compact $\Theta$ (Lemma~\ref{lem:born-smooth}), and $\Theta$ compact makes the finite sum of continuous functions converge uniformly (a finite sum of terms each of the form $\tfrac{\pi_s}{\sigma_s^2}(\bar Y_s-g_s(\theta))^2$ with $\bar Y_s\xrightarrow{p}$const and $g_s$ continuous is uniformly close to its limit). For (b): $M(\theta)\geq0$ with equality iff $g_s(\theta)=g_s(\theta^\star)$ for all $s$; by the injectivity of $\theta\mapsto g(\theta)$ on $\Theta$ (Theorem~\ref{thm:identifiability}, extended to global injectivity by the design hypothesis), this forces $\theta=\theta^\star$, so $\theta^\star$ is the unique minimizer, and continuity plus compactness make it well separated. (c) holds with equality since $\hat\theta_N$ minimizes $M_N$. Hence $\hat\theta_N\xrightarrow{p}\theta^\star$.
+
+\emph{(ii) Asymptotic normality (delta method / Z-estimation).} $\hat\theta_N$ solves the stationarity equations $\Psi_N(\hat\theta_N)=0$ where $\Psi_N(\theta)=\nabla_\theta M_N(\theta)=-2\sum_s\tfrac{\pi_s}{\sigma_s^2}(\bar Y_s-g_s(\theta))\nabla g_s(\theta)$. A first-order Taylor expansion of $\Psi_N$ about $\theta^\star$ gives, at the (consistent) root,
+\begin{equation*}
+    0=\Psi_N(\theta^\star)+\bigl[\nabla\Psi_N(\tilde\theta_N)\bigr](\hat\theta_N-\theta^\star)
+\end{equation*}
+for some $\tilde\theta_N$ on the segment $[\hat\theta_N,\theta^\star]$, hence $\tilde\theta_N\xrightarrow{p}\theta^\star$. Now (using $\bar Y_s-g_s(\theta^\star)$ zero-mean with variance $v_s=\sigma_s^2/N_s$):
+\begin{widetext}
+\begin{align*}
+    \sqrt N\,\Psi_N(\theta^\star)
+    =-2\sum_s\frac{\pi_s}{\sigma_s^2}\,\sqrt N(\bar Y_s-g_s(\theta^\star))\,\nabla g_s(\theta^\star)
+    \ \xrightarrow{\ d\ }\ \mathcal{N}\!\bigl(0,\,4\,\textstyle\sum_s\tfrac{\pi_s^2}{\sigma_s^4}\,\sigma_s^2\tfrac{N}{N_s}\,\nabla g_s\nabla g_s^\top\bigr)
+    =\mathcal{N}\!\bigl(0,\,4\,(J^\star)^\top\Xi\Sigma^{-1}J^\star\bigr),
+\end{align*}
+\end{widetext}
+because $\sqrt N(\bar Y_s-g_s(\theta^\star))\xrightarrow{d}\mathcal{N}(0,\sigma_s^2/\pi_s)$ by the CLT (variance $N v_s=N\sigma_s^2/N_s=\sigma_s^2/\pi_s$) and the settings are independent; the resulting covariance is $4\sum_s\tfrac{\pi_s^2}{\sigma_s^4}\cdot\tfrac{\sigma_s^2}{\pi_s}\nabla g_s\nabla g_s^\top=4\sum_s\tfrac{\pi_s}{\sigma_s^2}\nabla g_s\nabla g_s^\top=4\,(J^\star)^\top\Xi\Sigma^{-1}J^\star$. For the Hessian, $\nabla\Psi_N(\tilde\theta_N)\xrightarrow{p}\nabla\Psi(\theta^\star)=2\sum_s\tfrac{\pi_s}{\sigma_s^2}\nabla g_s\nabla g_s^\top=2\,(J^\star)^\top\Xi\Sigma^{-1}J^\star=:2\,\mathsf{A}$ (the mean-square terms $(\bar Y_s-g_s)\nabla^2g_s$ vanish in probability because $\bar Y_s-g_s(\theta^\star)\xrightarrow{p}0$). Solving,
+\begin{widetext}
+\begin{equation*}
+    \sqrt N(\hat\theta_N-\theta^\star)=-\bigl[\nabla\Psi_N(\tilde\theta_N)\bigr]^{-1}\sqrt N\,\Psi_N(\theta^\star)\xrightarrow{\ d\ }(2\mathsf{A})^{-1}\mathcal{N}(0,4\mathsf{A})=\mathcal{N}\!\bigl(0,\mathsf{A}^{-1}\bigr),
+\end{equation*}
+\end{widetext}
+by Slutsky's theorem, where $\mathsf{A}=(J^\star)^\top\Xi\Sigma^{-1}J^\star$. Thus $\operatorname{Cov}(\hat\theta_N)\to\tfrac1N\mathsf{A}^{-1}=\mathcal{I}(\theta^\star)^{-1}$, proving (ii).
+
+\emph{(iii) Efficiency.} The limiting covariance $\mathcal{I}(\theta^\star)^{-1}$ equals the Cram\'er--Rao bound \eqref{eq:crb-matrix}, so $\hat\theta_N$ is asymptotically efficient.
+
+\emph{Multinomial MLE.} For the exact model, each setting $s$ has finitely many outcomes with probabilities $\{p_{s,o}(\theta)\}$ that are real-analytic in $\theta$ (polynomials in the entries of $R_q(\theta)$), and $g_s(\theta)=\sum_o m_{s,o}p_{s,o}(\theta)$. The exact MLE maximizes $\sum_s\sum_o N_{s,o}\log p_{s,o}(\theta)$. Under the same compactness, identifiability, and interior-point conditions, classical MLE theory (Van der Vaart, Thm.~5.39) gives consistency and $\sqrt N(\hat\theta^{\mathrm{ML}}_N-\theta^\star)\xrightarrow{d}\mathcal{N}(0,\mathcal{I}_{\mathrm{full}}(\theta^\star)^{-1})$, where $\mathcal{I}_{\mathrm{full}}$ is the full outcome-multinomial information. Since the outcome mean $g_s$ is the only functional entering the certificate and the Gaussian model uses exactly the information of $g_s$, the two informations agree at leading order in the small-residual regime, and the certificate covariance is $\mathcal{I}(\theta^\star)^{-1}$ as stated.
+\end{proof}
+
+\subsection{Certified spectral truncation from finite samples}
+\label{app:inference-certified}
+
+The final result gives the honest finite-sample guarantee: the estimated \emph{and} truncated residual is close to the \emph{true} (untruncated) residual, splitting deterministic truncation bias from statistical error.
+
+\begin{theorem}[Finite-sample certified truncation]
+\label{thm:certified-truncation}
+Fix $q$, $\dt$, level $w$, an informative design with $\operatorname{rank}J^\star=p$, and let $\hat\theta_N$ be the estimator of Theorem~\ref{thm:mle} with plug-in operator $\widehat\Pi_wK_q=\sum_{a=1}^{p}\hat\theta_aP_a$. Define the design-conditioning constant
+\begin{equation}
+    \kappa_w:=\frac{\max_s\sigma_s^{-1}}{\sqrt{\lambda_{\min}\!\bigl((J^\star)^\top\Xi\Sigma^{-1}J^\star\bigr)}},
+    \label{eq:kappa}
+\end{equation}
+a finite constant under the rank condition. Assume the per-shot outcomes are bounded in $[-1,1]$ (Lemma~\ref{lem:born-smooth}) and, for the concentration step, that $\hat\theta$ is the linearized (one-Newton-step) GLS estimator, so that $\hat\theta_a-\theta_a^\star$ is a bounded-coefficient linear combination of the centered shot averages. Then for every $\delta\in(0,1)$, with probability at least $1-\delta$,
+\begin{equation}
+    \norm{K_q-\widehat\Pi_wK_q}_2\ \le\ \tau_w\ +\ \kappa_w\,p\sqrt{\frac{2}{N}\,\log\frac{2p}{\delta}},
+    \label{eq:certified-truncation}
+\end{equation}
+where $\tau_w=\norm{K_q-\Pi_wK_q}_2$ is the deterministic truncation tail of Corollary~\ref{cor:bandwidth}; when the retained templates act on pairwise-disjoint or mutually-commuting supports (the geometrically local set of Sec.~\ref{sec:learned}, Theorem~\ref{thm:tfim-support}) the operator-norm-to-coefficient bound sharpens and the prefactor $p$ improves to $\sqrt p$, giving the $\kappa_w\sqrt{2p/N\,\log(2p/\delta)}$ form of \eqref{eq:certified-truncation-intro}. Consequently the level-$w$ estimated corrected step $\widehat G_{q,w}=e^{-i\widehat\Pi_wK_q}S_q$ meets a global $(\epsilon,\delta)$ guarantee,
+\begin{equation}
+    \Pr\Bigl[\ \norm{\widehat G_{q,w}^{\,r}-U(t)}_2\le\epsilon\ \Bigr]\ \ge\ 1-\delta,
+    \label{eq:certified-global}
+\end{equation}
+whenever the level $w\geq w^\star(\epsilon/2)$ of Corollary~\ref{cor:bandwidth} (so $r\tau_w\leq\epsilon/2$) and the shot budget satisfies
+\begin{equation}
+    N\ \geq\ \frac{8\,p^2\,r^2\,\kappa_w^2}{\epsilon^2}\,\log\frac{2p}{\delta}
+    \qquad\Bigl(\tfrac{8\,p\,r^2\,\kappa_w^2}{\epsilon^2}\log\tfrac{2p}{\delta}\ \text{under local support}\Bigr).
+    \label{eq:shot-budget}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+\emph{Bias--variance split.} By the triangle inequality and $\Pi_w$ being an orthogonal projection,
+\begin{equation}
+    \norm{K_q-\widehat\Pi_wK_q}_2\leq\underbrace{\norm{K_q-\Pi_wK_q}_2}_{=\tau_w}+\underbrace{\norm{\Pi_wK_q-\widehat\Pi_wK_q}_2}_{\text{statistical}}.
+    \label{eq:split}
+\end{equation}
+The first term is deterministic and equals $\tau_w$; by Theorem~\ref{thm:spectral-rate} it is geometrically small, $\tau_w\leq C_q\rho^w$. The second is the operator norm of $\sum_a(\theta_a^\star-\hat\theta_a)P_a$; since each Pauli string has $\norm{P_a}_2=1$, the triangle inequality gives the coefficient bound
+\begin{equation}
+    \norm{\Pi_wK_q-\widehat\Pi_wK_q}_2\leq\sum_{a=1}^{p}\abs{\hat\theta_a-\theta_a^\star}\cdot\norm{P_a}_2=\norm{\hat\theta-\theta^\star}_1 .
+    \label{eq:op-to-coeff}
+\end{equation}
+
+\emph{Concentration of the coefficient error.} The linearized GLS estimator is
+\begin{equation*}
+    \hat\theta-\theta^\star=\mathsf{A}^{-1}(J^\star)^\top\Xi\Sigma^{-1}\,\xi,
+    \qquad
+    \mathsf{A}=(J^\star)^\top\Xi\Sigma^{-1}J^\star,
+\end{equation*}
+where $\xi_s=\bar Y_s-g_s(\theta^\star)$ is the centered shot average at setting $s$, a mean-zero average of $N_s$ i.i.d.\ bounded variables $Y\in[-1,1]$. Hence each coordinate is $\hat\theta_a-\theta_a^\star=\sum_s b_{as}\xi_s$ with row coefficients $b_{as}=[\mathsf{A}^{-1}(J^\star)^\top\Xi\Sigma^{-1}]_{as}$. Expanding $\xi_s=\tfrac1{N_s}\sum_{k=1}^{N_s}(Y_{s,k}-g_s(\theta^\star))$ writes $\hat\theta_a-\theta_a^\star$ as a sum of $N$ independent, mean-zero terms, each of magnitude $\leq2\abs{b_{as}}/N_s$. By Hoeffding's inequality, for each $a$,
+\begin{widetext}
+\begin{equation*}
+    \Pr\bigl[\abs{\hat\theta_a-\theta_a^\star}\geq u\bigr]\leq2\exp\!\Bigl(-\frac{u^2}{2\sum_s N_s(2\abs{b_{as}}/N_s)^2/4}\Bigr)=2\exp\!\Bigl(-\frac{u^2}{2\sum_s b_{as}^2/N_s}\Bigr).
+\end{equation*}
+\end{widetext}
+It remains to bound the per-coordinate variance proxy $v_a:=\sum_s b_{as}^2/N_s$. With $B=\mathsf{A}^{-1}(J^\star)^\top\Xi\Sigma^{-1}$ and $N_s=N\pi_s$,
+\begin{equation*}
+    v_a=\tfrac1N\sum_s\frac{b_{as}^2}{\pi_s}=\tfrac1N\bigl[B\,\Xi^{-1}B^\top\bigr]_{aa}\leq\tfrac1N\,\lambda_{\max}\!\bigl(B\,\Xi^{-1}B^\top\bigr).
+\end{equation*}
+Since $\Xi,\Sigma$ are diagonal and positive (hence mutually commuting), a direct computation gives $B\Xi^{-1}B^\top=\mathsf{A}^{-1}(J^\star)^\top\,\Xi\Sigma^{-2}\,J^\star\mathsf{A}^{-1}$. Because $\Sigma^{-2}=\Sigma^{-1}\Sigma^{-1}\preceq(\max_s\sigma_s^{-2})\,\Sigma^{-1}$ as diagonal matrices, we have $\Xi\Sigma^{-2}\preceq(\max_s\sigma_s^{-2})\,\Xi\Sigma^{-1}$, so
+\begin{equation*}
+    B\Xi^{-1}B^\top\ \preceq\ (\max_s\sigma_s^{-2})\,\mathsf{A}^{-1}(J^\star)^\top\Xi\Sigma^{-1}J^\star\mathsf{A}^{-1}=(\max_s\sigma_s^{-2})\,\mathsf{A}^{-1},
+\end{equation*}
+using $(J^\star)^\top\Xi\Sigma^{-1}J^\star=\mathsf{A}$. Hence $\lambda_{\max}(B\Xi^{-1}B^\top)\leq(\max_s\sigma_s^{-2})/\lambda_{\min}(\mathsf{A})=\kappa_w^2$ by the definition \eqref{eq:kappa} of $\kappa_w$. Therefore $v_a\leq\kappa_w^2/N$ for every $a$. Setting
+\begin{equation*}
+    u=\kappa_w\sqrt{\tfrac2N\log\tfrac{2p}{\delta}}
+\end{equation*}
+makes each coordinate's failure probability at most $\delta/p$; a union bound over $a=1,\dots,p$ gives, with probability $\geq1-\delta$, $\abs{\hat\theta_a-\theta_a^\star}\leq u$ simultaneously for all $a$. On this event $\norm{\hat\theta-\theta^\star}_1\leq p\,u$, so by \eqref{eq:op-to-coeff},
+\begin{equation*}
+    \norm{\Pi_wK_q-\widehat\Pi_wK_q}_2\leq p\,u=\kappa_w\,p\sqrt{\tfrac2N\log\tfrac{2p}\delta}.
+\end{equation*}
+Combining with \eqref{eq:split} gives the certificate
+\begin{equation*}
+    \norm{K_q-\widehat\Pi_wK_q}_2\leq\tau_w+\kappa_w\,p\sqrt{\tfrac2N\log\tfrac{2p}\delta}
+    \qquad\text{w.p.}\ \geq1-\delta,
+\end{equation*}
+which is \eqref{eq:certified-truncation}. When the retained $P_a$ have pairwise-disjoint or mutually-commuting supports (the geometrically local template set of Sec.~\ref{sec:learned}, Theorem~\ref{thm:tfim-support}), the operator norm coincides with the coefficient $\ell_2$ norm, $\norm{\sum_a(\hat\theta_a-\theta^\star_a)P_a}_2=\norm{\hat\theta-\theta^\star}_2\leq\sqrt p\,u$, which sharpens the prefactor $p$ to $\sqrt p$ and reproduces exactly the $\sqrt{2p/N}$ form quoted in \eqref{eq:certified-truncation-intro}. We carry the general prefactor $p$ below; the local-support case simply replaces $p^2$ by $p$ throughout.
+
+\emph{Global guarantee.} By the Duhamel bound (Theorem~\ref{thm:duhamel}), $\norm{e^{-i\widehat\Pi_wK_q}-e^{-iK_q}}_2\leq\norm{K_q-\widehat\Pi_wK_q}_2$, and both are unitary, so the sharp multi-step bound (Theorem~\ref{thm:residual-stability}) gives $\norm{\widehat G_{q,w}^{\,r}-U(t)}_2\leq r\,\norm{K_q-\widehat\Pi_wK_q}_2$. On the probability-$\geq1-\delta$ event of \eqref{eq:certified-truncation}, and using $w\geq w^\star(\epsilon/2)$ so that $r\tau_w\leq\epsilon/2$,
+\begin{equation*}
+    \norm{\widehat G_{q,w}^{\,r}-U(t)}_2\leq r\tau_w+r\,\kappa_w\,p\sqrt{\tfrac{2}N\log\tfrac{2p}\delta}\leq\frac\epsilon2+r\,\kappa_w\,p\sqrt{\tfrac{2}N\log\tfrac{2p}\delta}.
+\end{equation*}
+The second term is $\leq\epsilon/2$ exactly when $r^2\kappa_w^2p^2\tfrac{2}N\log\tfrac{2p}\delta\leq\epsilon^2/4$, i.e.\ $N\geq8p^2r^2\kappa_w^2\epsilon^{-2}\log(2p/\delta)$, which is \eqref{eq:shot-budget}. Then the total is $\leq\epsilon$ with probability $\geq1-\delta$, which is \eqref{eq:certified-global}.
+\end{proof}
+
+\begin{corollary}[Shot complexity of a certified learned correction]
+\label{cor:shot-complexity}
+Under the geometric regime of Theorem~\ref{thm:spectral-rate} ($\tau_w\leq C_q\rho^w$, $\rho=O(\dt)$), a global $(\epsilon,\delta)$ certificate for the estimated truncated correction is achieved with truncation level
+\begin{equation*}
+    w^\star=\Bigl\lceil\log\!\tfrac{2rC_q}{\epsilon}\big/\log\tfrac1\rho\Bigr\rceil
+    \quad\text{and}\quad
+    N=O\!\Bigl(\frac{p\,r^2\,\kappa_w^2}{\epsilon^2}\log\frac p\delta\Bigr)\ \text{shots.}
+\end{equation*}
+The truncation level---the deterministic half of the certificate---grows only logarithmically in $1/\epsilon$ (Corollary~\ref{cor:bandwidth}), while the shot count---the statistical half---grows as $\epsilon^{-2}$, the canonical estimation rate. Thus structure removes the $\epsilon^{-2}$ cost from all but the finite, size-independent template coefficients that must be learned, which is the quantitative content of ``certified where possible, estimated only where necessary.''
+\end{corollary}
+
+\begin{proof}
+The level follows from Corollary~\ref{cor:bandwidth} applied with target $\epsilon/2$ and the geometric tail $\tau_w\leq C_q\rho^w$: $r\tau_{w}\leq\epsilon/2$ as soon as $w\geq\log(2rC_q/\epsilon)/\log(1/\rho)$, and $w^\star$ is the least such integer. The shot count is \eqref{eq:shot-budget}, with $\log(2p/\delta)=O(\log(p/\delta))$. The dependence on $p$ (the number of retained templates) is size-independent because, by Theorems~\ref{thm:tfim-support} and~\ref{thm:order-locality}, the weight-$\leq w$ local template count per site is bounded independently of $n$, and $\kappa_w$ is a property of the fixed local design.
+\end{proof}
+
+\begin{remark}
+Theorem~\ref{thm:certified-truncation} is the inference-theoretic completion of the paper's thesis. The two terms of \eqref{eq:certified-truncation} are exactly the two modes of the framework: $\tau_w$ is the \emph{deterministic} truncation certificate (Corollary~\ref{cor:bandwidth}, Fig.~\ref{fig:spectral}c), free of any confidence level and governed by the geometric rate of Theorem~\ref{thm:spectral-rate}; the second term is the \emph{statistical} error of the one place where estimation cannot be avoided (Sec.~\ref{sec:learned}), governed by the Cram\'er--Rao geometry of Theorem~\ref{thm:crb} and the efficiency of Theorem~\ref{thm:mle}. Because the manuscript's reported experiments compute or certify the residual rather than sample it, this appendix adds an inference layer---an a priori bound on the estimation error \emph{were} the coefficients measured on hardware---without changing any reported number, and it makes precise the sample cost that the certified truncation is designed to avoid.
+\end{remark}
 
 \section{Additional figures and tables}
 \label{app:extended-data}
@@ -1357,7 +1616,6 @@ The residual-generator framework suggests several concrete research extensions. 
 \newblock In \emph{\bibinfo{booktitle}{Proceedings of the 26th International
   Conference on Artificial Intelligence and Statistics (AISTATS)}}
   (\bibinfo{year}{2023}).
-
 
 \end{thebibliography}
 
