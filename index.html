@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lie-algebraic spectral truncation of the product-formula residual</title>
+<title>The Trotter residual as an inference object: a learnable, certified Lie-algebraic spectral truncation</title>
 <meta name="description" content="A certified, geometrically convergent, learnable compression of the Trotter-Suzuki finite-step error: projecting the residual generator onto the Pauli-weight filtration of the Lie algebra of Hermitian operators is a spectral truncation with a quantitative convergence rate, an a priori dynamical certificate, and a symmetric gate-level compilation, advancing the product-formula error-cost frontier.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -55,8 +55,11 @@
   pre{background:#eef2f7;color:#1b2330;border:1px solid var(--line);padding:16px 18px;border-radius:6px;overflow-x:auto;font-size:.84rem;line-height:1.55;}
   pre code{background:none;padding:0;}
   .math-block{background:var(--soft);border:1px solid var(--line);padding:14px 18px;margin:16px 0;overflow-x:auto;}
-  .github-badge{display:inline-flex;align-items:center;gap:8px;margin-top:22px;padding:10px 18px;background:var(--accent);color:#fff;font-size:.9rem;font-weight:700;letter-spacing:.04em;text-decoration:none;}
-  .github-badge:hover{background:#0a2a54;text-decoration:none;}
+  .cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px;align-items:center;}
+  .pdf-button{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;background:var(--accent);color:#fff;font-size:.95rem;font-weight:700;letter-spacing:.03em;text-decoration:none;border-radius:4px;}
+  .pdf-button:hover{background:#0a2a54;text-decoration:none;}
+  .github-badge{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;background:#fff;border:1px solid var(--accent);color:var(--accent);font-size:.9rem;font-weight:700;letter-spacing:.04em;text-decoration:none;border-radius:4px;}
+  .github-badge:hover{background:var(--accent-soft);text-decoration:none;}
   .site-footer{padding:28px 0;color:var(--muted);font-size:.9rem;}
   .footnote{font-size:.85rem;color:var(--muted);margin-top:10px;}
   @media (max-width:780px){.hero-grid{grid-template-columns:1fr;}.cards{grid-template-columns:1fr;}}
@@ -75,6 +78,7 @@
       <a href="#demo">Demo</a>
       <a href="#theory">Theory</a>
       <a href="#significance">Significance</a>
+      <a href="#cite">Cite</a>
       <a href="#references">References</a>
       <a href="https://thmolena.github.io/Lie-Algebra-for-Hamiltonian-Simulation/submission/main.pdf">Manuscript</a>
     </nav>
@@ -85,11 +89,14 @@
   <div class="hero-grid">
     <div>
       <span class="eyebrow">Hamiltonian simulation &middot; product formulas &middot; operator-algebraic learning</span>
-      <h1>Lie-algebraic spectral truncation of the product-formula residual</h1>
+      <h1>The Trotter residual as an inference object: a learnable, certified Lie-algebraic spectral truncation</h1>
       <p class="hero-tagline">The finite-step error of a Trotter&ndash;Suzuki formula is a single Hermitian operator; compressing it by spectral truncation yields a certified, geometrically convergent, learnable correction that enlarges the error&ndash;cost frontier of Hamiltonian simulation.</p>
       <p class="hero-subtitle">For an order-$q$ step $S_q(\delta t)$, the residual factor $R_q=U(\delta t)S_q(\delta t)^{\dagger}$ is the unique unitary left correction with $R_qS_q=U(\delta t)$, and its Hermitian generator $K_q=i\log R_q$ admits an exact, optimal correction. Projecting $K_q$ onto the Pauli-weight filtration of the Lie algebra of Hermitian operators is a genuine <em>spectral truncation</em> of that algebra&mdash;the Hamiltonian-simulation counterpart of the operator-algebraic spectral truncations of C$^\ast$-algebraic kernel learning, but endowed with a quantitative convergence rate, an a priori dynamical certificate, and a symmetric gate-level compilation that construction does not provide.</p>
       <p class="byline">Molena Huynh &middot; North Carolina State University &middot; <a href="mailto:molena.huynh@jmp.com">molena.huynh@jmp.com</a></p>
-      <a class="github-badge" href="https://github.com/thmolena/Lie-Algebra-for-Hamiltonian-Simulation">View repository &amp; reproducibility package</a>
+      <div class="cta-row">
+        <a class="pdf-button" href="https://thmolena.github.io/Lie-Algebra-for-Hamiltonian-Simulation/submission/main.pdf">Read the manuscript (PDF)</a>
+        <a class="github-badge" href="https://github.com/thmolena/Lie-Algebra-for-Hamiltonian-Simulation">View repository &amp; reproducibility package</a>
+      </div>
     </div>
     <aside class="hero-panel">
       <div class="stat"><span class="stat-value">449&ndash;576&times;</span><span class="stat-sub">measured error reduction <em>per truncation level</em> (TFIM, $q=2,4$): a geometric convergence rate, not mere convergence.</span></div>
@@ -218,8 +225,8 @@
 <section class="section" id="demo">
   <span class="section-label">Demonstration</span>
   <h2>Reproduce the headline numbers from the package</h2>
-  <p class="lede">The reproducibility package <span class="mono">lieideal-hs</span> regenerates every figure and table of the manuscript from first principles. The spectral-truncation results above are reproduced directly from its public API.</p>
-  <pre><code>pip install lieideal-hs        # or, from source:  cd submission/code && pip install -e .</code></pre>
+  <p class="lede">The reproducibility package <span class="mono">specops-lieresidual</span> regenerates every figure and table of the manuscript from first principles. The spectral-truncation results above are reproduced directly from its public API.</p>
+  <pre><code>pip install specops-lieresidual        # or, from source:  cd submission/code && pip install .</code></pre>
   <pre><code>import spectral_truncation as st
 
 # (1) Geometric convergence rate of the Lie-algebraic spectral truncation.
@@ -235,7 +242,22 @@ print(comp[["n", "q", "w", "oracle_error", "first_order_error", "symmetric_error
 # (3) Certificate-driven bandwidth selection.
 cert = st.certificate_selection()
 print(cert[["target_eps", "w_star", "certificate_bound", "achieved_error", "bound_holds"]])</code></pre>
-  <p class="footnote">A single console entry point reproduces the entire manuscript: <span class="mono">lieideal-reproduce</span> regenerates every dataset, figure and table deterministically, and <span class="mono">lieideal-verify</span> reruns the pipeline and asserts byte-identical outputs.</p>
+  <p class="footnote">A single console entry point reproduces the entire manuscript: <span class="mono">lieresidual-reproduce</span> regenerates every dataset, figure and table deterministically, and <span class="mono">lieideal-verify</span> reruns the pipeline and asserts byte-identical outputs.</p>
+</section>
+
+<section class="section" id="cite">
+  <span class="section-label">Cite</span>
+  <h2>Cite this work</h2>
+  <p class="lede">If this construction, its guarantees, or the accompanying package inform your work, please cite the manuscript.</p>
+  <pre><code>@article{huynh2026lie,
+  author  = {Huynh, Molena},
+  title   = {The Trotter residual as an inference object: a learnable,
+             certified Lie-algebraic spectral truncation},
+  year    = {2026},
+  note    = {Part of the spectral-truncation operators (specops) program},
+  url     = {https://thmolena.github.io/Lie-Algebra-for-Hamiltonian-Simulation/submission/main.pdf}
+}</code></pre>
+  <p class="footnote">Software distribution: <span class="mono">specops-lieresidual</span> (<span class="mono">pip install specops-lieresidual</span>); MIT license. The full manuscript is available at <a href="https://thmolena.github.io/Lie-Algebra-for-Hamiltonian-Simulation/submission/main.pdf">main.pdf</a>.</p>
 </section>
 
 <section class="section" id="theory">
@@ -368,7 +390,7 @@ print(cert[["target_eps", "w_star", "certificate_bound", "achieved_error", "boun
 </section>
 
 <footer class="site-footer">
-  <p>Molena Huynh &middot; North Carolina State University &middot; <a href="mailto:molena.huynh@jmp.com">molena.huynh@jmp.com</a>. Every reported value is an exact, deterministic dense-matrix computation regenerated by the <span class="mono">lieideal-hs</span> package. MIT license.</p>
+  <p>Molena Huynh &middot; North Carolina State University &middot; <a href="mailto:molena.huynh@jmp.com">molena.huynh@jmp.com</a>. Every reported value is an exact, deterministic dense-matrix computation regenerated by the <span class="mono">specops-lieresidual</span> package. MIT license.</p>
 </footer>
 </body>
 </html>
